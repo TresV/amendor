@@ -1,0 +1,16 @@
+# macOS
+.DS_Store
+Thumbs.db
+
+# Editor / IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# WordPress plugin build artifacts
+*.zip
+*.tar.gz
+
+# Logs
+*.log
