@@ -504,17 +504,17 @@ function amendor_render_results_section(array $args)
                 <p><?php esc_html_e('Perform a search or preview to see results here.', 'amendor'); ?></p>
             <?php elseif (!$has_results_or_preview): ?>
                 <p><?php
-                /* translators: %s: Action name (search or preview). */
-                printf(esc_html__('No matches found for your %s criteria.', 'amendor'), '<strong>' . esc_html($action) . '</strong>');
-                ?></p>
+                    /* translators: %s: Action name (search or preview). */
+                    printf(esc_html__('No matches found for your %s criteria.', 'amendor'), '<strong>' . esc_html($action) . '</strong>');
+                    ?></p>
             <?php else: ?>
                 <?php $result_types = array_unique(wp_list_pluck($items_to_display, 'type')); ?>
                 <?php if ($is_preview): ?>
                     <div class="notice notice-info inline" style="margin-bottom: 15px;">
                         <p><strong><?php esc_html_e('Preview Mode:', 'amendor'); ?></strong> <?php esc_html_e('Showing potential changes for selected items. No changes have been saved yet.', 'amendor'); ?> <?php
-                        /* translators: %s: Comma-separated list of active content sources. */
-                        printf(esc_html__('Active content sources: %s.', 'amendor'), '<strong>' . esc_html($content_source_summary) . '</strong>');
-                        ?></p>
+                                                                                                                                                                                                                /* translators: %s: Comma-separated list of active content sources. */
+                                                                                                                                                                                                                printf(esc_html__('Active content sources: %s.', 'amendor'), '<strong>' . esc_html($content_source_summary) . '</strong>');
+                                                                                                                                                                                                                ?></p>
                     </div>
                 <?php else: ?>
                     <p><?php
@@ -656,7 +656,7 @@ function amendor_display_debug_log_page()
         }
 
         // Table name is plugin-owned; the optional level filter is prepared below.
-        $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+        $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
         if (!empty($export_params)) {
             $export_query = $wpdb->prepare($export_query, ...$export_params);
         }
@@ -1064,16 +1064,16 @@ function amendor_display_change_history_log()
                             <td><?php echo esc_html(wp_date(get_option('date_format', 'Y-m-d') . ' ' . get_option('time_format', 'H:i:s'), strtotime($item->timestamp))); // Display in site's timezone 
                                 ?></td>
                             <td><?php
-                            /* translators: %d: User ID. */
-                            echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'amendor'), $item->user_id));
-                            ?></td>
+                                /* translators: %d: User ID. */
+                                echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'amendor'), $item->user_id));
+                                ?></td>
                             <td>
                                 <?php $post_link = get_edit_post_link($item->post_id); ?>
                                 <?php if ($post_link): ?>
                                     <a href="<?php echo esc_url($post_link); ?>" target="_blank" title="<?php
-                                    /* translators: %s: Post title. */
-                                    printf(esc_attr__('Edit Post: %s', 'amendor'), esc_attr($item->post_title));
-                                    ?>">
+                                                                                                        /* translators: %s: Post title. */
+                                                                                                        printf(esc_attr__('Edit Post: %s', 'amendor'), esc_attr($item->post_title));
+                                                                                                        ?>">
                                         <?php echo esc_html(wp_trim_words($item->post_title, 10, '...')); ?> (ID: <?php echo esc_html($item->post_id); ?>) <span class="dashicons dashicons-external"></span>
                                     </a>
                                 <?php else: ?>
