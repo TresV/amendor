@@ -11,8 +11,8 @@
     ],
     "authors": [
         {
-            "name": "Your Name",
-            "homepage": "https://example.com/"
+            "name": "TheBrandPlace",
+            "homepage": "https://thebrandplace.com/"
         }
     ],
     "require": {
@@ -36,6 +36,6 @@
         "cs-fix": "phpcbf --standard=phpcs.xml.dist"
     },
     "support": {
-        "source": "https://example.com/amendor/"
+        "source": "https://thebrandplace.com/"
     }
 }

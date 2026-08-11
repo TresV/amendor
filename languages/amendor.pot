@@ -3,7 +3,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.5.1\n"
-"Report-Msgid-Bugs-To: https://example.com/amendor/\n"
+"Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
 "POT-Creation-Date: 2026-08-11 11:55+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"

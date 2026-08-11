@@ -2,11 +2,11 @@
 
 /**
  * Plugin Name:       Amendor
- * Plugin URI:        https://example.com/amendor/
+ * Plugin URI:        https://thebrandplace.com/
  * Description:       Search and replace text within Elementor data, with backup, history, and persistent debug logging.
  * Version:           1.5.1
- * Author:            Your Name
- * Author URI:        https://example.com/
+ * Author:            TheBrandPlace
+ * Author URI:        https://thebrandplace.com/
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       amendor
