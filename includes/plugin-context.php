@@ -2,7 +2,7 @@
 /**
  * Shared plugin runtime context helpers.
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {
@@ -50,7 +50,7 @@ function amendor_is_fluentor_plugin()
  */
 function amendor_get_plugin_display_name()
 {
-    return __('Amendor', 'elementor-text-replacer');
+    return __('Amendor', 'amendor');
 }
 
 /**

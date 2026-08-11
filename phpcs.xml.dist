@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<ruleset name="Amendor">
+    <description>WordPress Coding Standards for the Amendor plugin.</description>
+
+    <!-- Only scan PHP files and show progress. -->
+    <arg name="extensions" value="php" />
+    <arg value="sp" />
+    <arg name="colors" />
+    <arg name="parallel" value="8" />
+
+    <!-- Paths to check. -->
+    <file>amendor.php</file>
+    <file>uninstall.php</file>
+    <file>includes/</file>
+    <file>assets/</file>
+
+    <!-- Exclude build/vendor/translation artifacts. -->
+    <exclude-pattern>/node_modules/*</exclude-pattern>
+    <exclude-pattern>/vendor/*</exclude-pattern>
+    <exclude-pattern>/languages/*</exclude-pattern>
+
+    <!-- WPCS: WordPress-Extra includes WordPress-Core plus additional best practices. -->
+    <rule ref="WordPress-Extra" />
+
+    <!-- Documentation standards. -->
+    <rule ref="WordPress-Docs" />
+
+    <!-- PHP version compatibility check (WPCS + PHPCompatibility). -->
+    <config name="testVersion" value="8.1-" />
+    <rule ref="PHPCompatibilityWP" />
+
+    <!-- The plugin intentionally accesses superglobals in its non-AJAX
+         admin handlers; nonces + capability checks gate every action. -->
+    <rule ref="WordPress.Security.NonceVerification">
+        <properties>
+            <property name="customSanitizingFunctions" type="array">
+                <element value="sanitize_key" />
+                <element value="sanitize_text_field" />
+                <element value="absint" />
+                <element value="intval" />
+            </property>
+        </properties>
+    </rule>
+</ruleset>

@@ -14,3 +14,11 @@ Thumbs.db
 
 # Logs
 *.log
+
+# Composer / dev tooling
+/vendor/
+composer.phar
+
+# Local translations (keep the .pot template)
+/languages/*.mo
+/languages/*.po

@@ -2,7 +2,7 @@
 /**
  * Internationalization Functions
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {

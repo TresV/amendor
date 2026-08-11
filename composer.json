@@ -1,0 +1,41 @@
+{
+    "name": "amendor/amendor",
+    "description": "Search and replace text within Elementor data, with backup, history, and persistent debug logging.",
+    "type": "wordpress-plugin",
+    "license": "GPL-2.0-or-later",
+    "keywords": [
+        "wordpress",
+        "plugin",
+        "elementor",
+        "search-replace"
+    ],
+    "authors": [
+        {
+            "name": "Your Name",
+            "homepage": "https://example.com/"
+        }
+    ],
+    "require": {
+        "php": ">=8.1"
+    },
+    "require-dev": {
+        "dealerdirect/phpcodesniffer-composer-installer": "^1.0",
+        "phpcompatibility/phpcompatibility-wp": "^2.1",
+        "squizlabs/php_codesniffer": "^3.7",
+        "wp-coding-standards/wpcs": "^3.0"
+    },
+    "config": {
+        "allow-plugins": {
+            "dealerdirect/phpcodesniffer-composer-installer": true
+        },
+        "sort-packages": true
+    },
+    "scripts": {
+        "lint": "php -l amendor.php && find includes -name '*.php' -exec php -l {} \\; && php -l uninstall.php",
+        "cs": "phpcs --standard=phpcs.xml.dist",
+        "cs-fix": "phpcbf --standard=phpcs.xml.dist"
+    },
+    "support": {
+        "source": "https://example.com/amendor/"
+    }
+}

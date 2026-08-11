@@ -3,7 +3,7 @@
 /**
  * Admin Page Rendering Functions
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {
@@ -20,8 +20,8 @@ function amendor_register_admin_pages()
     }
 
     add_menu_page(
-        __('Amendor', 'elementor-text-replacer'),                          // Page Title
-        __('Amendor', 'elementor-text-replacer'),                          // Menu Title
+        __('Amendor', 'amendor'),                          // Page Title
+        __('Amendor', 'amendor'),                          // Menu Title
         'manage_options',                   // Capability
         amendor_get_admin_parent_slug(),    // Menu Slug (Parent)
         'amendor_render_text_replacer_ui', // Callback function for main page
@@ -31,8 +31,8 @@ function amendor_register_admin_pages()
 
     add_submenu_page(
         amendor_get_admin_parent_slug(),    // Parent Slug
-        __('Change History Log', 'elementor-text-replacer'),               // Page Title
-        __('History Log', 'elementor-text-replacer'),                      // Menu Title
+        __('Change History Log', 'amendor'),               // Page Title
+        __('History Log', 'amendor'),                      // Menu Title
         'manage_options',                   // Capability
         'amendor-change-history',               // Menu Slug (Submenu 1)
         'amendor_display_change_history_log'        // Callback function for history page
@@ -41,8 +41,8 @@ function amendor_register_admin_pages()
     // Add the new Debug Log submenu page
     add_submenu_page(
         amendor_get_admin_parent_slug(),    // Parent Slug (Attach to main menu)
-        __('Debug Log', 'elementor-text-replacer'),                        // Page Title
-        __('Debug Log', 'elementor-text-replacer'),                        // Menu Title
+        __('Debug Log', 'amendor'),                        // Page Title
+        __('Debug Log', 'amendor'),                        // Menu Title
         'manage_options',                   // Capability
         'amendor-debug-log',                    // Menu Slug (Submenu 2) - MUST BE UNIQUE
         'amendor_display_debug_log_page'            // Callback function for debug log page
@@ -54,7 +54,8 @@ add_action('admin_menu', 'amendor_register_admin_pages');
 /**
  * Register the setting for enabling/disabling persistent debug logging.
  */
-function amendor_sanitize_positive_integer_setting($value) {
+function amendor_sanitize_positive_integer_setting($value)
+{
     return max(1, absint($value));
 }
 
@@ -63,7 +64,8 @@ function amendor_sanitize_positive_integer_setting($value) {
  *
  * @return int
  */
-function amendor_get_default_debug_log_retention_setting() {
+function amendor_get_default_debug_log_retention_setting()
+{
     return defined('AMENDOR_DEFAULT_DEBUG_LOG_RETENTION') ? AMENDOR_DEFAULT_DEBUG_LOG_RETENTION : 5000;
 }
 
@@ -72,7 +74,8 @@ function amendor_get_default_debug_log_retention_setting() {
  *
  * @return int
  */
-function amendor_get_default_history_log_retention_setting() {
+function amendor_get_default_history_log_retention_setting()
+{
     return defined('AMENDOR_DEFAULT_HISTORY_LOG_RETENTION') ? AMENDOR_DEFAULT_HISTORY_LOG_RETENTION : 5000;
 }
 
@@ -81,7 +84,8 @@ function amendor_get_default_history_log_retention_setting() {
  *
  * @return string
  */
-function amendor_get_debug_log_export_format() {
+function amendor_get_debug_log_export_format()
+{
     $allowed_formats = ['csv', 'json', 'txt'];
     $format = isset($_GET['export_format']) ? sanitize_key(wp_unslash($_GET['export_format'])) : 'csv';
 
@@ -94,7 +98,8 @@ function amendor_get_debug_log_export_format() {
  * @param array $row Database row.
  * @return array
  */
-function amendor_prepare_debug_log_export_row(array $row) {
+function amendor_prepare_debug_log_export_row(array $row)
+{
     $context_data = null;
     $context_text = '';
 
@@ -125,7 +130,8 @@ function amendor_prepare_debug_log_export_row(array $row) {
  * @param string $filename_suffix Filename suffix.
  * @return void
  */
-function amendor_send_debug_log_export(array $rows, $format, $filename_suffix) {
+function amendor_send_debug_log_export(array $rows, $format, $filename_suffix)
+{
     while (ob_get_level() > 0) {
         ob_end_clean();
     }
@@ -174,10 +180,10 @@ function amendor_send_debug_log_export(array $rows, $format, $filename_suffix) {
     $output = fopen('php://output', 'w');
     if ($output !== false) {
         fputcsv($output, [
-            __('Timestamp (Site Time)', 'elementor-text-replacer'),
-            __('Level', 'elementor-text-replacer'),
-            __('Message', 'elementor-text-replacer'),
-            __('Context', 'elementor-text-replacer'),
+            __('Timestamp (Site Time)', 'amendor'),
+            __('Level', 'amendor'),
+            __('Message', 'amendor'),
+            __('Context', 'amendor'),
         ]);
 
         foreach ($rows as $row) {
@@ -263,12 +269,6 @@ function amendor_admin_enqueue_scripts($hook_suffix)
     $screen = get_current_screen();
     $current_page_hook = $screen ? $screen->id : '';
     if (!in_array($current_page_hook, $plugin_pages, true)) {
-        if (function_exists('amendor_is_elementor_runtime_request') && amendor_is_elementor_runtime_request($screen)) {
-            amendor_log_elementor_template_runtime_event('skip_full_admin_bundle', null, [
-                'hook_suffix' => (string) $hook_suffix,
-                'current_page_hook' => (string) $current_page_hook,
-            ]);
-        }
         return;
     }
 
@@ -301,27 +301,27 @@ function amendor_admin_enqueue_scripts($hook_suffix)
 
     // Localize strings for JavaScript (specifically for confirmation dialogs)
     $js_vars = [
-        'confirm_replace_title' => __('Confirm Replacement', 'elementor-text-replacer'),
-        'confirm_replace_text' => __('You are about to replace text in %d selected post(s).', 'elementor-text-replacer'), // %d will be replaced by JS
-        'confirm_replace_backup_notice' => __('A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved.', 'elementor-text-replacer'),
-        'confirm_replace_warning' => __('This action cannot be easily undone, except by restoring from a backup.', 'elementor-text-replacer'),
-        'confirm_replace_proceed' => __('Are you sure you want to proceed?', 'elementor-text-replacer'),
-        'confirm_replace_large_batch_warning' => __('WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server\'s maximum execution time is set sufficiently high.', 'elementor-text-replacer'), // %d will be replaced
-        'alert_select_items' => __('Please select at least one item from the results to replace.', 'elementor-text-replacer'),
-        'confirm_restore_title' => __('Confirm Restore', 'elementor-text-replacer'),
-        'confirm_restore_text' => __('Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post.', 'elementor-text-replacer'), // %d will be replaced
-        'confirm_clear_log_title' => __('Confirm Clear Log', 'elementor-text-replacer'),
-        'confirm_clear_log_text' => __('Are you sure you want to clear the ENTIRE debug log? This cannot be undone.', 'elementor-text-replacer'),
-        'backup_selection_warning' => __('Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement.', 'elementor-text-replacer'),
-        'backup_selection_safe' => __('All selected posts already have at least one saved plugin backup.', 'elementor-text-replacer'),
+        'confirm_replace_title' => __('Confirm Replacement', 'amendor'),
+        'confirm_replace_text' => __('You are about to replace text in %d selected post(s).', 'amendor'), // %d will be replaced by JS
+        'confirm_replace_backup_notice' => __('A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved.', 'amendor'),
+        'confirm_replace_warning' => __('This action cannot be easily undone, except by restoring from a backup.', 'amendor'),
+        'confirm_replace_proceed' => __('Are you sure you want to proceed?', 'amendor'),
+        'confirm_replace_large_batch_warning' => __('WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server\'s maximum execution time is set sufficiently high.', 'amendor'), // %d will be replaced
+        'alert_select_items' => __('Please select at least one item from the results to replace.', 'amendor'),
+        'confirm_restore_title' => __('Confirm Restore', 'amendor'),
+        'confirm_restore_text' => __('Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post.', 'amendor'), // %d will be replaced
+        'confirm_clear_log_title' => __('Confirm Clear Log', 'amendor'),
+        'confirm_clear_log_text' => __('Are you sure you want to clear the ENTIRE debug log? This cannot be undone.', 'amendor'),
+        'backup_selection_warning' => __('Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement.', 'amendor'),
+        'backup_selection_safe' => __('All selected posts already have at least one saved plugin backup.', 'amendor'),
         'search_batch_nonce' => wp_create_nonce('amendor_run_search_batch'),
         'search_results_nonce' => wp_create_nonce('amendor_get_search_results'),
-        'search_progress_label' => __('Scanning selected content sources...', 'elementor-text-replacer'),
-        'search_progress_done' => __('Search scan complete. Loading results...', 'elementor-text-replacer'),
-        'search_progress_error' => __('Search scan failed. Falling back to standard form submission.', 'elementor-text-replacer'),
+        'search_progress_label' => __('Scanning selected content sources...', 'amendor'),
+        'search_progress_done' => __('Search scan complete. Loading results...', 'amendor'),
+        'search_progress_error' => __('Search scan failed. Falling back to standard form submission.', 'amendor'),
         'preview_nonce' => wp_create_nonce('amendor_run_preview'),
-        'preview_progress_label' => __('Generating preview...', 'elementor-text-replacer'),
-        'preview_progress_error' => __('Preview generation failed. Falling back to standard form submission.', 'elementor-text-replacer'),
+        'preview_progress_label' => __('Generating preview...', 'amendor'),
+        'preview_progress_error' => __('Preview generation failed. Falling back to standard form submission.', 'amendor'),
     ];
     wp_localize_script('amendor-admin-script', 'amendor_admin_vars', $js_vars);
 }
@@ -333,16 +333,17 @@ add_action('admin_enqueue_scripts', 'amendor_admin_enqueue_scripts');
  * @param array $messages Messages to display.
  * @return void
  */
-function amendor_render_admin_notices(array $messages) {
+function amendor_render_admin_notices(array $messages)
+{
     if (empty($messages)) {
         return;
     }
     foreach ($messages as $message) :
-        ?>
+?>
         <div class="notice notice-<?php echo esc_attr($message['type']); ?> is-dismissible" style="margin-bottom: 15px;">
             <p><?php echo wp_kses_post($message['text']); ?></p>
         </div>
-        <?php
+    <?php
     endforeach;
 }
 
@@ -352,7 +353,8 @@ function amendor_render_admin_notices(array $messages) {
  * @param array $messages Messages to display.
  * @return string
  */
-function amendor_get_admin_notices_html(array $messages) {
+function amendor_get_admin_notices_html(array $messages)
+{
     ob_start();
     amendor_render_admin_notices($messages);
     return ob_get_clean();
@@ -366,7 +368,8 @@ function amendor_get_admin_notices_html(array $messages) {
  * @param array $selected_ids Selected post IDs.
  * @return void
  */
-function amendor_render_results_item(array $item, $is_preview, array $selected_ids) {
+function amendor_render_results_item(array $item, $is_preview, array $selected_ids)
+{
     $post_status = get_post_status($item['ID']);
     $post_status_object = $post_status ? get_post_status_object($post_status) : null;
     $post_status_label = $post_status_object && !empty($post_status_object->label)
@@ -391,24 +394,24 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                 $view_link = get_permalink($item['ID']);
                 $elementor_edit_link = $edit_link ? add_query_arg(['action' => 'elementor'], $edit_link) : false;
                 ?>
-                <?php if ($view_link): ?><a href="<?php echo esc_url($view_link); ?>" target="_blank" class="button button-small view-link" title="<?php esc_attr_e('View Post (Opens in new tab)', 'elementor-text-replacer'); ?>"><?php esc_html_e('View', 'elementor-text-replacer'); ?></a><?php endif; ?>
-                <?php if ($edit_link): ?><a href="<?php echo esc_url($edit_link); ?>" target="_blank" class="button button-small edit-wp-link" title="<?php esc_attr_e('Edit in WordPress Editor (Opens in new tab)', 'elementor-text-replacer'); ?>"><?php esc_html_e('Edit WP', 'elementor-text-replacer'); ?></a><?php endif; ?>
-                <?php if ($elementor_edit_link && class_exists('Elementor\Plugin')): ?><a href="<?php echo esc_url($elementor_edit_link); ?>" target="_blank" class="button button-small edit-elementor-link" title="<?php esc_attr_e('Edit with Elementor (Opens in new tab)', 'elementor-text-replacer'); ?>"><?php esc_html_e('Edit Elementor', 'elementor-text-replacer'); ?></a><?php endif; ?>
+                <?php if ($view_link): ?><a href="<?php echo esc_url($view_link); ?>" target="_blank" class="button button-small view-link" title="<?php esc_attr_e('View Post (Opens in new tab)', 'amendor'); ?>"><?php esc_html_e('View', 'amendor'); ?></a><?php endif; ?>
+                <?php if ($edit_link): ?><a href="<?php echo esc_url($edit_link); ?>" target="_blank" class="button button-small edit-wp-link" title="<?php esc_attr_e('Edit in WordPress Editor (Opens in new tab)', 'amendor'); ?>"><?php esc_html_e('Edit WP', 'amendor'); ?></a><?php endif; ?>
+                <?php if ($elementor_edit_link && class_exists('Elementor\Plugin')): ?><a href="<?php echo esc_url($elementor_edit_link); ?>" target="_blank" class="button button-small edit-elementor-link" title="<?php esc_attr_e('Edit with Elementor (Opens in new tab)', 'amendor'); ?>"><?php esc_html_e('Edit Elementor', 'amendor'); ?></a><?php endif; ?>
             </span>
         </div>
         <div class="amendor-item-content">
             <div class="amendor-diffs">
                 <?php if (empty($item['matches'])): ?>
-                    <p><em><?php echo $is_preview ? esc_html__('No changes predicted in this item for the current criteria.', 'elementor-text-replacer') : esc_html__('No changes found in this item for the current criteria.', 'elementor-text-replacer'); ?></em></p>
+                    <p><em><?php echo $is_preview ? esc_html__('No changes predicted in this item for the current criteria.', 'amendor') : esc_html__('No changes found in this item for the current criteria.', 'amendor'); ?></em></p>
                 <?php else: ?>
                     <?php $match_count = count($item['matches']); ?>
                     <p class="match-count-info"><em><?php
-                        printf(
-                            /* translators: %s: Number of matches shown */
-                            esc_html__('Showing up to %s example matches for this post.', 'elementor-text-replacer'),
-                            esc_html(number_format_i18n($match_count))
-                        );
-                    ?></em></p>
+                                                    printf(
+                                                        /* translators: %s: Number of matches shown */
+                                                        esc_html__('Showing up to %s example matches for this post.', 'amendor'),
+                                                        esc_html(number_format_i18n($match_count))
+                                                    );
+                                                    ?></em></p>
                     <?php foreach ($item['matches'] as $index => $match): ?>
                         <div class="match-block" data-match-index="<?php echo esc_attr($index); ?>" style="<?php echo $index >= 10 ? 'display: none;' : ''; ?>">
                             <?php echo wp_kses_post(amendor_render_match_block($match)); ?>
@@ -424,14 +427,14 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                             <?php wp_nonce_field('amendor_restore_action_' . $item['ID'], 'amendor_restore_nonce'); ?>
                             <input type="hidden" name="action" value="restore">
                             <input type="hidden" name="restore_post_id" value="<?php echo esc_attr($item['ID']); ?>">
-                            <label for="backup_index_<?php echo esc_attr($item['ID']); ?>" style="margin-right: 5px;"><?php esc_html_e('Restore from:', 'elementor-text-replacer'); ?></label>
+                            <label for="backup_index_<?php echo esc_attr($item['ID']); ?>" style="margin-right: 5px;"><?php esc_html_e('Restore from:', 'amendor'); ?></label>
                             <select name="backup_index" id="backup_index_<?php echo esc_attr($item['ID']); ?>">
                                 <?php foreach ($backups as $index => $backup): ?>
                                     <option value="<?php echo esc_attr($index); ?>">
                                         <?php
                                         printf(
                                             /* translators: 1: Date and Time, 2: Human readable time difference */
-                                            esc_html__('Backup from %1$s (%2$s ago)', 'elementor-text-replacer'),
+                                            esc_html__('Backup from %1$s (%2$s ago)', 'amendor'),
                                             esc_html(wp_date(get_option('date_format', 'Y-m-d') . ' ' . get_option('time_format', 'H:i:s'), strtotime($backup['timestamp']))),
                                             esc_html(human_time_diff(strtotime($backup['timestamp']), current_time('timestamp', 1)))
                                         );
@@ -442,17 +445,17 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                             <button type="submit" class="button button-secondary button-small restore-button"
                                 data-post-id="<?php echo esc_attr($item['ID']); ?>"
                                 onclick="return confirm(amendor_admin_vars.confirm_restore_text.replace('%d', this.getAttribute('data-post-id')));">
-                                <span class="dashicons dashicons-undo"></span> <?php esc_html_e('Restore', 'elementor-text-replacer'); ?>
+                                <span class="dashicons dashicons-undo"></span> <?php esc_html_e('Restore', 'amendor'); ?>
                             </button>
                         </form>
                     <?php else: ?>
-                        <p style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd; font-style: italic; color: #666;"><?php esc_html_e('No backups available for this post.', 'elementor-text-replacer'); ?></p>
+                        <p style="margin-top: 15px; padding-top: 10px; border-top: 1px dashed #ddd; font-style: italic; color: #666;"><?php esc_html_e('No backups available for this post.', 'amendor'); ?></p>
                     <?php endif; ?>
                 </div>
             <?php endif; ?>
         </div>
     </div>
-    <?php
+<?php
 }
 
 /**
@@ -461,7 +464,8 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
  * @param array $args Results section state.
  * @return void
  */
-function amendor_render_results_section(array $args) {
+function amendor_render_results_section(array $args)
+{
     $preview_attempted = !empty($args['preview_attempted']);
     $search_attempted = !empty($args['search_attempted']);
     $preview_results = isset($args['preview_results']) && is_array($args['preview_results']) ? $args['preview_results'] : [];
@@ -479,31 +483,31 @@ function amendor_render_results_section(array $args) {
     $items_to_display = !empty($preview_results) ? $preview_results : $results;
     $is_preview = !empty($preview_results);
     $has_results_or_preview = !empty($items_to_display);
-    ?>
+?>
     <div class="amendor-section postbox" id="amendor-results-panel">
-        <h2 class="hndle"><span><?php esc_html_e('4. Results', 'elementor-text-replacer'); ?> <?php
-            if ($preview_attempted) {
-                echo '(' . esc_html__('Preview', 'elementor-text-replacer') . ')';
-            } elseif ($search_attempted) {
-                echo '(' . esc_html__('Search Results', 'elementor-text-replacer') . ')';
-            }
-        ?></span></h2>
+        <h2 class="hndle"><span><?php esc_html_e('4. Results', 'amendor'); ?> <?php
+                                                                                if ($preview_attempted) {
+                                                                                    echo '(' . esc_html__('Preview', 'amendor') . ')';
+                                                                                } elseif ($search_attempted) {
+                                                                                    echo '(' . esc_html__('Search Results', 'amendor') . ')';
+                                                                                }
+                                                                                ?></span></h2>
         <div class="inside">
             <?php if (!$search_attempted && !$preview_attempted): ?>
-                <p><?php esc_html_e('Perform a search or preview to see results here.', 'elementor-text-replacer'); ?></p>
+                <p><?php esc_html_e('Perform a search or preview to see results here.', 'amendor'); ?></p>
             <?php elseif (!$has_results_or_preview): ?>
-                <p><?php printf(esc_html__('No matches found for your %s criteria.', 'elementor-text-replacer'), '<strong>' . esc_html($action) . '</strong>'); ?></p>
+                <p><?php printf(esc_html__('No matches found for your %s criteria.', 'amendor'), '<strong>' . esc_html($action) . '</strong>'); ?></p>
             <?php else: ?>
                 <?php $result_types = array_unique(wp_list_pluck($items_to_display, 'type')); ?>
                 <?php if ($is_preview): ?>
                     <div class="notice notice-info inline" style="margin-bottom: 15px;">
-                        <p><strong><?php esc_html_e('Preview Mode:', 'elementor-text-replacer'); ?></strong> <?php esc_html_e('Showing potential changes for selected items. No changes have been saved yet.', 'elementor-text-replacer'); ?> <?php printf(esc_html__('Active content sources: %s.', 'elementor-text-replacer'), '<strong>' . esc_html($content_source_summary) . '</strong>'); ?></p>
+                        <p><strong><?php esc_html_e('Preview Mode:', 'amendor'); ?></strong> <?php esc_html_e('Showing potential changes for selected items. No changes have been saved yet.', 'amendor'); ?> <?php printf(esc_html__('Active content sources: %s.', 'amendor'), '<strong>' . esc_html($content_source_summary) . '</strong>'); ?></p>
                     </div>
                 <?php else: ?>
                     <p><?php
                         printf(
                             /* translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
-                            esc_html__('Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s.', 'elementor-text-replacer'),
+                            esc_html__('Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s.', 'amendor'),
                             '<strong>' . number_format_i18n(count($items_to_display)) . '</strong>',
                             '<strong>' . number_format_i18n($paged) . '</strong>',
                             '<strong>' . number_format_i18n($total_pages) . '</strong>',
@@ -511,18 +515,18 @@ function amendor_render_results_section(array $args) {
                             '<strong>' . number_format_i18n($total_candidate_posts) . '</strong>',
                             '<strong>' . esc_html($content_source_summary) . '</strong>'
                         );
-                    ?></p>
-                    <p><?php esc_html_e('Select posts below to Preview or Replace.', 'elementor-text-replacer'); ?></p>
+                        ?></p>
+                    <p><?php esc_html_e('Select posts below to Preview or Replace.', 'amendor'); ?></p>
                 <?php endif; ?>
 
                 <div class="amendor-results-toolbar">
                     <div class="result-toolbar-item">
-                        <label><input type="checkbox" id="select-all-results"> <?php esc_html_e('Select All / None', 'elementor-text-replacer'); ?></label>
+                        <label><input type="checkbox" id="select-all-results"> <?php esc_html_e('Select All / None', 'amendor'); ?></label>
                     </div>
                     <div class="result-toolbar-item">
-                        <label for="filter-type"><?php esc_html_e('Filter by Type:', 'elementor-text-replacer'); ?></label>
+                        <label for="filter-type"><?php esc_html_e('Filter by Type:', 'amendor'); ?></label>
                         <select id="filter-type">
-                            <option value=""><?php esc_html_e('All Types', 'elementor-text-replacer'); ?></option>
+                            <option value=""><?php esc_html_e('All Types', 'amendor'); ?></option>
                             <?php foreach ($result_types as $type): ?>
                                 <option value="<?php echo esc_attr($type); ?>">
                                     <?php echo esc_html(ucfirst(str_replace(['-', '_'], ' ', $type))); ?>
@@ -532,7 +536,7 @@ function amendor_render_results_section(array $args) {
                     </div>
                     <?php if (!$is_preview): ?>
                         <div class="result-toolbar-item">
-                            <label for="results-per-page"><?php esc_html_e('Posts Per Page:', 'elementor-text-replacer'); ?></label>
+                            <label for="results-per-page"><?php esc_html_e('Posts Per Page:', 'amendor'); ?></label>
                             <select id="results-per-page">
                                 <?php foreach (apply_filters('amendor_search_posts_per_page_options', [10, 25, 50, 100]) as $option): ?>
                                     <?php $option = (int) $option; ?>
@@ -555,15 +559,15 @@ function amendor_render_results_section(array $args) {
                     <div class="tablenav bottom amendor-results-pagination">
                         <div class="tablenav-pages">
                             <span class="displaying-num">
-                                <?php printf(esc_html(_n('%s matched item', '%s matched items', $matched_posts, 'elementor-text-replacer')), number_format_i18n($matched_posts)); ?>
+                                <?php printf(esc_html(_n('%s matched item', '%s matched items', $matched_posts, 'amendor')), number_format_i18n($matched_posts)); ?>
                             </span>
                             <?php
                             $pagination_base_url = add_query_arg('paged', '%#%', admin_url('admin.php?page=' . amendor_get_admin_parent_slug()));
                             echo paginate_links([
                                 'base' => $pagination_base_url,
                                 'format' => '',
-                                'prev_text' => __('&laquo; Prev', 'elementor-text-replacer'),
-                                'next_text' => __('Next &raquo;', 'elementor-text-replacer'),
+                                'prev_text' => __('&laquo; Prev', 'amendor'),
+                                'next_text' => __('Next &raquo;', 'amendor'),
                                 'total' => $total_pages,
                                 'current' => $paged,
                                 'add_args' => ['results_per_page' => $results_per_page],
@@ -575,7 +579,7 @@ function amendor_render_results_section(array $args) {
             <?php endif; ?>
         </div>
     </div>
-    <?php
+<?php
 }
 
 /**
@@ -584,7 +588,8 @@ function amendor_render_results_section(array $args) {
  * @param array $args Results section state.
  * @return string
  */
-function amendor_get_results_section_html(array $args) {
+function amendor_get_results_section_html(array $args)
+{
     ob_start();
     amendor_render_results_section($args);
     return ob_get_clean();
@@ -601,13 +606,13 @@ function amendor_display_debug_log_page()
 
     // Security check
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'elementor-text-replacer'));
+        wp_die(__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
     // --- Handle Clear Log Action ---
     if (isset($_POST['amendor_action']) && $_POST['amendor_action'] === 'clear_debug_log' && isset($_POST['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'amendor_clear_debug_log_nonce')) {
         $wpdb->query("TRUNCATE TABLE {$table_name}");
-        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Debug log cleared successfully.', 'elementor-text-replacer') . '</p></div>';
+        echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Debug log cleared successfully.', 'amendor') . '</p></div>';
     }
 
     // --- Pagination Logic ---
@@ -662,8 +667,8 @@ function amendor_display_debug_log_page()
 
 ?>
     <div class="wrap">
-        <h1><span class="dashicons dashicons-hammer" style="vertical-align: middle;"></span> <?php esc_html_e('Amendor - Debug Log', 'elementor-text-replacer'); ?></h1>
-        <p><?php esc_html_e('This log records detailed plugin operations if persistent logging is enabled.', 'elementor-text-replacer'); ?></p>
+        <h1><span class="dashicons dashicons-hammer" style="vertical-align: middle;"></span> <?php esc_html_e('Amendor - Debug Log', 'amendor'); ?></h1>
+        <p><?php esc_html_e('This log records detailed plugin operations if persistent logging is enabled.', 'amendor'); ?></p>
 
         <?php // --- Log Control Form (Enable/Disable, Clear) --- 
         ?>
@@ -673,14 +678,14 @@ function amendor_display_debug_log_page()
             <div style="display: flex; flex-direction: column; gap: 8px;">
                 <label>
                     <input type="checkbox" name="amendor_enable_persistent_debug_log" value="1" <?php checked(get_option('amendor_enable_persistent_debug_log', false), 1); ?>>
-                    <?php esc_html_e('Enable Persistent Debug Logging (Logs detailed actions to the database table below)', 'elementor-text-replacer'); ?>
+                    <?php esc_html_e('Enable Persistent Debug Logging (Logs detailed actions to the database table below)', 'amendor'); ?>
                 </label>
                 <label>
                     <input type="checkbox" name="amendor_delete_data_on_uninstall" value="1" <?php checked(get_option('amendor_delete_data_on_uninstall', false), 1); ?>>
-                    <?php esc_html_e('Delete plugin data on uninstall (history, debug log, backups, and per-user search history)', 'elementor-text-replacer'); ?>
+                    <?php esc_html_e('Delete plugin data on uninstall (history, debug log, backups, and per-user search history)', 'amendor'); ?>
                 </label>
                 <label for="amendor_debug_log_retention_limit">
-                    <?php esc_html_e('Max debug log rows to retain', 'elementor-text-replacer'); ?>
+                    <?php esc_html_e('Max debug log rows to retain', 'amendor'); ?>
                 </label>
                 <input
                     type="number"
@@ -689,10 +694,9 @@ function amendor_display_debug_log_page()
                     id="amendor_debug_log_retention_limit"
                     name="amendor_debug_log_retention_limit"
                     value="<?php echo esc_attr((int) get_option('amendor_debug_log_retention_limit', amendor_get_default_debug_log_retention_setting())); ?>"
-                    style="max-width: 160px;"
-                >
+                    style="max-width: 160px;">
                 <label for="amendor_history_log_retention_limit">
-                    <?php esc_html_e('Max history log rows to retain', 'elementor-text-replacer'); ?>
+                    <?php esc_html_e('Max history log rows to retain', 'amendor'); ?>
                 </label>
                 <input
                     type="number"
@@ -701,10 +705,9 @@ function amendor_display_debug_log_page()
                     id="amendor_history_log_retention_limit"
                     name="amendor_history_log_retention_limit"
                     value="<?php echo esc_attr((int) get_option('amendor_history_log_retention_limit', amendor_get_default_history_log_retention_setting())); ?>"
-                    style="max-width: 160px;"
-                >
+                    style="max-width: 160px;">
             </div>
-            <?php submit_button(__('Save Setting', 'elementor-text-replacer'), 'primary', 'submit_settings', false); // Add save button for the setting 
+            <?php submit_button(__('Save Setting', 'amendor'), 'primary', 'submit_settings', false); // Add save button for the setting 
             ?>
         </form>
 
@@ -716,64 +719,61 @@ function amendor_display_debug_log_page()
                 $clear_disabled = ($total_items == 0); // Disable if log is empty
                 ?>
                 <button type="submit" class="button button-secondary" <?php disabled($clear_disabled); ?> onclick="return confirm(amendor_admin_vars.confirm_clear_log_text);" style="display: flex; align-items: center; gap: 8px;">
-                    <span class="dashicons dashicons-trash"></span> <?php esc_html_e('Clear Entire Log', 'elementor-text-replacer'); ?>
+                    <span class="dashicons dashicons-trash"></span> <?php esc_html_e('Clear Entire Log', 'amendor'); ?>
                 </button>
             </form>
 
             <a
                 href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                    'page' => 'amendor-debug-log',
-                    'amendor_action' => 'export_debug_log',
-                    'export_format' => 'csv',
-                    'log_level' => $selected_level,
-                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                            'page' => 'amendor-debug-log',
+                            'amendor_action' => 'export_debug_log',
+                            'export_format' => 'csv',
+                            'log_level' => $selected_level,
+                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
                 class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;"
-            >
-                <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'elementor-text-replacer'); ?>
+                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'amendor'); ?>
             </a>
 
             <a
                 href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                    'page' => 'amendor-debug-log',
-                    'amendor_action' => 'export_debug_log',
-                    'export_format' => 'json',
-                    'log_level' => $selected_level,
-                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                            'page' => 'amendor-debug-log',
+                            'amendor_action' => 'export_debug_log',
+                            'export_format' => 'json',
+                            'log_level' => $selected_level,
+                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
                 class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;"
-            >
-                <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'elementor-text-replacer'); ?>
+                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'amendor'); ?>
             </a>
 
             <a
                 href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                    'page' => 'amendor-debug-log',
-                    'amendor_action' => 'export_debug_log',
-                    'export_format' => 'txt',
-                    'log_level' => $selected_level,
-                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                            'page' => 'amendor-debug-log',
+                            'amendor_action' => 'export_debug_log',
+                            'export_format' => 'txt',
+                            'log_level' => $selected_level,
+                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
                 class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;"
-            >
-                <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'elementor-text-replacer'); ?>
+                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'amendor'); ?>
             </a>
 
             <?php // --- Log Level Filter --- 
             ?>
             <form method="get" style="display: inline-block;">
                 <input type="hidden" name="page" value="amendor-debug-log"> <?php // Keep page context 
-                                                                        ?>
-                <label for="log_level_filter"><?php esc_html_e('Filter by Level:', 'elementor-text-replacer'); ?></label>
+                                                                            ?>
+                <label for="log_level_filter"><?php esc_html_e('Filter by Level:', 'amendor'); ?></label>
                 <select name="log_level" id="log_level_filter">
-                    <option value="" <?php selected($selected_level, ''); ?>><?php esc_html_e('All Levels', 'elementor-text-replacer'); ?></option>
+                    <option value="" <?php selected($selected_level, ''); ?>><?php esc_html_e('All Levels', 'amendor'); ?></option>
                     <?php foreach ($allowed_levels as $level): ?>
                         <option value="<?php echo esc_attr($level); ?>" <?php selected($selected_level, $level); ?>><?php echo esc_html($level); ?></option>
                     <?php endforeach; ?>
                 </select>
-                <button type="submit" class="button button-secondary"><?php esc_html_e('Filter', 'elementor-text-replacer'); ?></button>
+                <button type="submit" class="button button-secondary"><?php esc_html_e('Filter', 'amendor'); ?></button>
                 <?php if (!empty($selected_level)): ?>
-                    <a href="<?php echo esc_url(admin_url('admin.php?page=amendor-debug-log')); ?>" class="button button-secondary"><?php esc_html_e('Clear Filter', 'elementor-text-replacer'); ?></a>
+                    <a href="<?php echo esc_url(admin_url('admin.php?page=amendor-debug-log')); ?>" class="button button-secondary"><?php esc_html_e('Clear Filter', 'amendor'); ?></a>
                 <?php endif; ?>
             </form>
         </div>
@@ -784,7 +784,7 @@ function amendor_display_debug_log_page()
             <div class="tablenav top">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'elementor-text-replacer')), number_format_i18n($total_items)); ?>
+                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
                     </span>
                     <?php
                     // Add log_level to pagination links if filter is active
@@ -795,8 +795,8 @@ function amendor_display_debug_log_page()
                     echo paginate_links([
                         'base'      => $paginate_base,
                         'format'    => '',
-                        'prev_text' => __('&laquo;', 'elementor-text-replacer'), // Use HTML entities for arrows
-                        'next_text' => __('&raquo;', 'elementor-text-replacer'),
+                        'prev_text' => __('&laquo;', 'amendor'), // Use HTML entities for arrows
+                        'next_text' => __('&raquo;', 'amendor'),
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
@@ -811,10 +811,10 @@ function amendor_display_debug_log_page()
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 160px;"><?php esc_html_e('Timestamp (Site Time)', 'elementor-text-replacer'); ?></th>
-                    <th scope="col" style="width: 100px;"><?php esc_html_e('Level', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Message', 'elementor-text-replacer'); ?></th>
-                    <th scope="col" style="width: 25%;"><?php esc_html_e('Context', 'elementor-text-replacer'); ?></th>
+                    <th scope="col" style="width: 160px;"><?php esc_html_e('Timestamp (Site Time)', 'amendor'); ?></th>
+                    <th scope="col" style="width: 100px;"><?php esc_html_e('Level', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Message', 'amendor'); ?></th>
+                    <th scope="col" style="width: 25%;"><?php esc_html_e('Context', 'amendor'); ?></th>
                 </tr>
             </thead>
             <tbody id="the-list">
@@ -823,12 +823,12 @@ function amendor_display_debug_log_page()
                         <td class="colspanchange" colspan="4">
                             <?php
                             if (!empty($selected_level)) {
-                                printf(esc_html__('No debug log records found for level %s.', 'elementor-text-replacer'), '<strong>' . esc_html($selected_level) . '</strong>');
+                                printf(esc_html__('No debug log records found for level %s.', 'amendor'), '<strong>' . esc_html($selected_level) . '</strong>');
                             } else {
-                                esc_html_e('No debug log records found.', 'elementor-text-replacer');
+                                esc_html_e('No debug log records found.', 'amendor');
                             }
                             if (!get_option('amendor_enable_persistent_debug_log', false)) {
-                                echo ' ' . esc_html__('Logging is currently disabled.', 'elementor-text-replacer');
+                                echo ' ' . esc_html__('Logging is currently disabled.', 'amendor');
                             }
                             ?>
                         </td>
@@ -856,7 +856,7 @@ function amendor_display_debug_log_page()
                                                                                                                                                                                                                 }
                                                                                                                                                                                                                 ?></pre>
                                 <?php else: ?>
-                                    <em><?php esc_html_e('N/A', 'elementor-text-replacer'); ?></em>
+                                    <em><?php esc_html_e('N/A', 'amendor'); ?></em>
                                 <?php endif; ?>
                             </td>
                         </tr>
@@ -865,10 +865,10 @@ function amendor_display_debug_log_page()
             </tbody>
             <tfoot>
                 <tr>
-                    <th scope="col"><?php esc_html_e('Timestamp (Site Time)', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Level', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Message', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Context', 'elementor-text-replacer'); ?></th>
+                    <th scope="col"><?php esc_html_e('Timestamp (Site Time)', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Level', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Message', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Context', 'amendor'); ?></th>
                 </tr>
             </tfoot>
         </table>
@@ -879,14 +879,14 @@ function amendor_display_debug_log_page()
             <div class="tablenav bottom">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'elementor-text-replacer')), number_format_i18n($total_items)); ?>
+                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
                     </span>
                     <?php
                     echo paginate_links([
                         'base'      => $paginate_base, // Use the same base as top pagination
                         'format'    => '',
-                        'prev_text' => __('&laquo;', 'elementor-text-replacer'),
-                        'next_text' => __('&raquo;', 'elementor-text-replacer'),
+                        'prev_text' => __('&laquo;', 'amendor'),
+                        'next_text' => __('&raquo;', 'amendor'),
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
@@ -963,7 +963,7 @@ function amendor_display_change_history_log()
 
     // Security check: Only users who can manage options should see this
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'elementor-text-replacer'));
+        wp_die(__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
     // --- Pagination Logic ---
@@ -984,8 +984,8 @@ function amendor_display_change_history_log()
 
 ?>
     <div class="wrap">
-        <h1><span class="dashicons dashicons-backup" style="vertical-align: middle;"></span> <?php esc_html_e('Amendor - Change History Log', 'elementor-text-replacer'); ?></h1>
-        <p><?php esc_html_e('This log records all successful replacement operations performed by the plugin.', 'elementor-text-replacer'); ?></p>
+        <h1><span class="dashicons dashicons-backup" style="vertical-align: middle;"></span> <?php esc_html_e('Amendor - Change History Log', 'amendor'); ?></h1>
+        <p><?php esc_html_e('This log records all successful replacement operations performed by the plugin.', 'amendor'); ?></p>
 
         <?php // --- Top Pagination --- 
         ?>
@@ -993,14 +993,14 @@ function amendor_display_change_history_log()
             <div class="tablenav top">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'elementor-text-replacer')), number_format_i18n($total_items)); ?>
+                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
                     </span>
                     <?php
                     echo paginate_links([
                         'base'      => add_query_arg('history_paged', '%#%'), // '%#%' will be replaced by page number
                         'format'    => '', // Already have query var in base
-                        'prev_text' => __('&laquo;', 'elementor-text-replacer'),
-                        'next_text' => __('&raquo;', 'elementor-text-replacer'),
+                        'prev_text' => __('&laquo;', 'amendor'),
+                        'next_text' => __('&raquo;', 'amendor'),
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false, // Base includes everything needed (?page=amendor-change-history)
@@ -1015,19 +1015,19 @@ function amendor_display_change_history_log()
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th scope="col" style="width: 160px;"><?php esc_html_e('Timestamp (Site Time)', 'elementor-text-replacer'); ?></th>
-                    <th scope="col" style="width: 120px;"><?php esc_html_e('User', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Post', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Search Term', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Replace Term', 'elementor-text-replacer'); ?></th>
-                    <th scope="col" style="width: 100px;"><?php esc_html_e('Mode', 'elementor-text-replacer'); ?></th>
-                    <th scope="col" style="width: 80px;"><?php esc_html_e('Changes', 'elementor-text-replacer'); ?></th>
+                    <th scope="col" style="width: 160px;"><?php esc_html_e('Timestamp (Site Time)', 'amendor'); ?></th>
+                    <th scope="col" style="width: 120px;"><?php esc_html_e('User', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Post', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Search Term', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Replace Term', 'amendor'); ?></th>
+                    <th scope="col" style="width: 100px;"><?php esc_html_e('Mode', 'amendor'); ?></th>
+                    <th scope="col" style="width: 80px;"><?php esc_html_e('Changes', 'amendor'); ?></th>
                 </tr>
             </thead>
             <tbody id="the-list">
                 <?php if (empty($history_items)): ?>
                     <tr class="no-items">
-                        <td class="colspanchange" colspan="7"><?php esc_html_e('No history records found.', 'elementor-text-replacer'); ?></td>
+                        <td class="colspanchange" colspan="7"><?php esc_html_e('No history records found.', 'amendor'); ?></td>
                     </tr>
                 <?php else: ?>
                     <?php foreach ($history_items as $item): ?>
@@ -1035,22 +1035,22 @@ function amendor_display_change_history_log()
                         <tr>
                             <td><?php echo esc_html(wp_date(get_option('date_format', 'Y-m-d') . ' ' . get_option('time_format', 'H:i:s'), strtotime($item->timestamp))); // Display in site's timezone 
                                 ?></td>
-                            <td><?php echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'elementor-text-replacer'), $item->user_id)); ?></td>
+                            <td><?php echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'amendor'), $item->user_id)); ?></td>
                             <td>
                                 <?php $post_link = get_edit_post_link($item->post_id); ?>
                                 <?php if ($post_link): ?>
-                                    <a href="<?php echo esc_url($post_link); ?>" target="_blank" title="<?php printf(esc_attr__('Edit Post: %s', 'elementor-text-replacer'), $item->post_title); ?>">
+                                    <a href="<?php echo esc_url($post_link); ?>" target="_blank" title="<?php printf(esc_attr__('Edit Post: %s', 'amendor'), $item->post_title); ?>">
                                         <?php echo esc_html(wp_trim_words($item->post_title, 10, '...')); ?> (ID: <?php echo esc_html($item->post_id); ?>) <span class="dashicons dashicons-external"></span>
                                     </a>
                                 <?php else: ?>
-                                    <?php echo esc_html(wp_trim_words($item->post_title, 10, '...')); ?> (ID: <?php echo esc_html($item->post_id); ?>) <span title="<?php esc_attr_e('Post may have been deleted', 'elementor-text-replacer'); ?>">(<?php esc_html_e('Deleted?', 'elementor-text-replacer'); ?>)</span>
+                                    <?php echo esc_html(wp_trim_words($item->post_title, 10, '...')); ?> (ID: <?php echo esc_html($item->post_id); ?>) <span title="<?php esc_attr_e('Post may have been deleted', 'amendor'); ?>">(<?php esc_html_e('Deleted?', 'amendor'); ?>)</span>
                                 <?php endif; ?>
                             </td>
                             <td><code title="<?php echo esc_attr($item->search_term); ?>"><?php echo esc_html(wp_trim_words($item->search_term, 15, '...')); ?></code></td>
                             <td><code title="<?php echo esc_attr($item->replace_term); ?>"><?php echo esc_html(wp_trim_words($item->replace_term, 15, '...')); ?></code></td>
                             <td>
                                 <?php echo esc_html(ucfirst($item->search_mode)); ?>
-                                <?php if ($item->bulk_operation) echo ' <span title="' . esc_attr__('Bulk Operation', 'elementor-text-replacer') . '">(' . esc_html__('Bulk', 'elementor-text-replacer') . ')</span>'; ?>
+                                <?php if ($item->bulk_operation) echo ' <span title="' . esc_attr__('Bulk Operation', 'amendor') . '">(' . esc_html__('Bulk', 'amendor') . ')</span>'; ?>
                             </td>
                             <td style="text-align: center;"><?php echo esc_html($item->changes_made); ?></td>
                         </tr>
@@ -1059,13 +1059,13 @@ function amendor_display_change_history_log()
             </tbody>
             <tfoot>
                 <tr>
-                    <th scope="col"><?php esc_html_e('Timestamp (Site Time)', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('User', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Post', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Search Term', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Replace Term', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Mode', 'elementor-text-replacer'); ?></th>
-                    <th scope="col"><?php esc_html_e('Changes', 'elementor-text-replacer'); ?></th>
+                    <th scope="col"><?php esc_html_e('Timestamp (Site Time)', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('User', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Post', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Search Term', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Replace Term', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Mode', 'amendor'); ?></th>
+                    <th scope="col"><?php esc_html_e('Changes', 'amendor'); ?></th>
                 </tr>
             </tfoot>
         </table>
@@ -1076,14 +1076,14 @@ function amendor_display_change_history_log()
             <div class="tablenav bottom">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'elementor-text-replacer')), number_format_i18n($total_items)); ?>
+                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
                     </span>
                     <?php
                     echo paginate_links([
                         'base'      => add_query_arg('history_paged', '%#%'),
                         'format'    => '',
-                        'prev_text' => __('&laquo;', 'elementor-text-replacer'),
-                        'next_text' => __('&raquo;', 'elementor-text-replacer'),
+                        'prev_text' => __('&laquo;', 'amendor'),
+                        'next_text' => __('&raquo;', 'amendor'),
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
@@ -1105,7 +1105,7 @@ function amendor_render_text_replacer_ui()
 {
     // Security Check: Ensure the user has the required capability.
     if (!current_user_can('manage_options')) {
-        wp_die(__('Sorry, you are not allowed to access this page.', 'elementor-text-replacer'));
+        wp_die(__('Sorry, you are not allowed to access this page.', 'amendor'));
         return; // Stop execution if user doesn't have permission
     }
 
@@ -1113,9 +1113,9 @@ function amendor_render_text_replacer_ui()
     $amendor_messages = []; // Array to hold user feedback messages (success, error, info)
 
     // Check for redirect notices
-    if ( isset( $_GET['amendor_notice'] ) ) {
-        if ( $_GET['amendor_notice'] === 'no_backup_data' ) {
-            $amendor_messages[] = ['type' => 'warning', 'text' => __('⚠️ No backup data found to download. Perform some replacements first to create backups.', 'elementor-text-replacer')];
+    if (isset($_GET['amendor_notice'])) {
+        if ($_GET['amendor_notice'] === 'no_backup_data') {
+            $amendor_messages[] = ['type' => 'warning', 'text' => __('⚠️ No backup data found to download. Perform some replacements first to create backups.', 'amendor')];
         }
         // Add more notices here if needed in the future
     }
@@ -1214,7 +1214,7 @@ function amendor_render_text_replacer_ui()
     // ======================================================================
 ?>
     <div class="wrap amendor-wrap">
-        <h1><span class="dashicons dashicons-edit" style="font-size: 1.3em; vertical-align: middle;"></span> <?php esc_html_e('Amendor', 'elementor-text-replacer'); ?></h1>
+        <h1><span class="dashicons dashicons-edit" style="font-size: 1.3em; vertical-align: middle;"></span> <?php esc_html_e('Amendor', 'amendor'); ?></h1>
 
         <?php // --- Display collected notices/messages --- 
         ?>
@@ -1240,12 +1240,12 @@ function amendor_render_text_replacer_ui()
 
                     <!-- 1. Search & Replace Terms Section -->
                     <div class="amendor-section postbox">
-                        <h2 class="hndle"><span><?php esc_html_e('1. Search & Replace Terms', 'elementor-text-replacer'); ?></span></h2>
+                        <h2 class="hndle"><span><?php esc_html_e('1. Search & Replace Terms', 'amendor'); ?></span></h2>
                         <div class="inside">
-                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Define the primary text you want to find and replace. Use the Bulk Replace section below for multiple pairs.', 'elementor-text-replacer'); ?></p>
+                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Define the primary text you want to find and replace. Use the Bulk Replace section below for multiple pairs.', 'amendor'); ?></p>
                             <table class="form-table">
                                 <tr>
-                                    <th><label for="search"><?php esc_html_e('Search For', 'elementor-text-replacer'); ?></label></th>
+                                    <th><label for="search"><?php esc_html_e('Search For', 'amendor'); ?></label></th>
                                     <td>
                                         <input name="search" type="text" id="search" value="<?php echo esc_attr($search); ?>" class="regular-text" list="amendor-search-history-list">
                                         <?php $history = amendor_get_search_history(); ?>
@@ -1255,30 +1255,30 @@ function amendor_render_text_replacer_ui()
                                                     <option value="<?php echo esc_attr($past_search); ?>">
                                                     <?php endforeach; ?>
                                             </datalist>
-                                            <p class="description"><?php esc_html_e('Start typing or use arrow keys to see recent searches.', 'elementor-text-replacer'); ?></p>
+                                            <p class="description"><?php esc_html_e('Start typing or use arrow keys to see recent searches.', 'amendor'); ?></p>
                                         <?php else: ?>
-                                            <p class="description"><?php esc_html_e('Enter the text you want to find. Case sensitivity depends on the Search Mode.', 'elementor-text-replacer'); ?></p>
+                                            <p class="description"><?php esc_html_e('Enter the text you want to find. Case sensitivity depends on the Search Mode.', 'amendor'); ?></p>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th><label for="replace"><?php esc_html_e('Replace With', 'elementor-text-replacer'); ?></label></th>
+                                    <th><label for="replace"><?php esc_html_e('Replace With', 'amendor'); ?></label></th>
                                     <td>
                                         <input name="replace" type="text" id="replace" value="<?php echo esc_attr($replace); ?>" class="regular-text">
-                                        <p class="description"><?php esc_html_e('Enter the replacement text. Leave empty to delete the found text.', 'elementor-text-replacer'); ?></p>
+                                        <p class="description"><?php esc_html_e('Enter the replacement text. Leave empty to delete the found text.', 'amendor'); ?></p>
                                     </td>
                                 </tr>
                                 <tr>
-                                    <th><label for="search_mode"><?php esc_html_e('Search Mode', 'elementor-text-replacer'); ?></label></th>
+                                    <th><label for="search_mode"><?php esc_html_e('Search Mode', 'amendor'); ?></label></th>
                                     <td>
                                         <select name="search_mode" id="search_mode">
-                                            <option value="partial" <?php selected($search_mode, 'partial'); ?>><?php esc_html_e('Partial Match (Case-Insensitive, Default)', 'elementor-text-replacer'); ?></option>
-                                            <option value="exact" <?php selected($search_mode, 'exact'); ?>><?php esc_html_e('Exact Text (Case-Sensitive)', 'elementor-text-replacer'); ?></option>
-                                            <option value="regex" <?php selected($search_mode, 'regex'); ?>><?php esc_html_e('Regular Expression (PCRE, Case-Insensitive)', 'elementor-text-replacer'); ?></option>
+                                            <option value="partial" <?php selected($search_mode, 'partial'); ?>><?php esc_html_e('Partial Match (Case-Insensitive, Default)', 'amendor'); ?></option>
+                                            <option value="exact" <?php selected($search_mode, 'exact'); ?>><?php esc_html_e('Exact Text (Case-Sensitive)', 'amendor'); ?></option>
+                                            <option value="regex" <?php selected($search_mode, 'regex'); ?>><?php esc_html_e('Regular Expression (PCRE, Case-Insensitive)', 'amendor'); ?></option>
                                         </select>
-                                        <p class="description"><?php esc_html_e('Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\bword\b`).', 'elementor-text-replacer'); ?></p>
+                                        <p class="description"><?php esc_html_e('Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\bword\b`).', 'amendor'); ?></p>
                                         <div id="regex-help" style="display: <?php echo $search_mode === 'regex' ? 'block' : 'none'; ?>; margin-top: 10px; padding: 10px; background: #f0f0f0; border: 1px solid #ddd; font-size: 0.9em;">
-                                            <strong><?php esc_html_e('Regex Tips:', 'elementor-text-replacer'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'elementor-text-replacer'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'elementor-text-replacer'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php esc_html_e('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\b</code> for word boundaries. Test carefully!', 'elementor-text-replacer'); ?>
+                                            <strong><?php esc_html_e('Regex Tips:', 'amendor'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'amendor'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'amendor'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php esc_html_e('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\b</code> for word boundaries. Test carefully!', 'amendor'); ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -1288,24 +1288,24 @@ function amendor_render_text_replacer_ui()
 
                     <!-- 2. Bulk Replace Section -->
                     <div class="amendor-section postbox">
-                        <h2 class="hndle"><span><?php esc_html_e('2. Bulk Replace (Optional)', 'elementor-text-replacer'); ?></span></h2>
+                        <h2 class="hndle"><span><?php esc_html_e('2. Bulk Replace (Optional)', 'amendor'); ?></span></h2>
                         <div class="inside">
-                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement.', 'elementor-text-replacer'); ?></p>
+                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement.', 'amendor'); ?></p>
                             <div id="bulk-replace-container">
                                 <?php
                                 $bulk_pairs_count = max(1, count($bulk_search));
                                 for ($i = 0; $i < $bulk_pairs_count; $i++):
                                 ?>
                                     <div class="bulk-replace-pair" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
-                                        <input type="text" name="bulk_search[]" placeholder="<?php esc_attr_e('Search for...', 'elementor-text-replacer'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_search[$i]) ? esc_attr($bulk_search[$i]) : ''; ?>">
+                                        <input type="text" name="bulk_search[]" placeholder="<?php esc_attr_e('Search for...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_search[$i]) ? esc_attr($bulk_search[$i]) : ''; ?>">
                                         <span>➡️</span>
-                                        <input type="text" name="bulk_replace[]" placeholder="<?php esc_attr_e('Replace with...', 'elementor-text-replacer'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_replace[$i]) ? esc_attr($bulk_replace[$i]) : ''; ?>">
-                                        <button type="button" class="button remove-pair" title="<?php esc_attr_e('Remove this pair', 'elementor-text-replacer'); ?>">×</button>
+                                        <input type="text" name="bulk_replace[]" placeholder="<?php esc_attr_e('Replace with...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_replace[$i]) ? esc_attr($bulk_replace[$i]) : ''; ?>">
+                                        <button type="button" class="button remove-pair" title="<?php esc_attr_e('Remove this pair', 'amendor'); ?>">×</button>
                                     </div>
                                 <?php endfor; ?>
                             </div>
                             <button type="button" id="add-bulk-pair" class="button button-secondary">
-                                <span class="dashicons dashicons-plus-alt"></span> <?php esc_html_e('Add Another Pair', 'elementor-text-replacer'); ?>
+                                <span class="dashicons dashicons-plus-alt"></span> <?php esc_html_e('Add Another Pair', 'amendor'); ?>
                             </button>
                         </div>
                     </div>
@@ -1313,12 +1313,12 @@ function amendor_render_text_replacer_ui()
 
                     <!-- 3. Filters Section -->
                     <div class="amendor-section postbox">
-                        <h2 class="hndle"><span><?php esc_html_e('3. Filters', 'elementor-text-replacer'); ?></span></h2>
+                        <h2 class="hndle"><span><?php esc_html_e('3. Filters', 'amendor'); ?></span></h2>
                         <div class="inside">
-                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included.', 'elementor-text-replacer'); ?></p>
+                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included.', 'amendor'); ?></p>
                             <table class="form-table">
                                 <tr>
-                                    <th><?php esc_html_e('Content Sources', 'elementor-text-replacer'); ?></th>
+                                    <th><?php esc_html_e('Content Sources', 'amendor'); ?></th>
                                     <td>
                                         <fieldset id="amendor-content-sources">
                                             <?php foreach ($available_content_sources as $source_key => $source_label): ?>
@@ -1328,11 +1328,11 @@ function amendor_render_text_replacer_ui()
                                                 </label>
                                             <?php endforeach; ?>
                                         </fieldset>
-                                        <p class="description"><?php esc_html_e('By default Amendor searches Elementor data plus native post fields. Uncheck sources to narrow the scan.', 'elementor-text-replacer'); ?></p>
+                                        <p class="description"><?php esc_html_e('By default Amendor searches Elementor data plus native post fields. Uncheck sources to narrow the scan.', 'amendor'); ?></p>
                                     </td>
                                 </tr>
                                 <tr id="amendor-widget-filter-row" style="<?php echo in_array('elementor', $selected_content_sources, true) ? '' : 'display: none;'; ?>">
-                                    <th><label for="widget_types"><?php esc_html_e('Widget Types', 'elementor-text-replacer'); ?></label></th>
+                                    <th><label for="widget_types"><?php esc_html_e('Widget Types', 'amendor'); ?></label></th>
                                     <td>
                                         <?php if (!empty($available_widgets)): ?>
                                             <select name="widget_types[]" id="widget_types" multiple style="width: 100%; min-height: 150px;" <?php disabled(!in_array('elementor', $selected_content_sources, true)); ?>>
@@ -1342,9 +1342,9 @@ function amendor_render_text_replacer_ui()
                                                     </option>
                                                 <?php endforeach; ?>
                                             </select>
-                                            <p class="description"><?php esc_html_e('Leave empty to search/replace in all widget types. Use Ctrl/Cmd + Click for standard multi-select.', 'elementor-text-replacer'); ?></p>
+                                            <p class="description"><?php esc_html_e('Leave empty to search/replace in all widget types. Use Ctrl/Cmd + Click for standard multi-select.', 'amendor'); ?></p>
                                         <?php else: ?>
-                                            <p><em><?php esc_html_e('Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active.', 'elementor-text-replacer'); ?></em></p>
+                                            <p><em><?php esc_html_e('Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active.', 'amendor'); ?></em></p>
                                         <?php endif; ?>
                                     </td>
                                 </tr>
@@ -1377,57 +1377,57 @@ function amendor_render_text_replacer_ui()
 
                     <!-- Actions Panel -->
                     <div id="amendor-actions-panel" class="postbox">
-                        <h2 class="hndle"><span><?php esc_html_e('Actions', 'elementor-text-replacer'); ?></span></h2>
+                        <h2 class="hndle"><span><?php esc_html_e('Actions', 'amendor'); ?></span></h2>
                         <div class="inside">
                             <p id="backup-reminder" style="display: none; margin-bottom: 15px; padding: 10px; background: #fff8e1; border-left: 4px solid #ffb900;">
-                                <strong><?php esc_html_e('⚠️ Backup Recommended', 'elementor-text-replacer'); ?></strong><br>
-                                <span class="amendor-backup-reminder-text"><?php esc_html_e('Some selected posts do not have an existing backup yet. The plugin will create one automatically before replacement.', 'elementor-text-replacer'); ?></span>
+                                <strong><?php esc_html_e('⚠️ Backup Recommended', 'amendor'); ?></strong><br>
+                                <span class="amendor-backup-reminder-text"><?php esc_html_e('Some selected posts do not have an existing backup yet. The plugin will create one automatically before replacement.', 'amendor'); ?></span>
                             </p>
                             <div class="amendor-action-buttons">
                                 <button type="submit" name="action" value="search" class="button button-secondary button-large amendor-action-button" id="search-button">
-                                    <span class="dashicons dashicons-search"></span> <?php esc_html_e('Search Only', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-search"></span> <?php esc_html_e('Search Only', 'amendor'); ?>
                                 </button>
                                 <div id="amendor-search-progress" class="notice inline" style="display: none; margin: 0;">
                                     <p class="amendor-search-progress-text"></p>
                                 </div>
                                 <button type="submit" name="action" value="preview_selected" class="button button-secondary button-large amendor-action-button" id="preview-button" disabled>
-                                    <span class="dashicons dashicons-visibility"></span> <?php esc_html_e('Preview Selected', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-visibility"></span> <?php esc_html_e('Preview Selected', 'amendor'); ?>
                                 </button>
                                 <button type="submit" name="action" value="replace_selected" class="button button-primary button-large amendor-action-button" id="replace-button" disabled onclick="return confirmReplaceAction();">
-                                    <span class="dashicons dashicons-yes"></span> <?php esc_html_e('Replace Selected', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-yes"></span> <?php esc_html_e('Replace Selected', 'amendor'); ?>
                                 </button>
                                 <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=' . amendor_get_admin_parent_slug() . '&action=download_backup'), 'amendor_download_backup_action', 'amendor_download_nonce')); ?>"
                                     class="button button-secondary button-large amendor-action-button" id="backup-button">
-                                    <span class="dashicons dashicons-database-export"></span> <?php esc_html_e('Download Backups', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-database-export"></span> <?php esc_html_e('Download Backups', 'amendor'); ?>
                                 </a>
                                 <a href="<?php echo esc_url(admin_url('admin.php?page=amendor-change-history')); ?>"
                                     class="button button-secondary button-large amendor-action-button" id="history-button">
-                                    <span class="dashicons dashicons-backup"></span> <?php esc_html_e('View History Log', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-backup"></span> <?php esc_html_e('View History Log', 'amendor'); ?>
                                 </a>
                                 <a href="<?php echo esc_url(admin_url('admin.php?page=amendor-debug-log')); ?>"
                                     class="button button-secondary button-large amendor-action-button" id="debug-log-button">
-                                    <span class="dashicons dashicons-hammer"></span> <?php esc_html_e('View Debug Log', 'elementor-text-replacer'); ?>
+                                    <span class="dashicons dashicons-hammer"></span> <?php esc_html_e('View Debug Log', 'amendor'); ?>
                                 </a>
                             </div>
-                            <p class="description" style="margin-top: 10px; text-align: center;"><?php esc_html_e('Select items from results to enable Preview/Replace.', 'elementor-text-replacer'); ?></p>
+                            <p class="description" style="margin-top: 10px; text-align: center;"><?php esc_html_e('Select items from results to enable Preview/Replace.', 'amendor'); ?></p>
                         </div>
                     </div>
 
                     <!-- Info Panel -->
                     <div id="amendor-info-panel" class="postbox">
-                        <h2 class="hndle"><span><?php esc_html_e('How It Works', 'elementor-text-replacer'); ?></span></h2>
+                        <h2 class="hndle"><span><?php esc_html_e('How It Works', 'amendor'); ?></span></h2>
                         <div class="inside">
                             <ol style="margin: 0; padding-left: 20px; list-style: decimal;">
-                                <li><?php esc_html_e('Enter search/replace terms (or use Bulk Replace).', 'elementor-text-replacer'); ?></li>
-                                <li><?php esc_html_e('Choose the content sources to scan, then optionally filter Elementor widget types.', 'elementor-text-replacer'); ?></li>
-                                <li><?php printf(esc_html__('Click %s.', 'elementor-text-replacer'), '<strong>' . esc_html__('Search Only', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php esc_html_e('Results appear below. Select posts to modify.', 'elementor-text-replacer'); ?></li>
-                                <li><?php printf(esc_html__('Click %s for a dry run.', 'elementor-text-replacer'), '<strong>' . esc_html__('Preview Selected', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Click %s to apply changes (backups created per post).', 'elementor-text-replacer'), '<strong>' . esc_html__('Replace Selected', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s to save all backups.', 'elementor-text-replacer'), '<strong>' . esc_html__('Download Backups', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s to track changes.', 'elementor-text-replacer'), '<strong>' . esc_html__('View History Log', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s (and enable logging on its page) for detailed troubleshooting.', 'elementor-text-replacer'), '<strong>' . esc_html__('View Debug Log', 'elementor-text-replacer') . '</strong>'); ?></li>
-                                <li><?php esc_html_e('Restore individual posts from backups within the results list.', 'elementor-text-replacer'); ?></li>
+                                <li><?php esc_html_e('Enter search/replace terms (or use Bulk Replace).', 'amendor'); ?></li>
+                                <li><?php esc_html_e('Choose the content sources to scan, then optionally filter Elementor widget types.', 'amendor'); ?></li>
+                                <li><?php printf(esc_html__('Click %s.', 'amendor'), '<strong>' . esc_html__('Search Only', 'amendor') . '</strong>'); ?></li>
+                                <li><?php esc_html_e('Results appear below. Select posts to modify.', 'amendor'); ?></li>
+                                <li><?php printf(esc_html__('Click %s for a dry run.', 'amendor'), '<strong>' . esc_html__('Preview Selected', 'amendor') . '</strong>'); ?></li>
+                                <li><?php printf(esc_html__('Click %s to apply changes (backups created per post).', 'amendor'), '<strong>' . esc_html__('Replace Selected', 'amendor') . '</strong>'); ?></li>
+                                <li><?php printf(esc_html__('Use %s to save all backups.', 'amendor'), '<strong>' . esc_html__('Download Backups', 'amendor') . '</strong>'); ?></li>
+                                <li><?php printf(esc_html__('Use %s to track changes.', 'amendor'), '<strong>' . esc_html__('View History Log', 'amendor') . '</strong>'); ?></li>
+                                <li><?php printf(esc_html__('Use %s (and enable logging on its page) for detailed troubleshooting.', 'amendor'), '<strong>' . esc_html__('View Debug Log', 'amendor') . '</strong>'); ?></li>
+                                <li><?php esc_html_e('Restore individual posts from backups within the results list.', 'amendor'); ?></li>
                             </ol>
                         </div>
                     </div>

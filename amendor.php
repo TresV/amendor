@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Plugin Name:       Amendor
  * Plugin URI:        https://example.com/amendor/
@@ -8,10 +9,10 @@
  * Author URI:        https://example.com/
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain:       elementor-text-replacer
+ * Text Domain:       amendor
  * Domain Path:       /languages
- * Requires at least: 5.6
- * Requires PHP:      7.4
+ * Requires at least: 6.4
+ * Requires PHP:      8.1
  * Elementor tested up to: 3.15
  */
 
@@ -19,12 +20,24 @@ if (!defined('ABSPATH')) {
     exit;
 }
 
-define('AMENDOR_PLUGIN_MODE', 'amendor');
-define('AMENDOR_VERSION', '1.5.1');
-define('AMENDOR_PLUGIN_DIR', plugin_dir_path(__FILE__));
-define('AMENDOR_PLUGIN_URL', plugin_dir_url(__FILE__));
-define('AMENDOR_PLUGIN_FILE', __FILE__);
-define('AMENDOR_TEXT_DOMAIN', 'elementor-text-replacer');
+if (!defined('AMENDOR_PLUGIN_MODE')) {
+    define('AMENDOR_PLUGIN_MODE', 'amendor');
+}
+if (!defined('AMENDOR_VERSION')) {
+    define('AMENDOR_VERSION', '1.5.1');
+}
+if (!defined('AMENDOR_PLUGIN_DIR')) {
+    define('AMENDOR_PLUGIN_DIR', plugin_dir_path(__FILE__));
+}
+if (!defined('AMENDOR_PLUGIN_URL')) {
+    define('AMENDOR_PLUGIN_URL', plugin_dir_url(__FILE__));
+}
+if (!defined('AMENDOR_PLUGIN_FILE')) {
+    define('AMENDOR_PLUGIN_FILE', __FILE__);
+}
+if (!defined('AMENDOR_TEXT_DOMAIN')) {
+    define('AMENDOR_TEXT_DOMAIN', 'amendor');
+}
 
 require_once AMENDOR_PLUGIN_DIR . 'includes/plugin-context.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/i18n.php';

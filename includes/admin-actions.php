@@ -1,8 +1,9 @@
 <?php
+
 /**
  * Admin action handling functions.
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {
@@ -366,7 +367,7 @@ function amendor_get_cached_search_results_payload($search, $search_mode, array 
     $cache = amendor_get_valid_search_cache($cache_key, $signature);
 
     if (!$cache || empty($cache['completed'])) {
-        $messages[] = ['type' => 'warning', 'text' => __('⚠️ Search results are no longer available. Please run the search again.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'warning', 'text' => __('⚠️ Search results are no longer available. Please run the search again.', 'amendor')];
         amendor_add_debug_log('Cached search results unavailable for rendering.', 'WARN', ['cache_key' => $cache_key]);
         return $payload;
     }
@@ -405,19 +406,25 @@ function amendor_handle_restore_action($action, array &$messages)
         return;
     }
 
+    if (!current_user_can('manage_options')) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to restore backups.', 'amendor')];
+        amendor_add_debug_log('Restore Error: Permission denied.', 'ERROR');
+        return;
+    }
+
     $post_id_to_restore = intval($_POST['restore_post_id']);
     if (isset($_POST['amendor_restore_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_restore_nonce'])), 'amendor_restore_action_' . $post_id_to_restore)) {
         $backup_index = isset($_POST['backup_index']) ? intval($_POST['backup_index']) : 0;
         amendor_add_debug_log("Attempting Restore Action", 'INFO', ['post_id' => $post_id_to_restore, 'index' => $backup_index]);
 
         if (amendor_restore_elementor_backup($post_id_to_restore, $backup_index)) {
-            $messages[] = ['type' => 'success', 'text' => sprintf(__('✅ Post ID %d successfully restored from backup.', 'elementor-text-replacer'), $post_id_to_restore)];
+            $messages[] = ['type' => 'success', 'text' => sprintf(__('✅ Post ID %d successfully restored from backup.', 'amendor'), $post_id_to_restore)];
             amendor_add_debug_log("Restore successful.", 'INFO', ['post_id' => $post_id_to_restore]);
         } else {
-            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity.', 'elementor-text-replacer'), $post_id_to_restore)];
+            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity.', 'amendor'), $post_id_to_restore)];
         }
     } else {
-        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed for restore action. Please try again.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed for restore action. Please try again.', 'amendor')];
         amendor_add_debug_log("Restore Error: Nonce verification failed.", 'ERROR');
     }
 
@@ -454,9 +461,15 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
         return $payload;
     }
 
+    if (!current_user_can('manage_options')) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to run searches.', 'amendor')];
+        amendor_add_debug_log('Search Error: Permission denied.', 'ERROR');
+        return $payload;
+    }
+
     amendor_add_debug_log("Attempting Search Action...", 'INFO');
     if (!isset($_POST['amendor_search_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_search_nonce'])), 'amendor_search_action')) {
-        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try searching again.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try searching again.', 'amendor')];
         amendor_add_debug_log("Security check (Nonce) failed for search action.", 'ERROR');
         amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
         return $payload;
@@ -473,7 +486,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
     $content_sources = amendor_normalize_content_sources($content_sources);
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
-        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern provided for search: %s. Please check syntax.', 'elementor-text-replacer'), '<code>' . esc_html($search) . '</code>')];
+        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern provided for search: %s. Please check syntax.', 'amendor'), '<code>' . esc_html($search) . '</code>')];
         amendor_add_debug_log("Search aborted: Invalid regex pattern.", 'ERROR', ['pattern' => $search, 'sources' => $content_sources]);
         amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
         return $payload;
@@ -498,7 +511,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
 
         if (empty($candidate_post_ids)) {
             amendor_add_debug_log('No candidate posts found for search.', 'INFO', ['sources' => $content_sources]);
-            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No posts matched your search criteria.', 'elementor-text-replacer')];
+            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No posts matched your search criteria.', 'amendor')];
             amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
             return $payload;
         }
@@ -577,9 +590,15 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
         return $preview_results;
     }
 
+    if (!current_user_can('manage_options')) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to preview changes.', 'amendor')];
+        amendor_add_debug_log('Preview Error: Permission denied.', 'ERROR');
+        return $preview_results;
+    }
+
     amendor_add_debug_log("Attempting Preview Action...", 'INFO');
     if (!isset($_POST['amendor_preview_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_preview_nonce'])), 'amendor_preview_action')) {
-        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try the preview again.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try the preview again.', 'amendor')];
         amendor_add_debug_log("Security check (Nonce) failed for preview action.", 'ERROR');
         amendor_add_debug_log("====== Preview Action Finished ======", 'DEBUG');
         return $preview_results;
@@ -598,13 +617,13 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
     $content_sources = amendor_normalize_content_sources($content_sources);
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
-        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern for preview: %s. Please check syntax.', 'elementor-text-replacer'), '<code>' . esc_html($search) . '</code>')];
+        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern for preview: %s. Please check syntax.', 'amendor'), '<code>' . esc_html($search) . '</code>')];
         amendor_add_debug_log("Preview aborted: Invalid regex pattern.", 'ERROR', ['pattern' => $search, 'sources' => $content_sources]);
         amendor_add_debug_log("====== Preview Action Finished ======", 'DEBUG');
         return $preview_results;
     }
 
-    $messages[] = ['type' => 'info', 'text' => sprintf(__('👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved.', 'elementor-text-replacer'), count($selected_ids))];
+    $messages[] = ['type' => 'info', 'text' => sprintf(__('👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved.', 'amendor'), count($selected_ids))];
     $processed_preview_count = 0;
 
     foreach ($selected_ids as $post_id) {
@@ -652,7 +671,7 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
     if ($processed_preview_count === 0) {
         $has_errors = !empty(array_filter($messages, static fn($message) => $message['type'] === 'error'));
         if (!$has_errors) {
-            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No changes were predicted for the selected posts based on the provided terms and filters.', 'elementor-text-replacer')];
+            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No changes were predicted for the selected posts based on the provided terms and filters.', 'amendor')];
         }
     }
 
@@ -682,9 +701,15 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         return;
     }
 
+    if (!current_user_can('manage_options')) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to run replacements.', 'amendor')];
+        amendor_add_debug_log('Replace Error: Permission denied.', 'ERROR');
+        return;
+    }
+
     amendor_add_debug_log("Attempting Replace Action...", 'INFO');
     if (!isset($_POST['amendor_replace_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_replace_nonce'])), 'amendor_replace_action')) {
-        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try the replacement again.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try the replacement again.', 'amendor')];
         amendor_add_debug_log("Security check (Nonce) failed for replace action.", 'ERROR');
         amendor_add_debug_log("====== Replace Action Finished ======", 'DEBUG');
         return;
@@ -701,7 +726,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
     if (!empty($filtered_bulk_search)) {
         if (count($bulk_search) !== count($bulk_replace)) {
-            $messages[] = ['type' => 'error', 'text' => __('❌ Bulk Replace Error: The number of search terms does not match the number of replace terms. Operation cancelled.', 'elementor-text-replacer')];
+            $messages[] = ['type' => 'error', 'text' => __('❌ Bulk Replace Error: The number of search terms does not match the number of replace terms. Operation cancelled.', 'amendor')];
             amendor_add_debug_log("Bulk Replace Error: Mismatched count of search/replace pairs.", 'ERROR', ['search_count' => count($bulk_search), 'replace_count' => count($bulk_replace)]);
         } else {
             $is_bulk_operation = true;
@@ -712,7 +737,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             }
 
             if (empty($pairs_to_process)) {
-                $messages[] = ['type' => 'warning', 'text' => __('⚠️ No valid bulk search terms provided (all were empty). Operation cancelled.', 'elementor-text-replacer')];
+                $messages[] = ['type' => 'warning', 'text' => __('⚠️ No valid bulk search terms provided (all were empty). Operation cancelled.', 'amendor')];
                 amendor_add_debug_log("Bulk Replace: No non-empty search terms found in pairs.", 'WARN');
             } else {
                 amendor_add_debug_log("Performing Bulk Replace.", 'INFO', ['pair_count' => count($pairs_to_process), 'sources' => $content_sources]);
@@ -722,7 +747,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $pairs_to_process[] = ['search' => $search, 'replace' => $replace];
         amendor_add_debug_log("Performing Single Replace.", 'INFO', ['search' => $search, 'replace' => $replace, 'sources' => $content_sources]);
     } else {
-        $messages[] = ['type' => 'warning', 'text' => __('⚠️ No search term provided (single or bulk). Replacement operation cancelled.', 'elementor-text-replacer')];
+        $messages[] = ['type' => 'warning', 'text' => __('⚠️ No search term provided (single or bulk). Replacement operation cancelled.', 'amendor')];
         amendor_add_debug_log("Replace Action Error: No search term provided.", 'WARN');
     }
 
@@ -734,7 +759,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
     if ($search_mode === 'regex') {
         foreach ($pairs_to_process as $index => $pair) {
             if (!amendor_is_valid_regex($pair['search'])) {
-                $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted.', 'elementor-text-replacer'), $index + 1, '<code>' . esc_html($pair['search']) . '</code>')];
+                $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted.', 'amendor'), $index + 1, '<code>' . esc_html($pair['search']) . '</code>')];
                 amendor_add_debug_log("Replace aborted: Invalid regex pattern in pair.", 'ERROR', ['index' => $index + 1, 'pattern' => $pair['search'], 'sources' => $content_sources]);
                 amendor_add_debug_log("====== Replace Action Finished ======", 'DEBUG');
                 return;
@@ -758,7 +783,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $snapshot = amendor_build_post_backup_snapshot($post_id);
         if (!is_array($snapshot) || !amendor_create_post_backup($post_id, $snapshot)) {
             amendor_add_debug_log("Replace aborted for post: Failed to create backup.", 'ERROR', ['post_id' => $post_id]);
-            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to create backup for Post ID %d. Replacement skipped for this post.', 'elementor-text-replacer'), $post_id)];
+            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to create backup for Post ID %d. Replacement skipped for this post.', 'amendor'), $post_id)];
             continue;
         }
 
@@ -827,7 +852,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $update_result = wp_update_post(wp_slash($native_update), true);
         if (is_wp_error($update_result)) {
             amendor_add_debug_log('ERROR updating native post fields after processing pairs.', 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
-            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s', 'elementor-text-replacer'), $post_id, esc_html($update_result->get_error_message()))];
+            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($update_result->get_error_message()))];
             continue;
         }
 
@@ -835,7 +860,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             if (is_array($current_state['elementor_data'])) {
                 $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
                 if ($encoded_current_data_state === false) {
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'elementor-text-replacer'), $post_id)];
+                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
                     continue;
                 }
 
@@ -843,7 +868,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
                 if ($meta_update === false) {
                     $db_error = $GLOBALS['wpdb']->last_error;
                     amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'elementor-text-replacer'), $post_id, esc_html($db_error))];
+                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
                     continue;
                 }
                 amendor_clear_elementor_cache_for_post($post_id);
@@ -854,9 +879,9 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
         amendor_add_debug_log("Post content updated successfully.", 'INFO', ['post_id' => $post_id, 'total_changes' => $total_changes_in_post_across_pairs, 'sources' => $content_sources]);
 
-        $source_suffix = sprintf(__(' [Sources: %s]', 'elementor-text-replacer'), amendor_format_content_sources_summary($content_sources));
-        $log_search = $is_bulk_operation ? __('(Bulk Operation)', 'elementor-text-replacer') . $source_suffix : $search . $source_suffix;
-        $log_replace = $is_bulk_operation ? sprintf(__('%d pairs applied', 'elementor-text-replacer'), count($pairs_to_process)) : $replace;
+        $source_suffix = sprintf(__(' [Sources: %s]', 'amendor'), amendor_format_content_sources_summary($content_sources));
+        $log_search = $is_bulk_operation ? __('(Bulk Operation)', 'amendor') . $source_suffix : $search . $source_suffix;
+        $log_replace = $is_bulk_operation ? sprintf(__('%d pairs applied', 'amendor'), count($pairs_to_process)) : $replace;
         amendor_log_replacement(
             $current_user_id,
             $post_id,
@@ -874,7 +899,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
     if ($global_replaced_posts_count > 0) {
         $summary_message = sprintf(
-            __('✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s.', 'elementor-text-replacer'),
+            __('✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s.', 'amendor'),
             '<strong>' . number_format_i18n(count($selected_ids)) . '</strong>',
             '<strong>' . number_format_i18n($global_replaced_posts_count) . '</strong>',
             '<strong>' . number_format_i18n($global_total_changes_made) . '</strong>'
@@ -882,7 +907,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
         if ($is_bulk_operation) {
             $summary_message .= '<br>' . sprintf(
-                __('📦 Operation type: Bulk Replace with %d pair(s).', 'elementor-text-replacer'),
+                __('📦 Operation type: Bulk Replace with %d pair(s).', 'amendor'),
                 count($pairs_to_process)
             );
         }
@@ -898,7 +923,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
     } else {
         $has_errors = !empty(array_filter($messages, static fn($message) => $message['type'] === 'error'));
         if (!$has_errors) {
-            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No posts required replacement based on the provided terms, selected posts, and filters.', 'elementor-text-replacer')];
+            $messages[] = ['type' => 'info', 'text' => __('ℹ️ No posts required replacement based on the provided terms, selected posts, and filters.', 'amendor')];
             amendor_add_debug_log("Replacement action completed, but no posts required modification.", 'INFO');
         }
     }

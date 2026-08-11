@@ -2,7 +2,7 @@
 /**
  * AJAX Handler Functions
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {
@@ -20,7 +20,7 @@ function amendor_check_backup_callback()
     // Check if user has permission
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log('AJAX Backup Check: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
-        wp_send_json_error(['message' => __('Permission denied.', 'elementor-text-replacer')], 403);
+        wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
     }
 
@@ -62,7 +62,7 @@ function amendor_run_search_batch_callback()
 
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log('AJAX Search Batch: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
-        wp_send_json_error(['message' => __('Permission denied.', 'elementor-text-replacer')], 403);
+        wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
     }
 
@@ -74,12 +74,12 @@ function amendor_run_search_batch_callback()
     $reset = !empty($_POST['reset']);
 
     if ($search === '') {
-        wp_send_json_error(['message' => __('Search term is required.', 'elementor-text-replacer')], 400);
+        wp_send_json_error(['message' => __('Search term is required.', 'amendor')], 400);
         wp_die();
     }
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
-        wp_send_json_error(['message' => __('Invalid regular expression pattern.', 'elementor-text-replacer')], 400);
+        wp_send_json_error(['message' => __('Invalid regular expression pattern.', 'amendor')], 400);
         wp_die();
     }
 
@@ -108,7 +108,7 @@ function amendor_get_search_results_callback()
 
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log('AJAX Search Results: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
-        wp_send_json_error(['message' => __('Permission denied.', 'elementor-text-replacer')], 403);
+        wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
     }
 
@@ -122,12 +122,12 @@ function amendor_get_search_results_callback()
     $messages = [];
 
     if ($search === '') {
-        wp_send_json_error(['message' => __('Search term is required.', 'elementor-text-replacer')], 400);
+        wp_send_json_error(['message' => __('Search term is required.', 'amendor')], 400);
         wp_die();
     }
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
-        wp_send_json_error(['message' => __('Invalid regular expression pattern.', 'elementor-text-replacer')], 400);
+        wp_send_json_error(['message' => __('Invalid regular expression pattern.', 'amendor')], 400);
         wp_die();
     }
 
@@ -177,7 +177,7 @@ function amendor_run_preview_callback()
 
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log('AJAX Preview: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
-        wp_send_json_error(['message' => __('Permission denied.', 'elementor-text-replacer')], 403);
+        wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
     }
 

@@ -1,0 +1,899 @@
+# Copyright (C) 2026 Amendor
+# This file is distributed under the same license as the Amendor plugin.
+msgid ""
+msgstr ""
+"Project-Id-Version: Amendor 1.5.1\n"
+"Report-Msgid-Bugs-To: https://example.com/amendor/\n"
+"POT-Creation-Date: 2026-08-11 08:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"Language: \n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+"X-Generator: amendor-make-pot\n"
+"X-Domain: amendor\n"
+
+#: admin-pages.php:781
+#: admin-pages.php:876
+#: admin-pages.php:990
+#: admin-pages.php:1073
+msgid "%s item"
+msgid_plural "%s items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin-pages.php:552
+msgid "%s matched item"
+msgid_plural "%s matched items"
+msgstr[0] ""
+msgstr[1] ""
+
+#: admin-actions.php:881
+msgid " [Sources: %s]"
+msgstr ""
+
+#: admin-actions.php:883
+msgid "%d pairs applied"
+msgstr ""
+
+#: admin-pages.php:792
+#: admin-pages.php:882
+#: admin-pages.php:996
+#: admin-pages.php:1079
+msgid "&laquo;"
+msgstr ""
+
+#: admin-pages.php:559
+msgid "&laquo; Prev"
+msgstr ""
+
+#: admin-pages.php:793
+#: admin-pages.php:883
+#: admin-pages.php:997
+#: admin-pages.php:1080
+msgid "&raquo;"
+msgstr ""
+
+#: admin-actions.php:882
+msgid "(Bulk Operation)"
+msgstr ""
+
+#: admin-pages.php:1237
+msgid "1. Search & Replace Terms"
+msgstr ""
+
+#: admin-pages.php:1285
+msgid "2. Bulk Replace (Optional)"
+msgstr ""
+
+#: admin-pages.php:1310
+msgid "3. Filters"
+msgstr ""
+
+#: admin-pages.php:478
+msgid "4. Results"
+msgstr ""
+
+#: admin-pages.php:300
+msgid "A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved."
+msgstr ""
+
+#: admin-pages.php:1374
+msgid "Actions"
+msgstr ""
+
+#: admin-pages.php:494
+msgid "Active content sources: %s."
+msgstr ""
+
+#: admin-pages.php:1302
+msgid "Add Another Pair"
+msgstr ""
+
+#: admin-pages.php:1287
+msgid "Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement."
+msgstr ""
+
+#: admin-pages.php:763
+msgid "All Levels"
+msgstr ""
+
+#: admin-pages.php:519
+msgid "All Types"
+msgstr ""
+
+#: admin-pages.php:310
+msgid "All selected posts already have at least one saved plugin backup."
+msgstr ""
+
+#: admin-pages.php:23
+#: admin-pages.php:24
+#: admin-pages.php:1211
+#: plugin-context.php:53
+msgid "Amendor"
+msgstr ""
+
+#: admin-pages.php:981
+msgid "Amendor - Change History Log"
+msgstr ""
+
+#: admin-pages.php:659
+msgid "Amendor - Debug Log"
+msgstr ""
+
+#: admin-pages.php:308
+msgid "Are you sure you want to clear the ENTIRE debug log? This cannot be undone."
+msgstr ""
+
+#: admin-pages.php:302
+msgid "Are you sure you want to proceed?"
+msgstr ""
+
+#: admin-pages.php:306
+msgid "Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post."
+msgstr ""
+
+#. translators: 1: Post ID, 2: Data type */
+#: functions.php:184
+msgid "Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup."
+msgstr ""
+
+#. translators: %s: Post ID */
+#: functions.php:161
+msgid "Backup Error: update_post_meta failed for Post ID %s."
+msgstr ""
+
+#. translators: 1: Date and Time, 2: Human readable time difference */
+#: admin-pages.php:428
+msgid "Backup from %1$s (%2$s ago)"
+msgstr ""
+
+#: admin-pages.php:1047
+msgid "Bulk"
+msgstr ""
+
+#: admin-pages.php:1047
+msgid "Bulk Operation"
+msgstr ""
+
+#: admin-pages.php:1325
+msgid "By default Amendor searches Elementor data plus native post fields. Uncheck sources to narrow the scan."
+msgstr ""
+
+#: admin-pages.php:34
+msgid "Change History Log"
+msgstr ""
+
+#: admin-pages.php:1018
+#: admin-pages.php:1062
+msgid "Changes"
+msgstr ""
+
+#: admin-pages.php:1273
+msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\\bword\\b`)."
+msgstr ""
+
+#: admin-pages.php:1416
+msgid "Choose the content sources to scan, then optionally filter Elementor widget types."
+msgstr ""
+
+#: admin-pages.php:1312
+msgid "Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included."
+msgstr ""
+
+#: admin-pages.php:713
+msgid "Clear Entire Log"
+msgstr ""
+
+#: admin-pages.php:770
+msgid "Clear Filter"
+msgstr ""
+
+#: admin-pages.php:1419
+msgid "Click %s for a dry run."
+msgstr ""
+
+#: admin-pages.php:1420
+msgid "Click %s to apply changes (backups created per post)."
+msgstr ""
+
+#: admin-pages.php:1417
+msgid "Click %s."
+msgstr ""
+
+#: admin-pages.php:307
+msgid "Confirm Clear Log"
+msgstr ""
+
+#: admin-pages.php:298
+msgid "Confirm Replacement"
+msgstr ""
+
+#: admin-pages.php:305
+msgid "Confirm Restore"
+msgstr ""
+
+#: admin-pages.php:1315
+msgid "Content Sources"
+msgstr ""
+
+#: admin-pages.php:180
+#: admin-pages.php:811
+#: admin-pages.php:865
+msgid "Context"
+msgstr ""
+
+#: admin-pages.php:1341
+msgid "Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active."
+msgstr ""
+
+#: admin-pages.php:44
+#: admin-pages.php:45
+msgid "Debug Log"
+msgstr ""
+
+#: admin-pages.php:604
+msgid "Debug log cleared successfully."
+msgstr ""
+
+#: admin-pages.php:1239
+msgid "Define the primary text you want to find and replace. Use the Bulk Replace section below for multiple pairs."
+msgstr ""
+
+#: admin-pages.php:674
+msgid "Delete plugin data on uninstall (history, debug log, backups, and per-user search history)"
+msgstr ""
+
+#: admin-pages.php:1040
+msgid "Deleted?"
+msgstr ""
+
+#: admin-pages.php:1395
+#: admin-pages.php:1421
+msgid "Download Backups"
+msgstr ""
+
+#: admin-pages.php:390
+msgid "Edit Elementor"
+msgstr ""
+
+#: admin-pages.php:1036
+msgid "Edit Post: %s"
+msgstr ""
+
+#: admin-pages.php:389
+msgid "Edit WP"
+msgstr ""
+
+#: admin-pages.php:389
+msgid "Edit in WordPress Editor (Opens in new tab)"
+msgstr ""
+
+#: admin-pages.php:390
+msgid "Edit with Elementor (Opens in new tab)"
+msgstr ""
+
+#: functions.php:36
+msgid "Elementor Content"
+msgstr ""
+
+#. translators: %s: Post ID */
+#: functions.php:925
+msgid "Elementor cache cleared after restore for Post ID %s."
+msgstr ""
+
+#: admin-pages.php:670
+msgid "Enable Persistent Debug Logging (Logs detailed actions to the database table below)"
+msgstr ""
+
+#: admin-pages.php:1415
+msgid "Enter search/replace terms (or use Bulk Replace)."
+msgstr ""
+
+#: admin-pages.php:1262
+msgid "Enter the replacement text. Leave empty to delete the found text."
+msgstr ""
+
+#: admin-pages.php:1254
+msgid "Enter the text you want to find. Case sensitivity depends on the Search Mode."
+msgstr ""
+
+#. translators: 1: String snippet, 2: Error message */
+#: functions.php:705
+msgid "Error processing string [%1$s...]: %2$s"
+msgstr ""
+
+#: admin-pages.php:1270
+msgid "Exact Text (Case-Sensitive)"
+msgstr ""
+
+#: functions.php:1180
+msgid "Export Error"
+msgstr ""
+
+#: admin-pages.php:727
+msgid "Export Log CSV"
+msgstr ""
+
+#: admin-pages.php:740
+msgid "Export Log JSON"
+msgstr ""
+
+#: admin-pages.php:753
+msgid "Export Log TXT"
+msgstr ""
+
+#: admin-pages.php:768
+msgid "Filter"
+msgstr ""
+
+#: admin-pages.php:761
+msgid "Filter by Level:"
+msgstr ""
+
+#: admin-pages.php:517
+msgid "Filter by Type:"
+msgstr ""
+
+#. translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
+#: admin-pages.php:500
+msgid "Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s."
+msgstr ""
+
+#: admin-pages.php:317
+msgid "Generating preview..."
+msgstr ""
+
+#: admin-pages.php:35
+msgid "History Log"
+msgstr ""
+
+#. translators: %s: Database error message */
+#: functions.php:1018
+msgid "History Log Error: Failed to insert record into DB. Error: %s"
+msgstr ""
+
+#. translators: 1: User ID, 2: Post ID, 3: Changes Made */
+#: functions.php:974
+msgid "History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d"
+msgstr ""
+
+#. translators: 1: Post ID, 2: Changes Made */
+#: functions.php:1026
+msgid "History Log Success: Record added for Post ID %1$s. Changes: %2$d"
+msgstr ""
+
+#: admin-pages.php:1412
+msgid "How It Works"
+msgstr ""
+
+#: ajax-handlers.php:82
+#: ajax-handlers.php:130
+msgid "Invalid regular expression pattern."
+msgstr ""
+
+#. translators: %s: JSON error message */
+#: functions.php:259
+msgid "JSON encoding failed: %s"
+msgstr ""
+
+#: admin-pages.php:1339
+msgid "Leave empty to search/replace in all widget types. Use Ctrl/Cmd + Click for standard multi-select."
+msgstr ""
+
+#: admin-pages.php:178
+#: admin-pages.php:809
+#: admin-pages.php:863
+msgid "Level"
+msgstr ""
+
+#: admin-pages.php:825
+msgid "Logging is currently disabled."
+msgstr ""
+
+#: functions.php:731
+msgid "Match - No Change Previewed"
+msgstr ""
+
+#: admin-pages.php:677
+msgid "Max debug log rows to retain"
+msgstr ""
+
+#: admin-pages.php:689
+msgid "Max history log rows to retain"
+msgstr ""
+
+#: admin-pages.php:179
+#: admin-pages.php:810
+#: admin-pages.php:864
+msgid "Message"
+msgstr ""
+
+#: admin-pages.php:1017
+#: admin-pages.php:1061
+msgid "Mode"
+msgstr ""
+
+#: admin-pages.php:853
+msgid "N/A"
+msgstr ""
+
+#: admin-pages.php:560
+msgid "Next &raquo;"
+msgstr ""
+
+#: admin-pages.php:443
+msgid "No backups available for this post."
+msgstr ""
+
+#: admin-pages.php:396
+msgid "No changes found in this item for the current criteria."
+msgstr ""
+
+#: admin-pages.php:396
+msgid "No changes predicted in this item for the current criteria."
+msgstr ""
+
+#: admin-pages.php:820
+msgid "No debug log records found for level %s."
+msgstr ""
+
+#: admin-pages.php:822
+msgid "No debug log records found."
+msgstr ""
+
+#: admin-pages.php:1024
+msgid "No history records found."
+msgstr ""
+
+#: admin-pages.php:489
+msgid "No matches found for your %s criteria."
+msgstr ""
+
+#: admin-pages.php:1269
+msgid "Partial Match (Case-Insensitive, Default)"
+msgstr ""
+
+#: admin-pages.php:487
+msgid "Perform a search or preview to see results here."
+msgstr ""
+
+#: functions.php:1117
+msgid "Permission Denied"
+msgstr ""
+
+#: ajax-handlers.php:23
+#: ajax-handlers.php:65
+#: ajax-handlers.php:111
+#: ajax-handlers.php:180
+msgid "Permission denied."
+msgstr ""
+
+#: admin-pages.php:304
+msgid "Please select at least one item from the results to replace."
+msgstr ""
+
+#: admin-pages.php:1014
+#: admin-pages.php:1058
+msgid "Post"
+msgstr ""
+
+#: functions.php:38
+msgid "Post Content"
+msgstr ""
+
+#: functions.php:39
+msgid "Post Excerpt"
+msgstr ""
+
+#: functions.php:37
+msgid "Post Title"
+msgstr ""
+
+#: admin-pages.php:1040
+msgid "Post may have been deleted"
+msgstr ""
+
+#: admin-pages.php:529
+msgid "Posts Per Page:"
+msgstr ""
+
+#: admin-pages.php:480
+msgid "Preview"
+msgstr ""
+
+#: admin-pages.php:494
+msgid "Preview Mode:"
+msgstr ""
+
+#: admin-pages.php:1388
+#: admin-pages.php:1419
+msgid "Preview Selected"
+msgstr ""
+
+#: admin-pages.php:318
+msgid "Preview generation failed. Falling back to standard form submission."
+msgstr ""
+
+#: admin-pages.php:1275
+msgid "Regex Tips:"
+msgstr ""
+
+#: functions.php:690
+msgid "Regex matching error: %s"
+msgstr ""
+
+#: functions.php:686
+msgid "Regex replacement error: %s"
+msgstr ""
+
+#: admin-pages.php:1271
+msgid "Regular Expression (PCRE, Case-Insensitive)"
+msgstr ""
+
+#: admin-pages.php:1297
+msgid "Remove this pair"
+msgstr ""
+
+#: admin-pages.php:1391
+#: admin-pages.php:1420
+msgid "Replace Selected"
+msgstr ""
+
+#: admin-pages.php:1016
+#: admin-pages.php:1060
+msgid "Replace Term"
+msgstr ""
+
+#: admin-pages.php:1259
+msgid "Replace With"
+msgstr ""
+
+#: admin-pages.php:1296
+msgid "Replace with..."
+msgstr ""
+
+#: admin-pages.php:439
+msgid "Restore"
+msgstr ""
+
+#. translators: 1: Backup Index, 2: Post ID */
+#: functions.php:835
+msgid "Restore Error: Backup index %1$s not found or invalid for Post ID %2$s."
+msgstr ""
+
+#. translators: 1: Post ID, 2: Error message */
+#: functions.php:878
+msgid "Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s"
+msgstr ""
+
+#. translators: 1: Post ID, 2: Database Error */
+#: functions.php:913
+msgid "Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s"
+msgstr ""
+
+#. translators: 1: Post ID, 2: Backup Index */
+#: functions.php:895
+msgid "Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s."
+msgstr ""
+
+#. translators: 1: Post ID, 2: Backup Index */
+#: functions.php:855
+msgid "Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s."
+msgstr ""
+
+#: admin-pages.php:421
+msgid "Restore from:"
+msgstr ""
+
+#: admin-pages.php:1424
+msgid "Restore individual posts from backups within the results list."
+msgstr ""
+
+#: admin-pages.php:1418
+msgid "Results appear below. Select posts to modify."
+msgstr ""
+
+#: admin-pages.php:701
+msgid "Save Setting"
+msgstr ""
+
+#: admin-pages.php:313
+msgid "Scanning selected content sources..."
+msgstr ""
+
+#: admin-pages.php:1242
+msgid "Search For"
+msgstr ""
+
+#: admin-pages.php:1266
+msgid "Search Mode"
+msgstr ""
+
+#: admin-pages.php:1382
+#: admin-pages.php:1417
+msgid "Search Only"
+msgstr ""
+
+#: admin-pages.php:482
+msgid "Search Results"
+msgstr ""
+
+#: admin-pages.php:1015
+#: admin-pages.php:1059
+msgid "Search Term"
+msgstr ""
+
+#: admin-pages.php:1294
+msgid "Search for..."
+msgstr ""
+
+#: admin-pages.php:1275
+msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\\b</code> for word boundaries. Test carefully!"
+msgstr ""
+
+#: admin-pages.php:314
+msgid "Search scan complete. Loading results..."
+msgstr ""
+
+#: admin-pages.php:315
+msgid "Search scan failed. Falling back to standard form submission."
+msgstr ""
+
+#: ajax-handlers.php:77
+#: ajax-handlers.php:125
+msgid "Search term is required."
+msgstr ""
+
+#: admin-pages.php:514
+msgid "Select All / None"
+msgstr ""
+
+#: admin-pages.php:1406
+msgid "Select items from results to enable Preview/Replace."
+msgstr ""
+
+#: admin-pages.php:509
+msgid "Select posts below to Preview or Replace."
+msgstr ""
+
+#: admin-pages.php:494
+msgid "Showing potential changes for selected items. No changes have been saved yet."
+msgstr ""
+
+#. translators: %s: Number of matches shown */
+#: admin-pages.php:402
+msgid "Showing up to %s example matches for this post."
+msgstr ""
+
+#: admin-pages.php:1378
+msgid "Some selected posts do not have an existing backup yet. The plugin will create one automatically before replacement."
+msgstr ""
+
+#: admin-pages.php:309
+msgid "Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement."
+msgstr ""
+
+#: admin-pages.php:1102
+msgid "Sorry, you are not allowed to access this page."
+msgstr ""
+
+#: admin-pages.php:1252
+msgid "Start typing or use arrow keys to see recent searches."
+msgstr ""
+
+#: admin-pages.php:301
+msgid "This action cannot be easily undone, except by restoring from a backup."
+msgstr ""
+
+#: admin-pages.php:982
+msgid "This log records all successful replacement operations performed by the plugin."
+msgstr ""
+
+#: admin-pages.php:660
+msgid "This log records detailed plugin operations if persistent logging is enabled."
+msgstr ""
+
+#: admin-pages.php:177
+#: admin-pages.php:808
+#: admin-pages.php:862
+#: admin-pages.php:1012
+#: admin-pages.php:1056
+msgid "Timestamp (Site Time)"
+msgstr ""
+
+#: functions.php:1180
+msgid "Unable to generate the backup export file because JSON encoding failed."
+msgstr ""
+
+#: functions.php:260
+msgid "Unknown JSON error"
+msgstr ""
+
+#: admin-pages.php:1032
+msgid "Unknown User (ID: %d)"
+msgstr ""
+
+#: admin-pages.php:1423
+msgid "Use %s (and enable logging on its page) for detailed troubleshooting."
+msgstr ""
+
+#: admin-pages.php:1421
+msgid "Use %s to save all backups."
+msgstr ""
+
+#: admin-pages.php:1422
+msgid "Use %s to track changes."
+msgstr ""
+
+#: admin-pages.php:1275
+msgid "Use PCRE syntax (no delimiters needed here). Special characters like"
+msgstr ""
+
+#: admin-pages.php:1013
+#: admin-pages.php:1057
+msgid "User"
+msgstr ""
+
+#: admin-pages.php:388
+msgid "View"
+msgstr ""
+
+#: admin-pages.php:1403
+#: admin-pages.php:1423
+msgid "View Debug Log"
+msgstr ""
+
+#: admin-pages.php:1399
+#: admin-pages.php:1422
+msgid "View History Log"
+msgstr ""
+
+#: admin-pages.php:388
+msgid "View Post (Opens in new tab)"
+msgstr ""
+
+#: admin-pages.php:303
+msgid "WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server's maximum execution time is set sufficiently high."
+msgstr ""
+
+#: admin-pages.php:1329
+msgid "Widget Types"
+msgstr ""
+
+#: admin-pages.php:299
+msgid "You are about to replace text in %d selected post(s)."
+msgstr ""
+
+#: functions.php:1117
+msgid "You do not have sufficient permissions to access this feature."
+msgstr ""
+
+#: admin-pages.php:598
+#: admin-pages.php:960
+msgid "You do not have sufficient permissions to access this page."
+msgstr ""
+
+#: admin-pages.php:1275
+msgid "need escaping with"
+msgstr ""
+
+#: admin-actions.php:673
+msgid "ℹ️ No changes were predicted for the selected posts based on the provided terms and filters."
+msgstr ""
+
+#: admin-actions.php:513
+msgid "ℹ️ No posts matched your search criteria."
+msgstr ""
+
+#: admin-actions.php:925
+msgid "ℹ️ No posts required replacement based on the provided terms, selected posts, and filters."
+msgstr ""
+
+#: admin-pages.php:1377
+msgid "⚠️ Backup Recommended"
+msgstr ""
+
+#: admin-pages.php:1112
+msgid "⚠️ No backup data found to download. Perform some replacements first to create backups."
+msgstr ""
+
+#: admin-actions.php:749
+msgid "⚠️ No search term provided (single or bulk). Replacement operation cancelled."
+msgstr ""
+
+#: admin-actions.php:739
+msgid "⚠️ No valid bulk search terms provided (all were empty). Operation cancelled."
+msgstr ""
+
+#: admin-actions.php:369
+msgid "⚠️ Search results are no longer available. Please run the search again."
+msgstr ""
+
+#: admin-actions.php:420
+msgid "✅ Post ID %d successfully restored from backup."
+msgstr ""
+
+#: admin-actions.php:901
+msgid "✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s."
+msgstr ""
+
+#: admin-actions.php:728
+msgid "❌ Bulk Replace Error: The number of search terms does not match the number of replace terms. Operation cancelled."
+msgstr ""
+
+#: admin-actions.php:785
+msgid "❌ Failed to create backup for Post ID %d. Replacement skipped for this post."
+msgstr ""
+
+#: admin-actions.php:862
+msgid "❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved."
+msgstr ""
+
+#: admin-actions.php:423
+msgid "❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity."
+msgstr ""
+
+#: admin-actions.php:870
+msgid "❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s"
+msgstr ""
+
+#: admin-actions.php:854
+msgid "❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s"
+msgstr ""
+
+#: admin-actions.php:619
+msgid "❌ Invalid regular expression pattern for preview: %s. Please check syntax."
+msgstr ""
+
+#: admin-actions.php:761
+msgid "❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted."
+msgstr ""
+
+#: admin-actions.php:488
+msgid "❌ Invalid regular expression pattern provided for search: %s. Please check syntax."
+msgstr ""
+
+#: admin-actions.php:426
+msgid "❌ Security check failed for restore action. Please try again."
+msgstr ""
+
+#: admin-actions.php:471
+msgid "❌ Security check failed. Please try searching again."
+msgstr ""
+
+#: admin-actions.php:600
+msgid "❌ Security check failed. Please try the preview again."
+msgstr ""
+
+#: admin-actions.php:711
+msgid "❌ Security check failed. Please try the replacement again."
+msgstr ""
+
+#: admin-actions.php:593
+msgid "❌ You do not have permission to preview changes."
+msgstr ""
+
+#: admin-actions.php:409
+msgid "❌ You do not have permission to restore backups."
+msgstr ""
+
+#: admin-actions.php:704
+msgid "❌ You do not have permission to run replacements."
+msgstr ""
+
+#: admin-actions.php:464
+msgid "❌ You do not have permission to run searches."
+msgstr ""
+
+#: admin-actions.php:625
+msgid "👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved."
+msgstr ""
+
+#: admin-actions.php:909
+msgid "📦 Operation type: Bulk Replace with %d pair(s)."
+msgstr ""
+

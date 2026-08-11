@@ -1,8 +1,9 @@
 <?php
+
 /**
  * General Helper Functions
  *
- * @package ElementorTextReplacer
+ * @package Amendor
  */
 
 if (!defined('ABSPATH')) {
@@ -33,10 +34,10 @@ if (!defined('AMENDOR_DEFAULT_HISTORY_LOG_RETENTION')) {
 function amendor_get_available_content_sources()
 {
     return [
-        'elementor' => __('Elementor Content', 'elementor-text-replacer'),
-        'post_title' => __('Post Title', 'elementor-text-replacer'),
-        'post_content' => __('Post Content', 'elementor-text-replacer'),
-        'post_excerpt' => __('Post Excerpt', 'elementor-text-replacer'),
+        'elementor' => __('Elementor Content', 'amendor'),
+        'post_title' => __('Post Title', 'amendor'),
+        'post_content' => __('Post Content', 'amendor'),
+        'post_excerpt' => __('Post Excerpt', 'amendor'),
     ];
 }
 
@@ -158,7 +159,7 @@ function amendor_create_post_backup($post_id, array $snapshot)
     if ($result === false) {
         $error_msg = sprintf(
             /* translators: %s: Post ID */
-            esc_html__('Backup Error: update_post_meta failed for Post ID %s.', 'elementor-text-replacer'),
+            esc_html__('Backup Error: update_post_meta failed for Post ID %s.', 'amendor'),
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id]);
@@ -181,7 +182,7 @@ function amendor_create_elementor_backup($post_id, $data)
     if (!$post_id || !is_array($data)) {
         $error_msg = sprintf(
             /* translators: 1: Post ID, 2: Data type */
-            esc_html__('Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup.', 'elementor-text-replacer'),
+            esc_html__('Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup.', 'amendor'),
             esc_html($post_id),
             esc_html(gettype($data))
         );
@@ -256,8 +257,8 @@ function amendor_encode_elementor_data($data, $log_context = [])
     if ($encoded === false) {
         $error_message = sprintf(
             /* translators: %s: JSON error message */
-            __('JSON encoding failed: %s', 'elementor-text-replacer'),
-            function_exists('json_last_error_msg') ? json_last_error_msg() : __('Unknown JSON error', 'elementor-text-replacer')
+            __('JSON encoding failed: %s', 'amendor'),
+            function_exists('json_last_error_msg') ? json_last_error_msg() : __('Unknown JSON error', 'amendor')
         );
         amendor_add_debug_log($error_message, 'ERROR', $log_context);
         error_log('ETP ' . $error_message);
@@ -683,11 +684,11 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                             $matched = true;
                             $potential_new_value = @preg_replace($pattern, $replace, $original_value);
                             if ($potential_new_value === null && preg_last_error() !== PREG_NO_ERROR) {
-                                throw new Exception(sprintf(__('Regex replacement error: %s', 'elementor-text-replacer'), preg_last_error_msg()));
+                                throw new Exception(sprintf(__('Regex replacement error: %s', 'amendor'), preg_last_error_msg()));
                             }
                             $new_value = $potential_new_value;
                         } elseif ($match_result === false) {
-                            throw new Exception(sprintf(__('Regex matching error: %s', 'elementor-text-replacer'), preg_last_error_msg()));
+                            throw new Exception(sprintf(__('Regex matching error: %s', 'amendor'), preg_last_error_msg()));
                         }
                         break;
 
@@ -702,7 +703,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
         } catch (Exception $e) {
             $error_message = sprintf(
                 /* translators: 1: String snippet, 2: Error message */
-                __('Error processing string [%1$s...]: %2$s', 'elementor-text-replacer'),
+                __('Error processing string [%1$s...]: %2$s', 'amendor'),
                 esc_html(mb_substr($original_value, 0, 50)),
                 esc_html($e->getMessage())
             );
@@ -728,7 +729,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                     'before' => $original_value,
                     'after' => $original_value,
                     'changed' => false,
-                    'note' => __('Match - No Change Previewed', 'elementor-text-replacer'),
+                    'note' => __('Match - No Change Previewed', 'amendor'),
                 ];
             }
         }
@@ -810,10 +811,6 @@ function amendor_clear_elementor_cache_for_post($post_id)
             }
         }
 
-        if (function_exists('amendor_clear_elementor_theme_builder_conditions_cache')) {
-            amendor_clear_elementor_theme_builder_conditions_cache('elementor_cache_clear_for_post', (int) $post_id);
-        }
-
         return true;
     } catch (Exception $e) {
         amendor_add_debug_log('Error clearing Elementor cache.', 'WARN', ['post_id' => $post_id, 'error' => $e->getMessage()]);
@@ -836,7 +833,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
     if (!isset($backups[$backup_index]) || !is_array($backups[$backup_index])) {
         $error_msg = sprintf(
             /* translators: 1: Backup Index, 2: Post ID */
-            esc_html__('Restore Error: Backup index %1$s not found or invalid for Post ID %2$s.', 'elementor-text-replacer'),
+            esc_html__('Restore Error: Backup index %1$s not found or invalid for Post ID %2$s.', 'amendor'),
             esc_html($backup_index),
             esc_html($post_id)
         );
@@ -856,7 +853,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
     if (empty($snapshot)) {
         $error_msg = sprintf(
             /* translators: 1: Post ID, 2: Backup Index */
-            esc_html__('Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s.', 'elementor-text-replacer'),
+            esc_html__('Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s.', 'amendor'),
             esc_html($post_id),
             esc_html($backup_index)
         );
@@ -879,7 +876,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
         if (is_wp_error($update_result)) {
             $error_msg = sprintf(
                 /* translators: 1: Post ID, 2: Error message */
-                esc_html__('Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s', 'elementor-text-replacer'),
+                esc_html__('Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s', 'amendor'),
                 esc_html($post_id),
                 esc_html($update_result->get_error_message())
             );
@@ -896,7 +893,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
         } elseif (!is_array($backup_data)) {
             $error_msg = sprintf(
                 /* translators: 1: Post ID, 2: Backup Index */
-                esc_html__('Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s.', 'elementor-text-replacer'),
+                esc_html__('Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s.', 'amendor'),
                 esc_html($post_id),
                 esc_html($backup_index)
             );
@@ -914,7 +911,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 $db_error = $GLOBALS['wpdb']->last_error;
                 $error_msg = sprintf(
                     /* translators: 1: Post ID, 2: Database Error */
-                    esc_html__('Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s', 'elementor-text-replacer'),
+                    esc_html__('Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s', 'amendor'),
                     esc_html($post_id),
                     esc_html($db_error)
                 );
@@ -926,7 +923,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
         if (amendor_clear_elementor_cache_for_post($post_id)) {
             $log_msg = sprintf(
                 /* translators: %s: Post ID */
-                esc_html__('Elementor cache cleared after restore for Post ID %s.', 'elementor-text-replacer'),
+                esc_html__('Elementor cache cleared after restore for Post ID %s.', 'amendor'),
                 esc_html($post_id)
             );
             amendor_add_debug_log($log_msg, 'INFO', ['post_id' => $post_id]);
@@ -975,7 +972,7 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
     if (empty($user_id) || empty($post_id) || $changes_made <= 0) {
         $log_msg = sprintf(
             /* translators: 1: User ID, 2: Post ID, 3: Changes Made */
-            esc_html__('History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d', 'elementor-text-replacer'),
+            esc_html__('History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d', 'amendor'),
             esc_html($user_id),
             esc_html($post_id),
             intval($changes_made)
@@ -1019,7 +1016,7 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
         $db_error = $wpdb->last_error;
         $error_msg = sprintf(
             /* translators: %s: Database error message */
-            esc_html__('History Log Error: Failed to insert record into DB. Error: %s', 'elementor-text-replacer'),
+            esc_html__('History Log Error: Failed to insert record into DB. Error: %s', 'amendor'),
             esc_html($db_error)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['db_error' => $db_error]);
@@ -1027,7 +1024,7 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
     } else {
         $log_msg = sprintf(
             /* translators: 1: Post ID, 2: Changes Made */
-            esc_html__('History Log Success: Record added for Post ID %1$s. Changes: %2$d', 'elementor-text-replacer'),
+            esc_html__('History Log Success: Record added for Post ID %1$s. Changes: %2$d', 'amendor'),
             esc_html($post_id),
             intval($changes_made)
         );
@@ -1111,14 +1108,14 @@ function amendor_handle_backup_download()
     if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['amendor_download_nonce'])), 'amendor_download_backup_action')) {
         amendor_add_debug_log("Backup Download Error: Nonce verification failed on admin_init.", 'ERROR');
         // Optionally add a wp_die() here or redirect with an error message, but returning might be less disruptive
-        // wp_die( __( 'Security check failed.', 'elementor-text-replacer' ), __( 'Nonce Error', 'elementor-text-replacer' ), 403 );
+        // wp_die( __( 'Security check failed.', 'amendor' ), __( 'Nonce Error', 'amendor' ), 403 );
         return;
     }
 
     // Check capability
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log("Backup Download Error: Permission denied on admin_init.", 'ERROR', ['user_id' => get_current_user_id()]);
-        wp_die(__('You do not have sufficient permissions to access this feature.', 'elementor-text-replacer'), __('Permission Denied', 'elementor-text-replacer'), 403);
+        wp_die(__('You do not have sufficient permissions to access this feature.', 'amendor'), __('Permission Denied', 'amendor'), 403);
         exit; // Exit is redundant after wp_die but good practice
     }
 
@@ -1181,7 +1178,7 @@ function amendor_handle_backup_download()
 
         $json_export = amendor_encode_elementor_data($export_data, ['operation' => 'backup_export', 'count' => $processed_count]);
         if ($json_export === false) {
-            wp_die(__('Unable to generate the backup export file because JSON encoding failed.', 'elementor-text-replacer'), __('Export Error', 'elementor-text-replacer'), 500);
+            wp_die(__('Unable to generate the backup export file because JSON encoding failed.', 'amendor'), __('Export Error', 'amendor'), 500);
         }
 
         // Output the JSON data
