@@ -684,10 +684,12 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                             $matched = true;
                             $potential_new_value = @preg_replace($pattern, $replace, $original_value);
                             if ($potential_new_value === null && preg_last_error() !== PREG_NO_ERROR) {
+                                /* translators: %s: PCRE error message. */
                                 throw new Exception(sprintf(__('Regex replacement error: %s', 'amendor'), preg_last_error_msg()));
                             }
                             $new_value = $potential_new_value;
                         } elseif ($match_result === false) {
+                            /* translators: %s: PCRE error message. */
                             throw new Exception(sprintf(__('Regex matching error: %s', 'amendor'), preg_last_error_msg()));
                         }
                         break;
@@ -1115,7 +1117,7 @@ function amendor_handle_backup_download()
     // Check capability
     if (!current_user_can('manage_options')) {
         amendor_add_debug_log("Backup Download Error: Permission denied on admin_init.", 'ERROR', ['user_id' => get_current_user_id()]);
-        wp_die(__('You do not have sufficient permissions to access this feature.', 'amendor'), __('Permission Denied', 'amendor'), 403);
+        wp_die(esc_html__('You do not have sufficient permissions to access this feature.', 'amendor'), esc_html__('Permission Denied', 'amendor'), 403);
         exit; // Exit is redundant after wp_die but good practice
     }
 
@@ -1164,10 +1166,10 @@ function amendor_handle_backup_download()
         amendor_add_debug_log("Backup Download: No data to export (checked on admin_init).", 'INFO');
         // Redirect back with an error message instead of trying to output headers
         $redirect_url = add_query_arg(['page' => amendor_get_admin_parent_slug(), 'amendor_notice' => 'no_backup_data'], admin_url('admin.php'));
-        wp_redirect(esc_url_raw($redirect_url));
+        wp_safe_redirect(esc_url_raw($redirect_url));
         exit;
     } else {
-        $filename = 'amendor-backups-' . date('Ymd-His') . '.json';
+        $filename = 'amendor-backups-' . gmdate('Ymd-His') . '.json';
         amendor_add_debug_log("Backup Download: Exporting posts (via admin_init).", 'INFO', ['count' => $processed_count, 'filename' => $filename]);
 
         // Set headers to force download
@@ -1178,11 +1180,11 @@ function amendor_handle_backup_download()
 
         $json_export = amendor_encode_elementor_data($export_data, ['operation' => 'backup_export', 'count' => $processed_count]);
         if ($json_export === false) {
-            wp_die(__('Unable to generate the backup export file because JSON encoding failed.', 'amendor'), __('Export Error', 'amendor'), 500);
+            wp_die(esc_html__('Unable to generate the backup export file because JSON encoding failed.', 'amendor'), esc_html__('Export Error', 'amendor'), 500);
         }
 
-        // Output the JSON data
-        echo $json_export;
+        // Output the JSON data (raw JSON download - must not be HTML-escaped).
+        echo $json_export; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         exit; // IMPORTANT: Stop script execution after sending the file
     }
 }

@@ -162,15 +162,18 @@ function amendor_send_debug_log_export(array $rows, $format, $filename_suffix)
         header('Content-Type: text/plain; charset=utf-8');
         header('Content-Disposition: attachment; filename="amendor-debug-log-' . $filename_suffix . '-' . $timestamp . '.txt"');
 
+        $lines = [];
         foreach ($rows as $row) {
             $export_row = amendor_prepare_debug_log_export_row($row);
-            echo '[' . $export_row['timestamp'] . '] ' . $export_row['level'] . ': ' . $export_row['message'] . "\n";
+            $lines[] = '[' . $export_row['timestamp'] . '] ' . $export_row['level'] . ': ' . $export_row['message'];
             if ($export_row['context_text'] !== '') {
-                echo 'Context: ' . $export_row['context_text'] . "\n";
+                $lines[] = 'Context: ' . $export_row['context_text'];
             }
-            echo "\n";
+            $lines[] = '';
         }
 
+        // Raw text export: content must not be HTML-escaped.
+        echo implode("\n", $lines); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         exit;
     }
 
@@ -196,6 +199,7 @@ function amendor_send_debug_log_export(array $rows, $format, $filename_suffix)
             ]);
         }
 
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose
         fclose($output);
     }
 
@@ -302,13 +306,16 @@ function amendor_admin_enqueue_scripts($hook_suffix)
     // Localize strings for JavaScript (specifically for confirmation dialogs)
     $js_vars = [
         'confirm_replace_title' => __('Confirm Replacement', 'amendor'),
+        /* translators: %d: Number of selected posts. */
         'confirm_replace_text' => __('You are about to replace text in %d selected post(s).', 'amendor'), // %d will be replaced by JS
         'confirm_replace_backup_notice' => __('A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved.', 'amendor'),
         'confirm_replace_warning' => __('This action cannot be easily undone, except by restoring from a backup.', 'amendor'),
         'confirm_replace_proceed' => __('Are you sure you want to proceed?', 'amendor'),
+        /* translators: %d: Number of selected posts. */
         'confirm_replace_large_batch_warning' => __('WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server\'s maximum execution time is set sufficiently high.', 'amendor'), // %d will be replaced
         'alert_select_items' => __('Please select at least one item from the results to replace.', 'amendor'),
         'confirm_restore_title' => __('Confirm Restore', 'amendor'),
+        /* translators: %d: Post ID. */
         'confirm_restore_text' => __('Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post.', 'amendor'), // %d will be replaced
         'confirm_clear_log_title' => __('Confirm Clear Log', 'amendor'),
         'confirm_clear_log_text' => __('Are you sure you want to clear the ENTIRE debug log? This cannot be undone.', 'amendor'),
@@ -496,23 +503,29 @@ function amendor_render_results_section(array $args)
             <?php if (!$search_attempted && !$preview_attempted): ?>
                 <p><?php esc_html_e('Perform a search or preview to see results here.', 'amendor'); ?></p>
             <?php elseif (!$has_results_or_preview): ?>
-                <p><?php printf(esc_html__('No matches found for your %s criteria.', 'amendor'), '<strong>' . esc_html($action) . '</strong>'); ?></p>
+                <p><?php
+                /* translators: %s: Action name (search or preview). */
+                printf(esc_html__('No matches found for your %s criteria.', 'amendor'), '<strong>' . esc_html($action) . '</strong>');
+                ?></p>
             <?php else: ?>
                 <?php $result_types = array_unique(wp_list_pluck($items_to_display, 'type')); ?>
                 <?php if ($is_preview): ?>
                     <div class="notice notice-info inline" style="margin-bottom: 15px;">
-                        <p><strong><?php esc_html_e('Preview Mode:', 'amendor'); ?></strong> <?php esc_html_e('Showing potential changes for selected items. No changes have been saved yet.', 'amendor'); ?> <?php printf(esc_html__('Active content sources: %s.', 'amendor'), '<strong>' . esc_html($content_source_summary) . '</strong>'); ?></p>
+                        <p><strong><?php esc_html_e('Preview Mode:', 'amendor'); ?></strong> <?php esc_html_e('Showing potential changes for selected items. No changes have been saved yet.', 'amendor'); ?> <?php
+                        /* translators: %s: Comma-separated list of active content sources. */
+                        printf(esc_html__('Active content sources: %s.', 'amendor'), '<strong>' . esc_html($content_source_summary) . '</strong>');
+                        ?></p>
                     </div>
                 <?php else: ?>
                     <p><?php
                         printf(
                             /* translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
                             esc_html__('Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s.', 'amendor'),
-                            '<strong>' . number_format_i18n(count($items_to_display)) . '</strong>',
-                            '<strong>' . number_format_i18n($paged) . '</strong>',
-                            '<strong>' . number_format_i18n($total_pages) . '</strong>',
-                            '<strong>' . number_format_i18n($matched_posts) . '</strong>',
-                            '<strong>' . number_format_i18n($total_candidate_posts) . '</strong>',
+                            '<strong>' . esc_html(number_format_i18n(count($items_to_display))) . '</strong>',
+                            '<strong>' . esc_html(number_format_i18n($paged)) . '</strong>',
+                            '<strong>' . esc_html(number_format_i18n($total_pages)) . '</strong>',
+                            '<strong>' . esc_html(number_format_i18n($matched_posts)) . '</strong>',
+                            '<strong>' . esc_html(number_format_i18n($total_candidate_posts)) . '</strong>',
                             '<strong>' . esc_html($content_source_summary) . '</strong>'
                         );
                         ?></p>
@@ -559,11 +572,14 @@ function amendor_render_results_section(array $args)
                     <div class="tablenav bottom amendor-results-pagination">
                         <div class="tablenav-pages">
                             <span class="displaying-num">
-                                <?php printf(esc_html(_n('%s matched item', '%s matched items', $matched_posts, 'amendor')), number_format_i18n($matched_posts)); ?>
+                                <?php
+                                /* translators: %s: Number of matched items. */
+                                printf(esc_html(_n('%s matched item', '%s matched items', $matched_posts, 'amendor')), esc_html(number_format_i18n($matched_posts)));
+                                ?>
                             </span>
                             <?php
                             $pagination_base_url = add_query_arg('paged', '%#%', admin_url('admin.php?page=' . amendor_get_admin_parent_slug()));
-                            echo paginate_links([
+                            echo wp_kses_post(paginate_links([
                                 'base' => $pagination_base_url,
                                 'format' => '',
                                 'prev_text' => __('&laquo; Prev', 'amendor'),
@@ -571,7 +587,7 @@ function amendor_render_results_section(array $args)
                                 'total' => $total_pages,
                                 'current' => $paged,
                                 'add_args' => ['results_per_page' => $results_per_page],
-                            ]);
+                            ]));
                             ?>
                         </div>
                     </div>
@@ -606,12 +622,13 @@ function amendor_display_debug_log_page()
 
     // Security check
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'amendor'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
     // --- Handle Clear Log Action ---
     if (isset($_POST['amendor_action']) && $_POST['amendor_action'] === 'clear_debug_log' && isset($_POST['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['_wpnonce'])), 'amendor_clear_debug_log_nonce')) {
-        $wpdb->query("TRUNCATE TABLE {$table_name}");
+        // Table name is plugin-owned and derived from $wpdb->prefix; gated by nonce + capability.
+        $wpdb->query("TRUNCATE TABLE {$table_name}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
         echo '<div class="notice notice-success is-dismissible"><p>' . esc_html__('Debug log cleared successfully.', 'amendor') . '</p></div>';
     }
 
@@ -638,12 +655,13 @@ function amendor_display_debug_log_page()
             $export_params[] = $selected_level;
         }
 
-        $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC";
+        // Table name is plugin-owned; the optional level filter is prepared below.
+        $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
         if (!empty($export_params)) {
             $export_query = $wpdb->prepare($export_query, ...$export_params);
         }
 
-        $export_rows = $wpdb->get_results($export_query, ARRAY_A);
+        $export_rows = $wpdb->get_results($export_query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $filename_suffix = !empty($selected_level) ? strtolower($selected_level) : 'all-levels';
         amendor_send_debug_log_export($export_rows, $export_format, $filename_suffix);
     }
@@ -655,15 +673,15 @@ function amendor_display_debug_log_page()
     }
 
     // Get total items for pagination (considering filter)
-    $total_items = $wpdb->get_var("SELECT COUNT(id) FROM {$table_name}" . $where_clause);
+    $total_items = $wpdb->get_var("SELECT COUNT(id) FROM {$table_name}" . $where_clause); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
     $total_pages = ceil($total_items / $per_page);
 
     // Get log items for the current page (considering filter)
     $log_items = $wpdb->get_results($wpdb->prepare(
-        "SELECT * FROM {$table_name}" . $where_clause . " ORDER BY timestamp DESC LIMIT %d OFFSET %d",
+        "SELECT * FROM {$table_name}" . $where_clause . " ORDER BY timestamp DESC LIMIT %d OFFSET %d", // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
         $per_page,
         $offset
-    ));
+    )); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
 
 ?>
     <div class="wrap">
@@ -784,7 +802,10 @@ function amendor_display_debug_log_page()
             <div class="tablenav top">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
+                        <?php
+                        /* translators: %s: Number of log items. */
+                        printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), esc_html(number_format_i18n($total_items)));
+                        ?>
                     </span>
                     <?php
                     // Add log_level to pagination links if filter is active
@@ -792,7 +813,7 @@ function amendor_display_debug_log_page()
                     if (!empty($selected_level)) {
                         $paginate_base = add_query_arg('log_level', $selected_level, $paginate_base);
                     }
-                    echo paginate_links([
+                    echo wp_kses_post(paginate_links([
                         'base'      => $paginate_base,
                         'format'    => '',
                         'prev_text' => __('&laquo;', 'amendor'), // Use HTML entities for arrows
@@ -800,7 +821,7 @@ function amendor_display_debug_log_page()
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
-                    ]);
+                    ]));
                     ?>
                 </div>
             </div>
@@ -823,6 +844,7 @@ function amendor_display_debug_log_page()
                         <td class="colspanchange" colspan="4">
                             <?php
                             if (!empty($selected_level)) {
+                                /* translators: %s: Debug log level (e.g. ERROR). */
                                 printf(esc_html__('No debug log records found for level %s.', 'amendor'), '<strong>' . esc_html($selected_level) . '</strong>');
                             } else {
                                 esc_html_e('No debug log records found.', 'amendor');
@@ -879,10 +901,13 @@ function amendor_display_debug_log_page()
             <div class="tablenav bottom">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
+                        <?php
+                        /* translators: %s: Number of log items. */
+                        printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), esc_html(number_format_i18n($total_items)));
+                        ?>
                     </span>
                     <?php
-                    echo paginate_links([
+                    echo wp_kses_post(paginate_links([
                         'base'      => $paginate_base, // Use the same base as top pagination
                         'format'    => '',
                         'prev_text' => __('&laquo;', 'amendor'),
@@ -890,7 +915,7 @@ function amendor_display_debug_log_page()
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
-                    ]);
+                    ]));
                     ?>
                 </div>
             </div>
@@ -963,7 +988,7 @@ function amendor_display_change_history_log()
 
     // Security check: Only users who can manage options should see this
     if (!current_user_can('manage_options')) {
-        wp_die(__('You do not have sufficient permissions to access this page.', 'amendor'));
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
     // --- Pagination Logic ---
@@ -993,10 +1018,13 @@ function amendor_display_change_history_log()
             <div class="tablenav top">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
+                        <?php
+                        /* translators: %s: Number of log items. */
+                        printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), esc_html(number_format_i18n($total_items)));
+                        ?>
                     </span>
                     <?php
-                    echo paginate_links([
+                    echo wp_kses_post(paginate_links([
                         'base'      => add_query_arg('history_paged', '%#%'), // '%#%' will be replaced by page number
                         'format'    => '', // Already have query var in base
                         'prev_text' => __('&laquo;', 'amendor'),
@@ -1004,7 +1032,7 @@ function amendor_display_change_history_log()
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false, // Base includes everything needed (?page=amendor-change-history)
-                    ]);
+                    ]));
                     ?>
                 </div>
             </div>
@@ -1035,11 +1063,17 @@ function amendor_display_change_history_log()
                         <tr>
                             <td><?php echo esc_html(wp_date(get_option('date_format', 'Y-m-d') . ' ' . get_option('time_format', 'H:i:s'), strtotime($item->timestamp))); // Display in site's timezone 
                                 ?></td>
-                            <td><?php echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'amendor'), $item->user_id)); ?></td>
+                            <td><?php
+                            /* translators: %d: User ID. */
+                            echo esc_html($user_info ? $user_info->user_login : sprintf(__('Unknown User (ID: %d)', 'amendor'), $item->user_id));
+                            ?></td>
                             <td>
                                 <?php $post_link = get_edit_post_link($item->post_id); ?>
                                 <?php if ($post_link): ?>
-                                    <a href="<?php echo esc_url($post_link); ?>" target="_blank" title="<?php printf(esc_attr__('Edit Post: %s', 'amendor'), $item->post_title); ?>">
+                                    <a href="<?php echo esc_url($post_link); ?>" target="_blank" title="<?php
+                                    /* translators: %s: Post title. */
+                                    printf(esc_attr__('Edit Post: %s', 'amendor'), esc_attr($item->post_title));
+                                    ?>">
                                         <?php echo esc_html(wp_trim_words($item->post_title, 10, '...')); ?> (ID: <?php echo esc_html($item->post_id); ?>) <span class="dashicons dashicons-external"></span>
                                     </a>
                                 <?php else: ?>
@@ -1076,10 +1110,13 @@ function amendor_display_change_history_log()
             <div class="tablenav bottom">
                 <div class="tablenav-pages">
                     <span class="displaying-num">
-                        <?php printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), number_format_i18n($total_items)); ?>
+                        <?php
+                        /* translators: %s: Number of log items. */
+                        printf(esc_html(_n('%s item', '%s items', $total_items, 'amendor')), esc_html(number_format_i18n($total_items)));
+                        ?>
                     </span>
                     <?php
-                    echo paginate_links([
+                    echo wp_kses_post(paginate_links([
                         'base'      => add_query_arg('history_paged', '%#%'),
                         'format'    => '',
                         'prev_text' => __('&laquo;', 'amendor'),
@@ -1087,7 +1124,7 @@ function amendor_display_change_history_log()
                         'total'     => $total_pages,
                         'current'   => $current_page,
                         'add_args'  => false,
-                    ]);
+                    ]));
                     ?>
                 </div>
             </div>
@@ -1105,7 +1142,7 @@ function amendor_render_text_replacer_ui()
 {
     // Security Check: Ensure the user has the required capability.
     if (!current_user_can('manage_options')) {
-        wp_die(__('Sorry, you are not allowed to access this page.', 'amendor'));
+        wp_die(esc_html__('Sorry, you are not allowed to access this page.', 'amendor'));
         return; // Stop execution if user doesn't have permission
     }
 
@@ -1420,13 +1457,13 @@ function amendor_render_text_replacer_ui()
                             <ol style="margin: 0; padding-left: 20px; list-style: decimal;">
                                 <li><?php esc_html_e('Enter search/replace terms (or use Bulk Replace).', 'amendor'); ?></li>
                                 <li><?php esc_html_e('Choose the content sources to scan, then optionally filter Elementor widget types.', 'amendor'); ?></li>
-                                <li><?php printf(esc_html__('Click %s.', 'amendor'), '<strong>' . esc_html__('Search Only', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Click %s.', 'amendor'), '<strong>' . esc_html__('Search Only', 'amendor') . '</strong>'); ?></li>
                                 <li><?php esc_html_e('Results appear below. Select posts to modify.', 'amendor'); ?></li>
-                                <li><?php printf(esc_html__('Click %s for a dry run.', 'amendor'), '<strong>' . esc_html__('Preview Selected', 'amendor') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Click %s to apply changes (backups created per post).', 'amendor'), '<strong>' . esc_html__('Replace Selected', 'amendor') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s to save all backups.', 'amendor'), '<strong>' . esc_html__('Download Backups', 'amendor') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s to track changes.', 'amendor'), '<strong>' . esc_html__('View History Log', 'amendor') . '</strong>'); ?></li>
-                                <li><?php printf(esc_html__('Use %s (and enable logging on its page) for detailed troubleshooting.', 'amendor'), '<strong>' . esc_html__('View Debug Log', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Click %s for a dry run.', 'amendor'), '<strong>' . esc_html__('Preview Selected', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Click %s to apply changes (backups created per post).', 'amendor'), '<strong>' . esc_html__('Replace Selected', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Use %s to save all backups.', 'amendor'), '<strong>' . esc_html__('Download Backups', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Use %s to track changes.', 'amendor'), '<strong>' . esc_html__('View History Log', 'amendor') . '</strong>'); ?></li>
+                                <li><?php /* translators: %s: Name of the button or action. */ printf(esc_html__('Use %s (and enable logging on its page) for detailed troubleshooting.', 'amendor'), '<strong>' . esc_html__('View Debug Log', 'amendor') . '</strong>'); ?></li>
                                 <li><?php esc_html_e('Restore individual posts from backups within the results list.', 'amendor'); ?></li>
                             </ol>
                         </div>

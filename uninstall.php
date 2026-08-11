@@ -18,17 +18,18 @@ delete_option('amendor_enable_persistent_debug_log');
 delete_option('amendor_delete_data_on_uninstall');
 delete_option('amendor_storage_schema_version');
 
-$plugin_tables = [
+$amendor_tables = [
     $wpdb->prefix . 'amendor_history',
     $wpdb->prefix . 'amendor_debug_log',
 ];
 
-foreach ($plugin_tables as $table_name) {
-    if (!preg_match('/^[A-Za-z0-9_]+$/', $table_name)) {
+foreach ($amendor_tables as $amendor_table_name) {
+    if (!preg_match('/^[A-Za-z0-9_]+$/', $amendor_table_name)) {
         continue;
     }
 
-    $wpdb->query("DROP TABLE IF EXISTS `{$table_name}`");
+    // Table names are plugin-owned and validated above.
+    $wpdb->query("DROP TABLE IF EXISTS `{$amendor_table_name}`"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.SchemaChange
 }
 
 $wpdb->delete($wpdb->postmeta, ['meta_key' => '_amendor_backups'], ['%s']);

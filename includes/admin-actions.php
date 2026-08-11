@@ -418,9 +418,11 @@ function amendor_handle_restore_action($action, array &$messages)
         amendor_add_debug_log("Attempting Restore Action", 'INFO', ['post_id' => $post_id_to_restore, 'index' => $backup_index]);
 
         if (amendor_restore_elementor_backup($post_id_to_restore, $backup_index)) {
+            /* translators: %d: Post ID. */
             $messages[] = ['type' => 'success', 'text' => sprintf(__('✅ Post ID %d successfully restored from backup.', 'amendor'), $post_id_to_restore)];
             amendor_add_debug_log("Restore successful.", 'INFO', ['post_id' => $post_id_to_restore]);
         } else {
+            /* translators: %d: Post ID. */
             $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity.', 'amendor'), $post_id_to_restore)];
         }
     } else {
@@ -486,6 +488,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
     $content_sources = amendor_normalize_content_sources($content_sources);
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
+        /* translators: %s: The invalid regular expression pattern. */
         $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern provided for search: %s. Please check syntax.', 'amendor'), '<code>' . esc_html($search) . '</code>')];
         amendor_add_debug_log("Search aborted: Invalid regex pattern.", 'ERROR', ['pattern' => $search, 'sources' => $content_sources]);
         amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
@@ -617,12 +620,14 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
     $content_sources = amendor_normalize_content_sources($content_sources);
 
     if ($search_mode === 'regex' && !amendor_is_valid_regex($search)) {
+        /* translators: %s: The invalid regular expression pattern. */
         $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern for preview: %s. Please check syntax.', 'amendor'), '<code>' . esc_html($search) . '</code>')];
         amendor_add_debug_log("Preview aborted: Invalid regex pattern.", 'ERROR', ['pattern' => $search, 'sources' => $content_sources]);
         amendor_add_debug_log("====== Preview Action Finished ======", 'DEBUG');
         return $preview_results;
     }
 
+    /* translators: %d: Number of selected posts. */
     $messages[] = ['type' => 'info', 'text' => sprintf(__('👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved.', 'amendor'), count($selected_ids))];
     $processed_preview_count = 0;
 
@@ -759,6 +764,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
     if ($search_mode === 'regex') {
         foreach ($pairs_to_process as $index => $pair) {
             if (!amendor_is_valid_regex($pair['search'])) {
+                /* translators: 1: Pair number, 2: The invalid regular expression pattern. */
                 $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted.', 'amendor'), $index + 1, '<code>' . esc_html($pair['search']) . '</code>')];
                 amendor_add_debug_log("Replace aborted: Invalid regex pattern in pair.", 'ERROR', ['index' => $index + 1, 'pattern' => $pair['search'], 'sources' => $content_sources]);
                 amendor_add_debug_log("====== Replace Action Finished ======", 'DEBUG');
@@ -783,6 +789,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $snapshot = amendor_build_post_backup_snapshot($post_id);
         if (!is_array($snapshot) || !amendor_create_post_backup($post_id, $snapshot)) {
             amendor_add_debug_log("Replace aborted for post: Failed to create backup.", 'ERROR', ['post_id' => $post_id]);
+            /* translators: %d: Post ID. */
             $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to create backup for Post ID %d. Replacement skipped for this post.', 'amendor'), $post_id)];
             continue;
         }
@@ -852,6 +859,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $update_result = wp_update_post(wp_slash($native_update), true);
         if (is_wp_error($update_result)) {
             amendor_add_debug_log('ERROR updating native post fields after processing pairs.', 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
+            /* translators: 1: Post ID, 2: WordPress error message. */
             $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($update_result->get_error_message()))];
             continue;
         }
@@ -860,6 +868,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             if (is_array($current_state['elementor_data'])) {
                 $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
                 if ($encoded_current_data_state === false) {
+                    /* translators: %d: Post ID. */
                     $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
                     continue;
                 }
@@ -868,6 +877,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
                 if ($meta_update === false) {
                     $db_error = $GLOBALS['wpdb']->last_error;
                     amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
+                    /* translators: 1: Post ID, 2: Database error message. */
                     $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
                     continue;
                 }
@@ -879,8 +889,10 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
         amendor_add_debug_log("Post content updated successfully.", 'INFO', ['post_id' => $post_id, 'total_changes' => $total_changes_in_post_across_pairs, 'sources' => $content_sources]);
 
+        /* translators: %s: Comma-separated list of content sources. */
         $source_suffix = sprintf(__(' [Sources: %s]', 'amendor'), amendor_format_content_sources_summary($content_sources));
         $log_search = $is_bulk_operation ? __('(Bulk Operation)', 'amendor') . $source_suffix : $search . $source_suffix;
+        /* translators: %d: Number of search/replace pairs. */
         $log_replace = $is_bulk_operation ? sprintf(__('%d pairs applied', 'amendor'), count($pairs_to_process)) : $replace;
         amendor_log_replacement(
             $current_user_id,
@@ -899,6 +911,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
     if ($global_replaced_posts_count > 0) {
         $summary_message = sprintf(
+            /* translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced. */
             __('✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s.', 'amendor'),
             '<strong>' . number_format_i18n(count($selected_ids)) . '</strong>',
             '<strong>' . number_format_i18n($global_replaced_posts_count) . '</strong>',
@@ -907,6 +920,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
         if ($is_bulk_operation) {
             $summary_message .= '<br>' . sprintf(
+                /* translators: %d: Number of search/replace pairs. */
                 __('📦 Operation type: Bulk Replace with %d pair(s).', 'amendor'),
                 count($pairs_to_process)
             );
