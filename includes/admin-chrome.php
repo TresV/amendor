@@ -277,6 +277,15 @@ function amendor_render_text_replacer_ui()
         // Add more notices here if needed in the future
     }
 
+    // Handle onboarding banner dismissal.
+    if (isset($_GET['amendor_dismiss_onboarding'], $_GET['_wpnonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_dismiss_onboarding')) {
+        $onboarding_user_id = get_current_user_id();
+        if ($onboarding_user_id) {
+            update_user_meta($onboarding_user_id, 'amendor_onboarding_dismissed', 1);
+        }
+    }
+    $show_onboarding = !get_user_meta(get_current_user_id(), 'amendor_onboarding_dismissed', true);
+
     // Add an initial marker to the debug log for clarity
     amendor_add_debug_log("====== ETP PAGE LOAD / ACTION START ======", 'DEBUG');
 
@@ -373,6 +382,24 @@ function amendor_render_text_replacer_ui()
     ?>
     <div class="wrap amendor-wrap">
         <h1><span class="dashicons dashicons-edit" style="font-size: 1.3em; vertical-align: middle;"></span> <?php esc_html_e('Amendor', 'amendor'); ?></h1>
+
+        <?php if ($show_onboarding): ?>
+            <div class="notice notice-info is-dismissible amendor-onboarding">
+                <p><strong><?php esc_html_e('Welcome to Amendor!', 'amendor'); ?></strong></p>
+                <p><?php esc_html_e('Amendor finds and replaces text inside Elementor content and native post fields — safely.', 'amendor'); ?></p>
+                <ol style="margin: 6px 0 6px 20px; list-style: decimal;">
+                    <li><?php esc_html_e('Enter the text to find (and an optional replacement), or use Bulk Replace for multiple pairs.', 'amendor'); ?></li>
+                    <li><?php esc_html_e('Choose the content sources to scan, then click "Search Only".', 'amendor'); ?></li>
+                    <li><?php esc_html_e('Review the results, use "Preview Selected" for a dry run, then "Replace Selected".', 'amendor'); ?></li>
+                    <li><?php esc_html_e('A backup is created before every replacement — use "Undo Last Replace" or the History Log to revert.', 'amendor'); ?></li>
+                </ol>
+                <p>
+                    <a class="button button-secondary" href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=' . amendor_get_admin_parent_slug() . '&amendor_dismiss_onboarding=1'), 'amendor_dismiss_onboarding')); ?>">
+                        <?php esc_html_e('Dismiss', 'amendor'); ?>
+                    </a>
+                </p>
+            </div>
+        <?php endif; ?>
 
         <?php // --- Display collected notices/messages --- 
         ?>
