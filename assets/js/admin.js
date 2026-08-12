@@ -1,6 +1,7 @@
 jQuery(function ($) {
     let bypassSearchIntercept = false;
     let activeSubmitAction = '';
+    let searchCancelled = false;
 
     function ensureActionInput(form, actionValue) {
         let actionInput = form.find('#amendor-form-action');
@@ -90,16 +91,19 @@ jQuery(function ($) {
     function setSearchProgressState(visible, text, isError) {
         const progress = $('#amendor-search-progress');
         const textNode = progress.find('.amendor-search-progress-text');
+        const cancelButton = progress.find('#amendor-search-cancel');
 
         if (!visible) {
             progress.hide().removeClass('notice-error').addClass('notice-info');
             textNode.text('');
+            cancelButton.hide();
             $('#search-button').prop('disabled', false);
             return;
         }
 
         progress.toggleClass('notice-error', !!isError).toggleClass('notice-info', !isError).show();
         textNode.text(text);
+        cancelButton.toggle(!isError);
         $('#search-button').prop('disabled', true);
     }
 
@@ -185,10 +189,25 @@ jQuery(function ($) {
             return;
         }
 
+        searchCancelled = false;
         cacheField.val('');
         setSearchProgressState(true, amendor_admin_vars.search_progress_label + ' 0%', false);
 
+        function finishCancelled() {
+            const progress = $('#amendor-search-progress');
+            progress.toggleClass('notice-error', false).toggleClass('notice-info', true).show();
+            progress.find('.amendor-search-progress-text').text(amendor_admin_vars.search_cancelled);
+            progress.find('#amendor-search-cancel').hide();
+            $('#search-button').prop('disabled', false);
+            cacheField.val('');
+        }
+
         function runStep(cacheKey, reset) {
+            if (searchCancelled) {
+                finishCancelled();
+                return;
+            }
+
             $.post(ajaxurl, {
                 action: 'amendor_run_search_batch',
                 nonce: amendor_admin_vars.search_batch_nonce,
@@ -199,6 +218,10 @@ jQuery(function ($) {
                 search_cache_key: cacheKey || '',
                 reset: reset ? 1 : 0
             }).done(function (response) {
+                if (searchCancelled) {
+                    finishCancelled();
+                    return;
+                }
                 if (!response || !response.success || !response.data) {
                     throw new Error('invalid-search-response');
                 }
@@ -339,6 +362,11 @@ jQuery(function ($) {
         ensureActionInput(form, 'search');
         activeSubmitAction = 'search';
         form.trigger('submit');
+    });
+
+    $(document).on('click', '#amendor-search-cancel', function () {
+        searchCancelled = true;
+        $(this).hide();
     });
 
     $(document).on('change', '#results-per-page', function () {

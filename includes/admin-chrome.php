@@ -211,6 +211,8 @@ function amendor_admin_enqueue_scripts($hook_suffix)
         'search_progress_label' => __('Scanning selected content sources...', 'amendor'),
         'search_progress_done' => __('Search scan complete. Loading results...', 'amendor'),
         'search_progress_error' => __('Search scan failed. Falling back to standard form submission.', 'amendor'),
+        'search_cancel_label' => __('Cancel Scan', 'amendor'),
+        'search_cancelled' => __('Search scan cancelled.', 'amendor'),
         'preview_nonce' => wp_create_nonce('amendor_run_preview'),
         'preview_progress_label' => __('Generating preview...', 'amendor'),
         'preview_progress_error' => __('Preview generation failed. Falling back to standard form submission.', 'amendor'),
@@ -581,6 +583,9 @@ function amendor_render_text_replacer_ui()
                                 </button>
                                 <div id="amendor-search-progress" class="notice inline" style="display: none; margin: 0;">
                                     <p class="amendor-search-progress-text"></p>
+                                    <button type="button" id="amendor-search-cancel" class="button button-small" style="display: none; margin-top: 6px;">
+                                        <span class="dashicons dashicons-no-alt"></span> <?php esc_html_e('Cancel Scan', 'amendor'); ?>
+                                    </button>
                                 </div>
                                 <button type="submit" name="action" value="preview_selected" class="button button-secondary button-large amendor-action-button" id="preview-button" disabled>
                                     <span class="dashicons dashicons-visibility"></span> <?php esc_html_e('Preview Selected', 'amendor'); ?>
