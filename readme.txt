@@ -28,6 +28,7 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 * Persistent debug log with level filtering and CSV/JSON/TXT export
 * Content-source and widget-type filters
 * Recent search history (20 entries) with one-click re-run
+* Elementor editor tool (experimental): word-level highlight and in-place replace directly in the editor, with per-occurrence selection, a field filter, and native Cmd/Ctrl+Z undo
 * Fully translation-ready (`languages/amendor.pot`)
 
 == Installation ==
@@ -44,6 +45,10 @@ Backups are stored in a dedicated database table (`{prefix}amendor_backups`) and
 = Does it work with Elementor Pro and third-party add-ons? =
 
 Yes. Amendor scans the raw Elementor data, so any widget from Elementor Free, Elementor Pro, or third-party add-ons is supported. Use the widget-type filter to target specific widgets.
+
+= Can I replace text right inside the Elementor editor? =
+
+Yes. Open the Amendor panel with the 🔍 button or Alt+Shift+F, search, tick the occurrences you want, then press "Replace Selected". Changes apply in place (no page reload) and are recorded in Elementor's own history, so Cmd/Ctrl+Z (Mac) or Ctrl+Z (Windows) undoes them like any other editor change. The panel's Undo button restores the whole last batch at once.
 
 = Can I delete all plugin data on uninstall? =
 

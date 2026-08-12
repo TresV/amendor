@@ -7,16 +7,32 @@ Standalone package for the Elementor search-and-replace tool.
 - **Search & replace** across Elementor data plus native post fields (title, content, excerpt)
 - **Three search modes**: partial (case-insensitive), exact (case-sensitive), and PCRE regex
 - **Bulk replace** with multiple sequential search/replace pairs
-- **Batched AJAX scanning** with live progress and results caching (scales to large sites)
-- **Preview (dry run)** before committing changes
-- **Automatic backups** before every replacement, with **one-click Undo** and per-post restore (stored in a dedicated table)
+- **Batched AJAX scanning** with live progress, a **cancel button**, and results caching (scales to large sites)
+- **Preview (dry run)** before committing changes, with a collapsible **visual JSON diff** for Elementor data
+- **Automatic backups** before every replacement, with **one-click Undo** and per-post restore (dedicated table)
 - **Dashboard quick stats** and **occurrence counts** by content source and widget type
 - **Change history log** with filtering and CSV/JSON/TXT export
 - **Persistent debug log** with level filtering and CSV/JSON/TXT export
-- **Content-source and widget-type filters**
+- **Content-source and widget-type filters**, plus **field-key targeting**
+- **URL / domain swap preset**
+- **Data-size guardrail** (10 MB per page) to safely skip oversized Elementor documents
 - **Recent search history** (20 entries) with one-click re-run
-- **Elementor editor tool (experimental)** — floating search in the Elementor editor that highlights matching widgets (`Alt+Shift+F`); replacement stays in the admin
+- **Dismissible onboarding banner**
+- **Elementor editor tool (experimental)** — search, highlight and replace right inside the Elementor editor (see below)
 - Fully **translation-ready** (`languages/amendor.pot`)
+
+### Elementor editor tool (experimental)
+
+Search, see and replace text directly in the Elementor editor — no need to leave the page:
+
+- Floating **FAB + panel**, opened with the 🔍 button or **`Alt+Shift+F`** (works even while focus is inside the preview canvas)
+- **Word-level highlighting** in the live preview (yellow marks) plus a subtle outline on each matching element
+- **Replace Selected (N)**: per-occurrence checkboxes (widget + field + snippet) so you choose exactly what changes
+- **Field filter** with safe defaults (text & content only; URLs, shortcodes, code and internal fields are opt-in)
+- **In-place replace** via Elementor's own settings command — the canvas updates instantly, no page reload, scroll position preserved
+- **Undo** in the panel, plus native **`Cmd/Ctrl+Z`** support through Elementor's history system (each replace is a recorded history step)
+- **"Open in Amendor"** deep link to the full admin tool for batch work, backups and the audit trail
+- Gated by the `amendor_enable_elementor_editor_integration` filter (default on)
 
 ## Contents
 
@@ -33,7 +49,7 @@ Standalone package for the Elementor search-and-replace tool.
   - `admin-main-page.php` — the main search & replace UI page
   - `log-debug-page.php` — debug log page and export
   - `log-history-page.php` — change history log page and export
-  - `elementor-editor.php` — Elementor editor integration (experimental highlight tool)
+  - `elementor-editor.php` — Elementor editor integration (experimental search/highlight/replace tool)
   - `ajax-handlers.php` — AJAX endpoints (batched search, results, preview, backup check)
 - `assets/`: admin CSS and JavaScript
 - `languages/`: translation template (`amendor.pot`)
