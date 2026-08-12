@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Elementor Editor Integration (experimental)
  *
