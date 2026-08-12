@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Activation Functions
  *
@@ -54,6 +55,20 @@ function amendor_create_amendor_tables()
     ) {$charset_collate};";
     dbDelta($sql_debug); // dbDelta handles creation and updates safely
 
+    // --- Backups Table ---
+    $backups_table_name = amendor_get_backups_table_name();
+    $sql_backups = "CREATE TABLE {$backups_table_name} (
+        id BIGINT UNSIGNED NOT NULL AUTO_INCREMENT,
+        post_id BIGINT UNSIGNED NOT NULL,
+        timestamp datetime DEFAULT '0000-00-00 00:00:00' NOT NULL,
+        data longtext DEFAULT NULL,
+        snapshot longtext DEFAULT NULL,
+        PRIMARY KEY  (id),
+        INDEX idx_post_id (post_id),
+        INDEX idx_timestamp (timestamp)
+    ) {$charset_collate};";
+    dbDelta($sql_backups); // dbDelta handles creation and updates safely
+
 }
 
 /**
@@ -75,8 +90,35 @@ function amendor_activate_amendor()
 {
     amendor_maybe_migrate_legacy_storage();
     amendor_create_amendor_tables();
+    amendor_schedule_log_pruning();
     flush_rewrite_rules();
 }
+
+/**
+ * Schedule the daily log pruning event.
+ *
+ * @return void
+ */
+function amendor_schedule_log_pruning()
+{
+    if (!wp_next_scheduled('amendor_daily_log_prune')) {
+        wp_schedule_event(time() + HOUR_IN_SECONDS, 'daily', 'amendor_daily_log_prune');
+    }
+}
+
+/**
+ * Clear the daily log pruning event.
+ *
+ * @return void
+ */
+function amendor_clear_log_pruning_schedule()
+{
+    $timestamp = wp_next_scheduled('amendor_daily_log_prune');
+    if ($timestamp) {
+        wp_unschedule_event($timestamp, 'amendor_daily_log_prune');
+    }
+}
+add_action('amendor_daily_log_prune', 'amendor_run_log_pruning');
 
 /**
  * Return whether a table exists.
@@ -142,6 +184,69 @@ function amendor_maybe_migrate_legacy_storage()
 }
 
 /**
+ * Move post-meta backups into the dedicated backups table.
+ *
+ * @return void
+ */
+function amendor_maybe_migrate_backups_to_table()
+{
+    global $wpdb;
+
+    if (get_option('amendor_storage_schema_version', '') === '2') {
+        return;
+    }
+
+    $table = amendor_get_backups_table_name();
+    if (!amendor_table_exists($table)) {
+        return;
+    }
+
+    $migrated = 0;
+    $meta_keys = [
+        amendor_get_backup_meta_key(),
+        '_elementor_text_replacer_backups',
+    ];
+
+    foreach ($meta_keys as $meta_key) {
+        $rows = $wpdb->get_results(
+            $wpdb->prepare("SELECT post_id, meta_value FROM {$wpdb->postmeta} WHERE meta_key = %s", $meta_key),
+            ARRAY_A
+        ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+
+        foreach ((array) $rows as $row) {
+            $backups = maybe_unserialize($row['meta_value']);
+            if (!is_array($backups)) {
+                continue;
+            }
+
+            foreach ($backups as $backup) {
+                if (!is_array($backup)) {
+                    continue;
+                }
+
+                $wpdb->insert(
+                    $table,
+                    [
+                        'post_id' => (int) $row['post_id'],
+                        'timestamp' => isset($backup['timestamp']) ? (string) $backup['timestamp'] : current_time('mysql', 1),
+                        'data' => (isset($backup['data']) && is_array($backup['data'])) ? wp_json_encode($backup['data']) : null,
+                        'snapshot' => isset($backup['snapshot']) ? wp_json_encode($backup['snapshot']) : null,
+                    ],
+                    ['%d', '%s', '%s', '%s']
+                );
+                $migrated++;
+            }
+        }
+
+        $wpdb->delete($wpdb->postmeta, ['meta_key' => $meta_key], ['%s']);
+    }
+
+    update_option('amendor_storage_schema_version', '2', false);
+
+    amendor_add_debug_log('Migrated post-meta backups into dedicated backups table.', 'INFO', ['migrated' => $migrated]);
+}
+
+/**
  * Run one-time storage migrations on plugin load.
  *
  * @return void
@@ -149,5 +254,6 @@ function amendor_maybe_migrate_legacy_storage()
 function amendor_run_db_migrations()
 {
     amendor_maybe_migrate_legacy_storage();
+    amendor_maybe_migrate_backups_to_table();
 }
 add_action('plugins_loaded', 'amendor_run_db_migrations', 5);

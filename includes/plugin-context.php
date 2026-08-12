@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Shared plugin runtime context helpers.
  *
@@ -41,6 +42,18 @@ function amendor_is_amendor_plugin()
 function amendor_is_fluentor_plugin()
 {
     return false;
+}
+
+/**
+ * Return whether the current user can manage plugin settings and actions.
+ *
+ * Central capability check used by every admin handler and AJAX endpoint.
+ *
+ * @return bool
+ */
+function amendor_current_user_can_manage()
+{
+    return current_user_can('manage_options');
 }
 
 /**
@@ -95,4 +108,16 @@ function amendor_get_debug_log_table_name()
     global $wpdb;
 
     return $wpdb->prefix . 'amendor_debug_log';
+}
+
+/**
+ * Return the Amendor backups table name.
+ *
+ * @return string
+ */
+function amendor_get_backups_table_name()
+{
+    global $wpdb;
+
+    return $wpdb->prefix . 'amendor_backups';
 }

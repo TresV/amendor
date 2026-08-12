@@ -74,6 +74,9 @@ function amendor_analyze_native_post_fields(array $state, $search, $replace, $se
  */
 function amendor_analyze_post_content_state(array $state, $search, $replace, $search_mode, $perform_replace, array $selected_widgets, array $content_sources)
 {
+    // Clamp terms once here; every scan/preview/replace path funnels through this method.
+    $search = amendor_limit_search_term($search);
+    $replace = amendor_limit_search_term($replace);
     $content_sources = amendor_normalize_content_sources($content_sources);
     $changes_details = amendor_create_changes_details();
 
@@ -169,7 +172,18 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                         $match_result = @preg_match($pattern, $original_value);
                         if ($match_result === 1) {
                             $matched = true;
+                            // Bound PCRE resource limits to avoid catastrophic backtracking on user input.
+                            $prev_backtrack = ini_get('pcre.backtrack_limit');
+                            $prev_recursion = ini_get('pcre.recursion_limit');
+                            ini_set('pcre.backtrack_limit', '1000000');
+                            ini_set('pcre.recursion_limit', '100000');
                             $potential_new_value = @preg_replace($pattern, $replace, $original_value);
+                            if (false !== $prev_backtrack) {
+                                ini_set('pcre.backtrack_limit', (string) $prev_backtrack);
+                            }
+                            if (false !== $prev_recursion) {
+                                ini_set('pcre.recursion_limit', (string) $prev_recursion);
+                            }
                             if ($potential_new_value === null && preg_last_error() !== PREG_NO_ERROR) {
                                 /* translators: %s: PCRE error message. */
                                 throw new Exception(sprintf(__('Regex replacement error: %s', 'amendor'), preg_last_error_msg()));
@@ -285,10 +299,7 @@ function amendor_clear_elementor_cache_for_post($post_id)
     try {
         $elementor = Elementor\Plugin::$instance;
 
-        if (isset($elementor->files_manager) && method_exists($elementor->files_manager, 'clear_cache')) {
-            $elementor->files_manager->clear_cache();
-        }
-
+        // Clear only the affected post's CSS cache, never the whole site.
         if (isset($elementor->posts_css_manager)) {
             if (method_exists($elementor->posts_css_manager, 'clear_cache_for_post')) {
                 $elementor->posts_css_manager->clear_cache_for_post($post_id);
@@ -402,8 +413,30 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
             intval($changes_made)
         );
         amendor_add_debug_log($log_msg, 'INFO', ['post_id' => $post_id, 'changes' => $changes_made]);
-        amendor_prune_log_table($table_name, amendor_get_history_log_retention_limit());
     }
+}
+
+/**
+ * Recursively truncate long values inside a debug-log context.
+ *
+ * @param mixed $context Context payload.
+ * @return mixed
+ */
+function amendor_redact_log_context($context)
+{
+    if (is_string($context)) {
+        return strlen($context) > 1000 ? substr($context, 0, 1000) . '…[truncated]' : $context;
+    }
+
+    if (is_array($context)) {
+        $out = [];
+        foreach ($context as $key => $value) {
+            $out[$key] = amendor_redact_log_context($value);
+        }
+        return $out;
+    }
+
+    return $context;
 }
 
 /**
@@ -420,6 +453,15 @@ function amendor_add_debug_log($message, $level = 'INFO', $context = null)
 
     if (!$logging_enabled && !$write_php_debug_log) {
         return;
+    }
+
+    // Bound the message length and redact long context values before persisting.
+    $message = (string) $message;
+    if (strlen($message) > 1000) {
+        $message = substr($message, 0, 1000) . '…[truncated]';
+    }
+    if ($context !== null) {
+        $context = amendor_redact_log_context($context);
     }
 
     $allowed_levels = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'];
@@ -462,8 +504,5 @@ function amendor_add_debug_log($message, $level = 'INFO', $context = null)
         ]
     );
 
-    if ($inserted !== false) {
-        amendor_prune_log_table($table_name, amendor_get_debug_log_retention_limit());
-    }
+    // Retention is enforced by the daily log pruning cron job.
 }
-

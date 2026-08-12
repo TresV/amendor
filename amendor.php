@@ -54,5 +54,6 @@ require_once AMENDOR_PLUGIN_DIR . 'includes/ajax-handlers.php';
 add_action('plugins_loaded', 'amendor_load_textdomain');
 
 register_activation_hook(AMENDOR_PLUGIN_FILE, 'amendor_activate_amendor');
+register_deactivation_hook(AMENDOR_PLUGIN_FILE, 'amendor_clear_log_pruning_schedule');
 
 add_action('admin_init', 'amendor_handle_backup_download');

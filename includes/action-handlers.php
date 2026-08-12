@@ -23,7 +23,7 @@ function amendor_handle_restore_action($action, array &$messages)
         return;
     }
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to restore backups.', 'amendor')];
         amendor_add_debug_log('Restore Error: Permission denied.', 'ERROR');
         return;
@@ -80,7 +80,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
         return $payload;
     }
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to run searches.', 'amendor')];
         amendor_add_debug_log('Search Error: Permission denied.', 'ERROR');
         return $payload;
@@ -119,54 +119,53 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
     $cache = amendor_get_valid_search_cache($cache_key, $signature);
 
     if (!$cache) {
-        $cache_key = wp_generate_password(20, false, false);
-        $candidate_post_ids = amendor_get_search_candidate_post_ids($supported_post_types, $content_sources);
-        $payload['total_candidate_posts'] = count($candidate_post_ids);
-        amendor_add_debug_log('Candidate posts loaded for fallback full search scan.', 'INFO', [
-            'candidate_count' => $payload['total_candidate_posts'],
-            'current_page' => $paged,
-            'results_per_page' => $results_per_page,
-            'sources' => $content_sources,
-        ]);
+        // No AJAX search cache available: run a synchronous full scan via the batched backend.
+        $fallback_cache_key = '';
+        $is_first_batch = true;
+        $batch = [];
 
-        if (empty($candidate_post_ids)) {
+        do {
+            $batch = amendor_run_search_batch_request(
+                $search,
+                $search_mode,
+                $selected_widgets,
+                $content_sources,
+                $supported_post_types,
+                $fallback_cache_key,
+                $is_first_batch
+            );
+            $is_first_batch = false;
+            $fallback_cache_key = $batch['cache_key'];
+        } while (empty($batch['done']));
+
+        if ((int) $batch['total_candidate_posts'] === 0) {
             amendor_add_debug_log('No candidate posts found for search.', 'INFO', ['sources' => $content_sources]);
             $messages[] = ['type' => 'info', 'text' => __('ℹ️ No posts matched your search criteria.', 'amendor')];
             amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
             return $payload;
         }
 
-        $matched_results = [];
-        amendor_add_debug_log('Starting fallback full candidate scan for search.', 'DEBUG', [
-            'candidate_count' => $payload['total_candidate_posts'],
-            'sources' => $content_sources,
-        ]);
-        $batch_result = amendor_process_search_batch($candidate_post_ids, 0, count($candidate_post_ids), $search, $search_mode, $selected_widgets, $content_sources);
-        $matched_results = $batch_result['matched_results'];
-        $payload['scanned_posts'] = $batch_result['scanned_count'];
-        $payload['matched_posts'] = $batch_result['matched_count'];
-
-        $cache = [
-            'user_id' => get_current_user_id(),
-            'signature' => $signature,
-            'search' => $search,
-            'search_mode' => $search_mode,
-            'selected_widgets' => $selected_widgets,
-            'content_sources' => $content_sources,
-            'supported_post_types' => array_values($supported_post_types),
-            'matched_results' => $matched_results,
-            'scanned_posts' => $payload['scanned_posts'],
-            'matched_posts' => $payload['matched_posts'],
-            'total_candidate_posts' => $payload['total_candidate_posts'],
-            'completed' => true,
-        ];
-        amendor_set_search_cache($cache_key, $cache);
         amendor_add_debug_log('Finished fallback full candidate scan for search.', 'DEBUG', [
-            'scanned' => $payload['scanned_posts'],
-            'matched' => $payload['matched_posts'],
+            'scanned' => $batch['scanned_posts'],
+            'matched' => $batch['matched_posts'],
             'sources' => $content_sources,
         ]);
-        $cache = amendor_get_valid_search_cache($cache_key, $signature);
+
+        $payload = amendor_get_cached_search_results_payload(
+            $search,
+            $search_mode,
+            $selected_widgets,
+            $content_sources,
+            $supported_post_types,
+            $fallback_cache_key,
+            $paged,
+            $results_per_page,
+            $messages
+        );
+
+        amendor_add_debug_log("====== Search Action Finished ======", 'DEBUG');
+
+        return $payload;
     }
 
     if ($cache) {
@@ -210,7 +209,7 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
         return $preview_results;
     }
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to preview changes.', 'amendor')];
         amendor_add_debug_log('Preview Error: Permission denied.', 'ERROR');
         return $preview_results;
@@ -323,7 +322,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         return;
     }
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to run replacements.', 'amendor')];
         amendor_add_debug_log('Replace Error: Permission denied.', 'ERROR');
         return;

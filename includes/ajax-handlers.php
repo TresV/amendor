@@ -18,7 +18,7 @@ function amendor_check_backup_callback()
     check_ajax_referer('amendor_check_backup', 'nonce');
 
     // Check if user has permission
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         amendor_add_debug_log('AJAX Backup Check: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
         wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
@@ -60,7 +60,7 @@ function amendor_run_search_batch_callback()
 {
     check_ajax_referer('amendor_run_search_batch', 'nonce');
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         amendor_add_debug_log('AJAX Search Batch: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
         wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
@@ -106,7 +106,7 @@ function amendor_get_search_results_callback()
 {
     check_ajax_referer('amendor_get_search_results', 'nonce');
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         amendor_add_debug_log('AJAX Search Results: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
         wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();
@@ -175,7 +175,7 @@ function amendor_run_preview_callback()
 {
     check_ajax_referer('amendor_run_preview', 'nonce');
 
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         amendor_add_debug_log('AJAX Preview: Permission denied.', 'WARN', ['user_id' => get_current_user_id()]);
         wp_send_json_error(['message' => __('Permission denied.', 'amendor')], 403);
         wp_die();

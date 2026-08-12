@@ -110,6 +110,7 @@ function amendor_send_debug_log_export(array $rows, $format, $filename_suffix)
 
     header('Content-Type: text/csv; charset=utf-8');
     header('Content-Disposition: attachment; filename="amendor-debug-log-' . $filename_suffix . '-' . $timestamp . '.csv"');
+    echo "\xEF\xBB\xBF"; // UTF-8 BOM for Excel compatibility.
 
     $output = fopen('php://output', 'w');
     if ($output !== false) {
@@ -146,7 +147,7 @@ function amendor_display_debug_log_page()
     $table_name = amendor_get_debug_log_table_name();
 
     // Security check
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
@@ -187,6 +188,8 @@ function amendor_display_debug_log_page()
         }
 
         $export_rows = $wpdb->get_results($export_query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+        $export_max_rows = max(1, (int) apply_filters('amendor_debug_log_export_max_rows', 50000));
+        $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
         $filename_suffix = !empty($selected_level) ? strtolower($selected_level) : 'all-levels';
         amendor_send_debug_log_export($export_rows, $export_format, $filename_suffix);
     }
@@ -248,6 +251,17 @@ function amendor_display_debug_log_page()
                     id="amendor_history_log_retention_limit"
                     name="amendor_history_log_retention_limit"
                     value="<?php echo esc_attr((int) get_option('amendor_history_log_retention_limit', amendor_get_default_history_log_retention_setting())); ?>"
+                    style="max-width: 160px;">
+                <label for="amendor_search_batch_size">
+                    <?php esc_html_e('Search scan batch size (posts per AJAX request)', 'amendor'); ?>
+                </label>
+                <input
+                    type="number"
+                    min="1"
+                    step="1"
+                    id="amendor_search_batch_size"
+                    name="amendor_search_batch_size"
+                    value="<?php echo esc_attr((int) get_option('amendor_search_batch_size', AMENDOR_DEFAULT_SEARCH_BATCH_SIZE)); ?>"
                     style="max-width: 160px;">
             </div>
             <?php submit_button(__('Save Setting', 'amendor'), 'primary', 'submit_settings', false); // Add save button for the setting 
@@ -512,7 +526,7 @@ function amendor_display_change_history_log()
     $table_name = amendor_get_history_table_name();
 
     // Security check: Only users who can manage options should see this
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
     }
 
@@ -658,5 +672,3 @@ function amendor_display_change_history_log()
     </div><!-- /.wrap -->
 <?php
 } // End amendor_display_change_history_log
-
-

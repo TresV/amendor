@@ -26,6 +26,10 @@ if (!defined('AMENDOR_DEFAULT_HISTORY_LOG_RETENTION')) {
     define('AMENDOR_DEFAULT_HISTORY_LOG_RETENTION', 5000);
 }
 
+if (!defined('AMENDOR_MAX_SEARCH_TERM_LENGTH')) {
+    define('AMENDOR_MAX_SEARCH_TERM_LENGTH', 1000);
+}
+
 /**
  * Return the available content sources that can be searched or replaced.
  *
@@ -108,6 +112,21 @@ function amendor_format_content_sources_summary(array $selected_sources)
 }
 
 /**
+ * Clamp a search or replace term to a safe maximum length.
+ *
+ * @param string $term Search or replace term.
+ * @return string
+ */
+function amendor_limit_search_term($term)
+{
+    if (!is_string($term) || $term === '') {
+        return '';
+    }
+
+    return mb_substr($term, 0, AMENDOR_MAX_SEARCH_TERM_LENGTH);
+}
+
+/**
  * Build the current backup snapshot for a post.
  *
  * @param int $post_id The post ID.
@@ -142,36 +161,69 @@ function amendor_create_post_backup($post_id, array $snapshot)
         return false;
     }
 
-    $backups = get_post_meta($post_id, amendor_get_backup_meta_key(), true);
-    if (!is_array($backups)) {
-        $backups = [];
-    }
+    global $wpdb;
+    $table = amendor_get_backups_table_name();
+    $elementor_data = (isset($snapshot['elementor_data']) && is_array($snapshot['elementor_data'])) ? $snapshot['elementor_data'] : null;
 
-    $backup = [
-        'timestamp' => current_time('mysql', 1),
-        'data' => isset($snapshot['elementor_data']) && is_array($snapshot['elementor_data']) ? $snapshot['elementor_data'] : null,
-        'snapshot' => $snapshot,
-    ];
-    array_unshift($backups, $backup);
-    $backups = array_slice($backups, 0, amendor_get_backup_retention_limit());
-    $result = update_post_meta($post_id, amendor_get_backup_meta_key(), $backups);
+    $inserted = $wpdb->insert(
+        $table,
+        [
+            'post_id' => (int) $post_id,
+            'timestamp' => current_time('mysql', 1),
+            'data' => $elementor_data !== null ? wp_json_encode($elementor_data) : null,
+            'snapshot' => wp_json_encode($snapshot),
+        ],
+        ['%d', '%s', '%s', '%s']
+    );
 
-    if ($result === false) {
+    if ($inserted === false) {
         $error_msg = sprintf(
             /* translators: %s: Post ID */
-            esc_html__('Backup Error: update_post_meta failed for Post ID %s.', 'amendor'),
+            esc_html__('Backup Error: Insert failed for Post ID %s.', 'amendor'),
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id]);
         error_log('ETP ' . $error_msg);
+        return false;
     }
 
-    return $result !== false;
+    amendor_prune_backups($post_id, amendor_get_backup_retention_limit());
+
+    return true;
+}
+
+/**
+ * Prune backups for a post down to the retention limit.
+ *
+ * @param int $post_id The post ID.
+ * @param int $limit Maximum number of backups to keep.
+ * @return void
+ */
+function amendor_prune_backups($post_id, $limit)
+{
+    global $wpdb;
+
+    $limit = max(1, (int) $limit);
+    $table = amendor_get_backups_table_name();
+
+    // Table name is plugin-owned; the subquery keeps the newest $limit rows.
+    $wpdb->query(
+        $wpdb->prepare(
+            "DELETE FROM {$table} WHERE post_id = %d AND id NOT IN (
+                SELECT id FROM (
+                    SELECT id FROM {$table} WHERE post_id = %d ORDER BY timestamp DESC, id DESC LIMIT %d
+                ) retained_backups
+            )",
+            $post_id,
+            $post_id,
+            $limit
+        )
+    ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 }
 
 /**
  * Creates a backup of the Elementor data for a specific post.
- * Stores backups in post meta, keeping the configured retention count.
+ * Stores backups in the dedicated backups table, keeping the configured retention count.
  *
  * @param int $post_id The ID of the post.
  * @param array $data The Elementor data array to back up.
@@ -201,15 +253,31 @@ function amendor_create_elementor_backup($post_id, $data)
 }
 
 /**
- * Retrieves all stored backups for a specific post from post meta.
+ * Retrieves all stored backups for a specific post from the backups table.
  *
  * @param int $post_id The ID of the post.
  * @return array An array of backups or an empty array if none found.
  */
 function amendor_get_elementor_backups($post_id)
 {
-    $backups = get_post_meta($post_id, amendor_get_backup_meta_key(), true);
-    return is_array($backups) ? $backups : [];
+    global $wpdb;
+    $table = amendor_get_backups_table_name();
+
+    $rows = $wpdb->get_results(
+        $wpdb->prepare("SELECT * FROM {$table} WHERE post_id = %d ORDER BY timestamp DESC, id DESC", $post_id),
+        ARRAY_A
+    ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+    $backups = [];
+    foreach ((array) $rows as $row) {
+        $backups[] = [
+            'timestamp' => (string) $row['timestamp'],
+            'data' => !empty($row['data']) ? json_decode($row['data'], true) : null,
+            'snapshot' => !empty($row['snapshot']) ? json_decode($row['snapshot'], true) : [],
+        ];
+    }
+
+    return $backups;
 }
 
 /**
@@ -220,7 +288,14 @@ function amendor_get_elementor_backups($post_id)
  */
 function amendor_get_post_backup_count($post_id)
 {
-    return count(amendor_get_elementor_backups($post_id));
+    global $wpdb;
+    $table = amendor_get_backups_table_name();
+
+    $count = $wpdb->get_var(
+        $wpdb->prepare("SELECT COUNT(id) FROM {$table} WHERE post_id = %d", $post_id)
+    ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+    return (int) $count;
 }
 
 /**
@@ -301,7 +376,10 @@ function amendor_get_backup_retention_limit()
  */
 function amendor_get_default_search_batch_size()
 {
-    return max(1, (int) apply_filters('amendor_search_batch_size', AMENDOR_DEFAULT_SEARCH_BATCH_SIZE));
+    $saved = get_option('amendor_search_batch_size', 0);
+    $value = is_numeric($saved) && (int) $saved > 0 ? (int) $saved : AMENDOR_DEFAULT_SEARCH_BATCH_SIZE;
+
+    return max(1, (int) apply_filters('amendor_search_batch_size', $value));
 }
 
 /**
@@ -455,6 +533,17 @@ function amendor_prune_log_table($table_name, $limit)
             $limit
         )
     );
+}
+
+/**
+ * Run the scheduled log pruning job.
+ *
+ * @return void
+ */
+function amendor_run_log_pruning()
+{
+    amendor_prune_log_table(amendor_get_history_table_name(), amendor_get_history_log_retention_limit());
+    amendor_prune_log_table(amendor_get_debug_log_table_name(), amendor_get_debug_log_retention_limit());
 }
 
 /**
@@ -658,7 +747,7 @@ function amendor_handle_backup_download()
     }
 
     // Check capability
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         amendor_add_debug_log("Backup Download Error: Permission denied on admin_init.", 'ERROR', ['user_id' => get_current_user_id()]);
         wp_die(esc_html__('You do not have sufficient permissions to access this feature.', 'amendor'), esc_html__('Permission Denied', 'amendor'), 403);
         exit; // Exit is redundant after wp_die but good practice
@@ -666,43 +755,39 @@ function amendor_handle_backup_download()
 
     amendor_add_debug_log("Initiating Backup Download (via admin_init)...", 'INFO');
 
-    // --- Gather Data (Same logic as before) ---
-    $posts_with_backup = get_posts([
-        'post_type' => 'any',
-        'post_status' => 'any',
-        'posts_per_page' => -1,
-        'meta_query' => [
-            [
-                'key' => amendor_get_backup_meta_key(),
-                'compare' => 'EXISTS'
-            ]
-        ],
-        'fields' => 'ids'
-    ]);
+    // --- Gather Data from the dedicated backups table ---
+    global $wpdb;
+    $table = amendor_get_backups_table_name();
+    $backup_rows = $wpdb->get_results(
+        "SELECT post_id, timestamp, data, snapshot FROM {$table} ORDER BY post_id ASC, timestamp DESC, id DESC",
+        ARRAY_A
+    ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
 
     $export_data = [];
     $processed_count = 0;
+    $posts_map = [];
 
-    foreach ($posts_with_backup as $post_id) {
-        $post = get_post($post_id);
-        if (!$post) {
-            amendor_add_debug_log("Backup Download: Skipped Post - Post not found.", 'WARN', ['post_id' => $post_id]);
-            continue;
-        }
+    foreach ((array) $backup_rows as $row) {
+        $post_id = (int) $row['post_id'];
 
-        $backups = amendor_get_elementor_backups($post_id);
-        if (!empty($backups) && is_array($backups)) {
-            $export_data[] = [
+        if (!isset($posts_map[$post_id])) {
+            $post = get_post($post_id);
+            $posts_map[$post_id] = [
                 'post_id' => $post_id,
-                'post_title' => $post->post_title,
-                'post_type' => $post->post_type,
-                'backups' => $backups
+                'post_title' => $post ? (string) $post->post_title : '',
+                'post_type' => $post ? (string) $post->post_type : '',
+                'backups' => [],
             ];
             $processed_count++;
-        } else {
-            amendor_add_debug_log("Backup Download: No valid backup meta found for Post.", 'DEBUG', ['post_id' => $post_id]);
         }
+
+        $posts_map[$post_id]['backups'][] = [
+            'timestamp' => (string) $row['timestamp'],
+            'data' => !empty($row['data']) ? json_decode($row['data'], true) : null,
+            'snapshot' => !empty($row['snapshot']) ? json_decode($row['snapshot'], true) : [],
+        ];
     }
+    $export_data = array_values($posts_map);
 
     // --- Prepare and Send File ---
     if (empty($export_data)) {

@@ -127,6 +127,17 @@ function amendor_register_debug_settings()
             'show_in_rest' => false,
         ]
     );
+
+    register_setting(
+        'amendor_debug_settings',
+        'amendor_search_batch_size',
+        [
+            'type' => 'integer',
+            'sanitize_callback' => 'amendor_sanitize_positive_integer_setting',
+            'default' => AMENDOR_DEFAULT_SEARCH_BATCH_SIZE,
+            'show_in_rest' => false,
+        ]
+    );
 }
 add_action('admin_init', 'amendor_register_debug_settings');
 
@@ -246,7 +257,7 @@ function amendor_get_admin_notices_html(array $messages)
 function amendor_render_text_replacer_ui()
 {
     // Security Check: Ensure the user has the required capability.
-    if (!current_user_can('manage_options')) {
+    if (!amendor_current_user_can_manage()) {
         wp_die(esc_html__('Sorry, you are not allowed to access this page.', 'amendor'));
         return; // Stop execution if user doesn't have permission
     }
@@ -354,7 +365,7 @@ function amendor_render_text_replacer_ui()
     // ======================================================================
     // --- RENDER THE ADMIN PAGE UI ---
     // ======================================================================
-?>
+    ?>
     <div class="wrap amendor-wrap">
         <h1><span class="dashicons dashicons-edit" style="font-size: 1.3em; vertical-align: middle;"></span> <?php esc_html_e('Amendor', 'amendor'); ?></h1>
 
