@@ -1,0 +1,26 @@
+name: CI
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up PHP
+        uses: shivammathur/setup-php@v2
+        with:
+          php-version: '8.1'
+
+      - name: PHP syntax check
+        run: composer run lint
+
+      - name: JS syntax check
+        run: node --check assets/js/admin.js && node --check assets/js/editor.js
+
+      - name: Structural checks
+        run: php bin/check-structure.php .

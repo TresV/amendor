@@ -132,8 +132,67 @@ jQuery(function ($) {
         return String(type).replace(/-/g, ' ');
     }
 
+    function spacedHtml(html) {
+        // Insert a space after block-level closers and inline breaks so the
+        // stripped text reads as separate sentences rather than glued words.
+        return String(html)
+            .replace(/<\/(p|h[1-6]|li|ul|ol|div|section|blockquote|pre|table|tr|td|th|figure|figcaption)\s*>/gi, '> ')
+            .replace(/<br\s*\/?>/gi, ' ')
+            .replace(/<hr\s*\/?>/gi, ' ');
+    }
+
+    function stripHtmlToText(html) {
+        var div = document.createElement('div');
+        div.innerHTML = spacedHtml(html);
+        return div.textContent.replace(/\s+/g, ' ').trim();
+    }
+
+    function htmlContextBadge(html, term) {
+        // Returns a tiny structural hint (H2, List, Quote, ...) when the term
+        // sits inside a meaningful block, so the stripped snippet isn't flat.
+        try {
+            var div = document.createElement('div');
+            div.innerHTML = spacedHtml(html);
+            var walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT, {
+                acceptNode: function (node) {
+                    return node.nodeValue && node.nodeValue.toLowerCase().indexOf(String(term).toLowerCase()) !== -1
+                        ? NodeFilter.FILTER_ACCEPT
+                        : NodeFilter.FILTER_REJECT;
+                }
+            });
+            var node = walker.nextNode();
+            if (!node) {
+                return null;
+            }
+            var el = node.parentNode;
+            while (el && el !== div) {
+                var tag = el.tagName ? el.tagName.toLowerCase() : '';
+                if (/^h[1-6]$/.test(tag)) {
+                    return tag.toUpperCase();
+                }
+                if (tag === 'li') {
+                    return 'List';
+                }
+                if (tag === 'blockquote') {
+                    return 'Quote';
+                }
+                if (tag === 'pre') {
+                    return 'Code';
+                }
+                if (tag === 'p') {
+                    return 'Paragraph';
+                }
+                el = el.parentNode;
+            }
+        } catch (e) { /* ignore */ }
+        return null;
+    }
+
     function makeSnippet(value, term) {
-        var text = String(value).replace(/\s+/g, ' ').trim();
+        var text = stripHtmlToText(value);
+        if (!text) {
+            return '';
+        }
         var idx = text.toLowerCase().indexOf(String(term).toLowerCase());
         if (idx < 0) {
             idx = 0;
@@ -185,6 +244,7 @@ jQuery(function ($) {
                     value: value,
                     label: modelLabel(model),
                     snippet: makeSnippet(value, currentTerm),
+                    badge: htmlContextBadge(value, currentTerm),
                     selected: true
                 });
             });
@@ -367,6 +427,19 @@ jQuery(function ($) {
             $row.append($cb);
             $row.append($('<span></span>').text(o.label + ' · ' + o.key)
                 .css({ fontSize: '12px', fontWeight: '600', color: '#1d2327' }));
+            if (o.badge) {
+                $row.append($('<span></span>').text(o.badge)
+                    .css({
+                        display: 'block',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        color: '#8c8f94',
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.4px',
+                        paddingLeft: '18px',
+                        marginTop: '1px'
+                    }));
+            }
             $row.append($('<span></span>').text(o.snippet)
                 .css({
                     display: 'block',

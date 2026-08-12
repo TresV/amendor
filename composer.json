@@ -32,6 +32,7 @@
     },
     "scripts": {
         "lint": "php -l amendor.php && find includes -name '*.php' -exec php -l {} \\; && php -l uninstall.php",
+        "check-structure": "php bin/check-structure.php .",
         "cs": "phpcs --standard=phpcs.xml.dist",
         "cs-fix": "phpcbf --standard=phpcs.xml.dist"
     },
