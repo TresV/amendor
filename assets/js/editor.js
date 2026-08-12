@@ -22,7 +22,6 @@ jQuery(function ($) {
     // Current search state (term/mode/regex + results).
     var currentTerm = '';
     var currentMode = 'partial';
-    var currentRegex = null;
     var occurrences = [];
 
     // Field filtering (safe defaults + user control). Category -> enabled.
@@ -35,12 +34,17 @@ jQuery(function ($) {
     };
 
     function getPreviewDocument() {
+        // Prefer the live iframe document over Elementor's reference, which can
+        // go stale (detached) after Elementor reloads the preview.
+        var iframe = document.getElementById('elementor-preview-iframe');
+        var liveDoc = (iframe && iframe.contentDocument && iframe.contentDocument.body)
+            ? iframe.contentDocument
+            : null;
+        if (liveDoc) {
+            return $(liveDoc);
+        }
         if (elementor.$previewContents && elementor.$previewContents.length) {
             return elementor.$previewContents;
-        }
-        var iframe = document.getElementById('elementor-preview-iframe');
-        if (iframe && iframe.contentDocument) {
-            return $(iframe.contentDocument);
         }
         return null;
     }
@@ -358,33 +362,41 @@ jQuery(function ($) {
     }
 
     function runSearch() {
-        currentTerm = $.trim($('#amendor-editor-term').val());
-        currentMode = $('#amendor-editor-mode').val() || 'partial';
+        try {
+            currentTerm = $.trim($('#amendor-editor-term').val());
+            // currentMode is kept in sync by the mode select's change handler.
 
-        if (!currentTerm) {
+            if (!currentTerm) {
+                occurrences = [];
+                clearHighlights();
+                renderOccurrenceList();
+                updateReplaceButton();
+                $('#amendor-editor-status').hide();
+                return;
+            }
+
+            if (!buildTermRegex(currentTerm, currentMode)) {
+                occurrences = [];
+                clearHighlights();
+                renderOccurrenceList();
+                updateReplaceButton();
+                $('#amendor-editor-status').text(i18n.invalidRegex || 'Invalid regular expression.').show();
+                return;
+            }
+
+            occurrences = collectOccurrences();
+            applyHighlights();
+            renderOccurrenceList();
+            updateReplaceButton();
+            updateStatus();
+        } catch (err) {
+            // Surface errors instead of silently leaving stale results.
             occurrences = [];
             clearHighlights();
             renderOccurrenceList();
             updateReplaceButton();
-            $('#amendor-editor-status').hide();
-            return;
+            $('#amendor-editor-status').text('Amendor search error: ' + err.message).show();
         }
-
-        currentRegex = buildTermRegex(currentTerm, currentMode);
-        if (!currentRegex) {
-            occurrences = [];
-            clearHighlights();
-            renderOccurrenceList();
-            updateReplaceButton();
-            $('#amendor-editor-status').text(i18n.invalidRegex || 'Invalid regular expression.').show();
-            return;
-        }
-
-        occurrences = collectOccurrences();
-        applyHighlights();
-        renderOccurrenceList();
-        updateReplaceButton();
-        updateStatus();
     }
 
     function applyReplacement(value, regex, replacement, mode) {
@@ -697,6 +709,13 @@ jQuery(function ($) {
     bindShortcuts();
 
     $(document).on('click', '#amendor-editor-highlight', runSearch);
+    $(document).on('input', '#amendor-editor-term', function () {
+        currentTerm = $(this).val();
+    });
+    $(document).on('change', '#amendor-editor-mode', function () {
+        currentMode = $(this).val() || 'partial';
+        runSearch();
+    });
     $(document).on('keydown', '#amendor-editor-term', function (event) {
         if (event.key === 'Enter') {
             event.preventDefault();
