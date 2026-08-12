@@ -9,6 +9,25 @@
 jQuery(function ($) {
     'use strict';
 
+    // Build stamp — helps verify which editor.js build the browser is running.
+    // Logs the plugin version and the ?ver= cache-buster of the loaded script
+    // so stale/cached builds are easy to spot.
+    (function () {
+        var src = '';
+        var scripts = document.getElementsByTagName('script');
+        for (var i = 0; i < scripts.length; i++) {
+            if (scripts[i].src && scripts[i].src.indexOf('/editor.js') !== -1) {
+                src = scripts[i].src;
+                break;
+            }
+        }
+        var ver = src.indexOf('?ver=') !== -1 ? src.split('?ver=')[1].split('&')[0] : '';
+        var pluginVer = (window.amendor_editor_vars && window.amendor_editor_vars.version) || '?';
+        if (window.console && console.log) {
+            console.log('[Amendor editor] plugin v' + pluginVer + ' | script ver=' + ver);
+        }
+    })();
+
     if (!window.elementor || !window.amendor_editor_vars) {
         return;
     }

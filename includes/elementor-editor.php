@@ -45,6 +45,7 @@ function amendor_elementor_editor_assets()
     wp_localize_script('amendor-elementor-editor', 'amendor_editor_vars', [
         'adminUrl' => admin_url('admin.php?page=' . amendor_get_admin_parent_slug()),
         'postId' => $post_id,
+        'version' => AMENDOR_VERSION,
         'i18n' => [
             'title' => __('Amendor Search', 'amendor'),
             'placeholder' => __('Search for text in this page...', 'amendor'),
