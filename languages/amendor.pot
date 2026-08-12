@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 09:28+0000\n"
+"POT-Creation-Date: 2026-08-12 09:31+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -20,6 +20,10 @@ msgstr ""
 #. translators: translators: %s: Comma-separated list of content sources. */
 #: includes/action-handlers.php:602
 msgid " [Sources: %s]"
+msgstr ""
+
+#: includes/elementor-editor.php:53
+msgid "%d match(es) highlighted"
 msgstr ""
 
 #. translators: translators: %d: Number of search/replace pairs. */
@@ -142,6 +146,10 @@ msgstr ""
 msgid "Amendor - Debug Log"
 msgstr ""
 
+#: includes/elementor-editor.php:48
+msgid "Amendor Search"
+msgstr ""
+
 #: includes/admin-main-page.php:147
 msgid "Amendor finds and replaces text inside Elementor content and native post fields — safely."
 msgstr ""
@@ -225,6 +233,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:268
 msgid "Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included."
+msgstr ""
+
+#: includes/elementor-editor.php:51
+msgid "Clear"
 msgstr ""
 
 #: includes/log-debug-page.php:278
@@ -362,8 +374,16 @@ msgstr ""
 msgid "Error processing string [%1$s...]: %2$s"
 msgstr ""
 
+#: includes/elementor-editor.php:55
+msgid "Exact"
+msgstr ""
+
 #: includes/admin-main-page.php:226
 msgid "Exact Text (Case-Sensitive)"
+msgstr ""
+
+#: includes/elementor-editor.php:58
+msgid "Experimental — best-effort across Elementor versions; replacement happens in the Amendor admin."
 msgstr ""
 
 #: includes/log-history-page.php:217
@@ -426,6 +446,10 @@ msgstr ""
 
 #: includes/admin-chrome.php:218
 msgid "Generating preview..."
+msgstr ""
+
+#: includes/elementor-editor.php:50
+msgid "Highlight"
 msgstr ""
 
 #: includes/admin-chrome.php:35
@@ -549,8 +573,16 @@ msgstr ""
 msgid "No matches found for your %s criteria."
 msgstr ""
 
+#: includes/elementor-editor.php:54
+msgid "No matches found."
+msgstr ""
+
 #: includes/admin-main-page.php:370
 msgid "Old URL / domain"
+msgstr ""
+
+#: includes/elementor-editor.php:52
+msgid "Open in Amendor"
 msgstr ""
 
 #: includes/admin-main-page.php:305
@@ -559,6 +591,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:350
 msgid "Pages Modified"
+msgstr ""
+
+#: includes/elementor-editor.php:56
+msgid "Partial"
 msgstr ""
 
 #: includes/admin-main-page.php:225
@@ -641,6 +677,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:204
 msgid "Recent:"
+msgstr ""
+
+#: includes/elementor-editor.php:57
+msgid "Regex"
 msgstr ""
 
 #: includes/admin-main-page.php:231
@@ -758,6 +798,10 @@ msgstr ""
 #: includes/log-history-page.php:256
 #: includes/log-history-page.php:306
 msgid "Search Term"
+msgstr ""
+
+#: includes/elementor-editor.php:49
+msgid "Search for text in this page..."
 msgstr ""
 
 #: includes/admin-main-page.php:250

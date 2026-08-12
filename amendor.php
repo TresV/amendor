@@ -52,6 +52,7 @@ require_once AMENDOR_PLUGIN_DIR . 'includes/admin-chrome.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/admin-main-page.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/log-debug-page.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/log-history-page.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/elementor-editor.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/ajax-handlers.php';
 
 add_action('plugins_loaded', 'amendor_load_textdomain');

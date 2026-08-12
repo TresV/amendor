@@ -15,6 +15,7 @@ Standalone package for the Elementor search-and-replace tool.
 - **Persistent debug log** with level filtering and CSV/JSON/TXT export
 - **Content-source and widget-type filters**
 - **Recent search history** (20 entries) with one-click re-run
+- **Elementor editor tool (experimental)** — floating search in the Elementor editor that highlights matching widgets (`Alt+Shift+F`); replacement stays in the admin
 - Fully **translation-ready** (`languages/amendor.pot`)
 
 ## Contents
@@ -32,6 +33,7 @@ Standalone package for the Elementor search-and-replace tool.
   - `admin-main-page.php` — the main search & replace UI page
   - `log-debug-page.php` — debug log page and export
   - `log-history-page.php` — change history log page and export
+  - `elementor-editor.php` — Elementor editor integration (experimental highlight tool)
   - `ajax-handlers.php` — AJAX endpoints (batched search, results, preview, backup check)
 - `assets/`: admin CSS and JavaScript
 - `languages/`: translation template (`amendor.pot`)
