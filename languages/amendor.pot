@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 12:50+0000\n"
+"POT-Creation-Date: 2026-08-12 13:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -399,10 +399,6 @@ msgstr ""
 
 #: includes/admin-main-page.php:226
 msgid "Exact Text (Case-Sensitive)"
-msgstr ""
-
-#: includes/elementor-editor.php:74
-msgid "Experimental — best-effort across Elementor versions. Use the Fields filter and occurrence list to choose what to replace; Undo restores the last replace."
 msgstr ""
 
 #: includes/log-history-page.php:217

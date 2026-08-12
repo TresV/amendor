@@ -71,7 +71,6 @@ function amendor_elementor_editor_assets()
             'fieldOther' => __('Other (incl. internal)', 'amendor'),
             'replaceSelected' => __('Replace Selected (%d)', 'amendor'),
             'selectedOf' => __('%d of %d selected', 'amendor'),
-            'experimental' => __('Experimental — best-effort across Elementor versions. Use the Fields filter and occurrence list to choose what to replace; Undo restores the last replace.', 'amendor'),
         ],
     ]);
 }

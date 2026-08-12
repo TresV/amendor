@@ -55,14 +55,15 @@ jQuery(function ($) {
         }
         var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         if (mode === 'exact') {
-            // Whole word/phrase, case-sensitive. Boundaries are added only where
-            // the term starts/ends with a word character so URLs, phrases and
-            // punctuation (e.g. "sitemap.xml", "C++") still match.
-            if (/\w/.test(escaped.charAt(0))) {
-                escaped = '\\b' + escaped;
+            // Whole word/phrase, case-sensitive. Boundaries use alphanumerics
+            // only (not \b, where _ counts as a word char), so "tool" matches
+            // tool, tool_box and [tool_1] but not tools/toolbar; URLs, phrases
+            // and punctuation ("sitemap.xml", "C++") still work.
+            if (/[A-Za-z0-9]/.test(escaped.charAt(0))) {
+                escaped = '(?<![A-Za-z0-9])' + escaped;
             }
-            if (/\w/.test(escaped.charAt(escaped.length - 1))) {
-                escaped = escaped + '\\b';
+            if (/[A-Za-z0-9]/.test(escaped.charAt(escaped.length - 1))) {
+                escaped = escaped + '(?![A-Za-z0-9])';
             }
             return new RegExp(escaped, 'gu');
         }
@@ -605,7 +606,7 @@ jQuery(function ($) {
                 .hide()));
 
         panel.append($('<div id="amendor-editor-results"></div>').css({
-            maxHeight: '150px',
+            maxHeight: '300px',
             overflowY: 'auto',
             borderTop: '1px solid #dcdcde',
             marginBottom: '8px',
@@ -619,8 +620,6 @@ jQuery(function ($) {
             .text(i18n.open || 'Open in Amendor')
             .attr('href', vars.adminUrl + (vars.postId ? '&post=' + vars.postId : ''))
             .css({ display: 'inline-block', fontSize: '12px', fontWeight: '600', color: '#2271b1', textDecoration: 'underline', cursor: 'pointer' }));
-        panel.append($('<p></p>').text(i18n.experimental || '')
-            .css({ fontSize: '12px', color: '#50575e', margin: '8px 0 0' }));
 
         $('body').append(panel);
     }
