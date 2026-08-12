@@ -54,6 +54,49 @@ function amendor_analyze_native_post_fields(array $state, $search, $replace, $se
         }
     }
 
+    // SEO meta fields (Yoast / Rank Math), grouped by source.
+    $seo_groups = amendor_get_seo_meta_field_groups();
+    foreach ($seo_groups as $seo_source => $seo_meta_keys) {
+        if (!in_array($seo_source, $content_sources, true)) {
+            continue;
+        }
+
+        $seo_values = isset($state[$seo_source]) && is_array($state[$seo_source]) ? $state[$seo_source] : [];
+        $seo_modified = false;
+        foreach ($seo_meta_keys as $seo_meta_key) {
+            if (!array_key_exists($seo_meta_key, $seo_values)) {
+                continue;
+            }
+
+            $field_changes = amendor_create_changes_details();
+            $processed_value = amendor_process_elementor_data_recursive(
+                (string) $seo_values[$seo_meta_key],
+                $search,
+                $replace,
+                $search_mode,
+                $perform_replace,
+                $field_changes,
+                []
+            );
+
+            $field_changes['diffs'] = amendor_annotate_diff_entries(
+                isset($field_changes['diffs']) && is_array($field_changes['diffs']) ? $field_changes['diffs'] : [],
+                $seo_source,
+                amendor_get_content_source_label($seo_source)
+            );
+            $changes_details = amendor_merge_changes_details($changes_details, $field_changes);
+
+            if ($perform_replace && $field_changes['replaced_count'] > 0) {
+                $seo_values[$seo_meta_key] = $processed_value;
+                $seo_modified = true;
+            }
+        }
+
+        if ($perform_replace && $seo_modified) {
+            $state[$seo_source] = $seo_values;
+        }
+    }
+
     return [
         'state' => $state,
         'changes_details' => $changes_details,

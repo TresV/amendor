@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Structural guardrails for the Amendor procedural codebase.
  *

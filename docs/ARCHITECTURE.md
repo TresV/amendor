@@ -22,6 +22,7 @@ includes/
   backups.php               Backup snapshots, restore, download (dedicated table)
   search-engine.php         Search/replace analysis engine + debug logging
   search-cache.php          Batched search backend: cursor scan, cache, payloads
+  presets.php               Saved search/replace presets (save, apply, export/import as JSON)
   action-handlers.php       Admin form handlers: search/preview/replace/restore/undo
   render-results.php        Shared result/notice markup (admin + AJAX)
   admin-chrome.php          Menu, settings, assets, notices
@@ -81,6 +82,7 @@ drift; the name is the stable key.
 
 ### `includes/search-data.php`
 - `amendor_get_available_content_sources` (42) / `amendor_get_default_content_sources` (57) / `amendor_normalize_content_sources` (69) — content-source lists
+- `amendor_get_seo_meta_field_groups` (69) — SEO meta key groups (Yoast / Rank Math) mapped to `seo_title` / `seo_description` sources
 - `amendor_content_sources_include_elementor` (88) — has Elementor source selected
 - `amendor_get_content_source_label` (99) / `amendor_format_content_sources_summary` (111) — labels
 - `amendor_limit_search_term` (124) — clamp term length (1,000 chars)
@@ -152,6 +154,15 @@ drift; the name is the stable key.
 - `amendor_run_search_batch_callback` (60) — batched search AJAX
 - `amendor_get_search_results_callback` (108) — results AJAX
 - `amendor_run_preview_callback` (177) — preview AJAX
+
+### `includes/presets.php`
+- `amendor_get_presets` (22) / `amendor_get_preset` (46) — saved-preset storage (`amendor_presets` option)
+- `amendor_save_preset` (63) / `amendor_delete_preset` (90) — add/remove presets
+- `amendor_build_preset_data` (106) / `amendor_validate_preset_data` (139) — capture + validate preset data
+- `amendor_build_preset_export_payload` (171) / `amendor_send_preset_export` (188) — JSON export download
+- `amendor_handle_import_preset` (219) — JSON import
+- `amendor_handle_presets_action` (250) — save/delete/export/import dispatch
+- `amendor_render_presets_box` (307) — presets UI (list + import)
 
 ### `includes/elementor-editor.php`
 - `amendor_elementor_editor_assets` (22) — enqueues the editor tool (gated by `amendor_enable_elementor_editor_integration`)

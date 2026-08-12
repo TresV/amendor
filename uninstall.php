@@ -19,6 +19,7 @@ delete_option('amendor_enable_persistent_debug_log');
 delete_option('amendor_delete_data_on_uninstall');
 delete_option('amendor_storage_schema_version');
 delete_option('amendor_search_batch_size');
+delete_option('amendor_presets');
 
 $amendor_tables = [
     $wpdb->prefix . 'amendor_history',

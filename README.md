@@ -14,7 +14,9 @@ Standalone package for the Elementor search-and-replace tool.
 - **Change history log** with filtering and CSV/JSON/TXT export
 - **Persistent debug log** with level filtering and CSV/JSON/TXT export
 - **Content-source and widget-type filters**, plus **field-key targeting**
+- **SEO meta support** — scan and replace Yoast / Rank Math SEO titles and meta descriptions as first-class content sources
 - **URL / domain swap preset**
+- **Saved search/replace presets** — name, save, apply, and export/import as JSON for reuse across client sites
 - **Data-size guardrail** (10 MB per page) to safely skip oversized Elementor documents
 - **Recent search history** (20 entries) with one-click re-run
 - **Dismissible onboarding banner**
@@ -43,6 +45,7 @@ Search, see and replace text directly in the Elementor editor — no need to lea
   - `backups.php` — backup storage and restore (dedicated table)
   - `search-engine.php` — search/replace analysis engine and logging
   - `search-cache.php` — batched search backend (candidate scan, transient cache, pagination payloads)
+  - `presets.php` — saved search/replace presets (save, apply, export/import as JSON)
   - `action-handlers.php` — admin form action handlers (search, preview, replace, restore, undo)
   - `render-results.php` — admin notices and search/preview result markup (shared with AJAX)
   - `admin-chrome.php` — admin menu, settings, assets, and notices

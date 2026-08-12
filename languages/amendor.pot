@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 13:09+0000\n"
+"POT-Creation-Date: 2026-08-12 15:11+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -17,24 +17,24 @@ msgstr ""
 "X-Domain: amendor\n"
 
 #. translators: %s: Comma-separated list of content sources.
-#: includes/action-handlers.php:602
+#: includes/action-handlers.php:623
 msgid " [Sources: %s]"
 msgstr ""
 
-#: includes/elementor-editor.php:54
+#: includes/elementor-editor.php:55
 msgid "%d match(es) highlighted"
 msgstr ""
 
-#: includes/elementor-editor.php:73
+#: includes/elementor-editor.php:74
 msgid "%d of %d selected"
 msgstr ""
 
 #. translators: %d: Number of search/replace pairs.
-#: includes/action-handlers.php:605
+#: includes/action-handlers.php:626
 msgid "%d pairs applied"
 msgstr ""
 
-#: includes/elementor-editor.php:62
+#: includes/elementor-editor.php:63
 msgid "%d value(s) replaced"
 msgstr ""
 
@@ -73,19 +73,19 @@ msgstr ""
 msgid "&raquo;"
 msgstr ""
 
-#: includes/action-handlers.php:603
+#: includes/action-handlers.php:624
 msgid "(Bulk Operation)"
 msgstr ""
 
-#: includes/admin-main-page.php:187
+#: includes/admin-main-page.php:213
 msgid "1. Search & Replace Terms"
 msgstr ""
 
-#: includes/admin-main-page.php:241
+#: includes/admin-main-page.php:267
 msgid "2. Bulk Replace (Optional)"
 msgstr ""
 
-#: includes/admin-main-page.php:266
+#: includes/admin-main-page.php:292
 msgid "3. Filters"
 msgstr ""
 
@@ -93,7 +93,7 @@ msgstr ""
 msgid "4. Results"
 msgstr ""
 
-#: includes/admin-main-page.php:152
+#: includes/admin-main-page.php:178
 msgid "A backup is created before every replacement — use \"Undo Last Replace\" or the History Log to revert."
 msgstr ""
 
@@ -101,7 +101,7 @@ msgstr ""
 msgid "A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved."
 msgstr ""
 
-#: includes/admin-main-page.php:382
+#: includes/admin-main-page.php:421
 msgid "Actions"
 msgstr ""
 
@@ -110,11 +110,11 @@ msgstr ""
 msgid "Active content sources: %s."
 msgstr ""
 
-#: includes/admin-main-page.php:258
+#: includes/admin-main-page.php:284
 msgid "Add Another Pair"
 msgstr ""
 
-#: includes/admin-main-page.php:243
+#: includes/admin-main-page.php:269
 msgid "Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement."
 msgstr ""
 
@@ -140,7 +140,7 @@ msgstr ""
 
 #: includes/admin-chrome.php:23
 #: includes/admin-chrome.php:24
-#: includes/admin-main-page.php:142
+#: includes/admin-main-page.php:168
 #: includes/plugin-context.php:66
 msgid "Amendor"
 msgstr ""
@@ -153,12 +153,16 @@ msgstr ""
 msgid "Amendor - Debug Log"
 msgstr ""
 
-#: includes/elementor-editor.php:49
+#: includes/elementor-editor.php:50
 msgid "Amendor Search"
 msgstr ""
 
-#: includes/admin-main-page.php:147
+#: includes/admin-main-page.php:173
 msgid "Amendor finds and replaces text inside Elementor content and native post fields — safely."
+msgstr ""
+
+#: includes/presets.php:330
+msgid "Apply"
 msgstr ""
 
 #: includes/admin-chrome.php:206
@@ -179,12 +183,12 @@ msgid "Are you sure you want to undo the last replacement operation? This will r
 msgstr ""
 
 #. translators: %s: Post ID
-#: includes/backups.php:65
+#: includes/backups.php:75
 msgid "Backup Error: Insert failed for Post ID %s."
 msgstr ""
 
 #. translators: 1: Post ID, 2: Data type
-#: includes/backups.php:120
+#: includes/backups.php:130
 msgid "Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup."
 msgstr ""
 
@@ -193,7 +197,7 @@ msgstr ""
 msgid "Backup from %1$s (%2$s ago)"
 msgstr ""
 
-#: includes/admin-main-page.php:354
+#: includes/admin-main-page.php:380
 msgid "Backups Stored"
 msgstr ""
 
@@ -207,12 +211,12 @@ msgstr ""
 msgid "Bulk Operation"
 msgstr ""
 
-#: includes/admin-main-page.php:281
+#: includes/admin-main-page.php:307
 msgid "By default Amendor searches Elementor data plus native post fields. Uncheck sources to narrow the scan."
 msgstr ""
 
 #: includes/admin-chrome.php:214
-#: includes/admin-main-page.php:395
+#: includes/admin-main-page.php:434
 msgid "Cancel Scan"
 msgstr ""
 
@@ -226,27 +230,27 @@ msgstr ""
 msgid "Changes"
 msgstr ""
 
-#: includes/elementor-editor.php:63
+#: includes/elementor-editor.php:64
 msgid "Changes restored."
 msgstr ""
 
-#: includes/admin-main-page.php:229
+#: includes/admin-main-page.php:255
 msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\\bword\\b`)."
 msgstr ""
 
-#: includes/admin-main-page.php:150
+#: includes/admin-main-page.php:176
 msgid "Choose the content sources to scan, then click \"Search Only\"."
 msgstr ""
 
-#: includes/admin-main-page.php:430
+#: includes/admin-main-page.php:469
 msgid "Choose the content sources to scan, then optionally filter Elementor widget types."
 msgstr ""
 
-#: includes/admin-main-page.php:268
+#: includes/admin-main-page.php:294
 msgid "Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included."
 msgstr ""
 
-#: includes/elementor-editor.php:52
+#: includes/elementor-editor.php:53
 msgid "Clear"
 msgstr ""
 
@@ -260,21 +264,21 @@ msgid "Clear Filter"
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:433
+#: includes/admin-main-page.php:472
 msgid "Click %s for a dry run."
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:434
+#: includes/admin-main-page.php:473
 msgid "Click %s to apply changes (backups created per post)."
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:431
+#: includes/admin-main-page.php:470
 msgid "Click %s."
 msgstr ""
 
-#: includes/elementor-editor.php:70
+#: includes/elementor-editor.php:71
 msgid "Code & CSS"
 msgstr ""
 
@@ -290,7 +294,7 @@ msgstr ""
 msgid "Confirm Restore"
 msgstr ""
 
-#: includes/admin-main-page.php:271
+#: includes/admin-main-page.php:297
 msgid "Content Sources"
 msgstr ""
 
@@ -300,7 +304,7 @@ msgstr ""
 msgid "Context"
 msgstr ""
 
-#: includes/admin-main-page.php:297
+#: includes/admin-main-page.php:323
 msgid "Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active."
 msgstr ""
 
@@ -313,24 +317,32 @@ msgstr ""
 msgid "Debug log cleared successfully."
 msgstr ""
 
-#: includes/admin-main-page.php:189
+#: includes/admin-main-page.php:215
 msgid "Define the primary text you want to find and replace. Use the Bulk Replace section below for multiple pairs."
+msgstr ""
+
+#: includes/presets.php:344
+msgid "Delete"
 msgstr ""
 
 #: includes/log-debug-page.php:230
 msgid "Delete plugin data on uninstall (history, debug log, backups, and per-user search history)"
 msgstr ""
 
+#: includes/presets.php:340
+msgid "Delete this preset?"
+msgstr ""
+
 #: includes/log-history-page.php:287
 msgid "Deleted?"
 msgstr ""
 
-#: includes/admin-main-page.php:156
+#: includes/admin-main-page.php:182
 msgid "Dismiss"
 msgstr ""
 
-#: includes/admin-main-page.php:409
-#: includes/admin-main-page.php:435
+#: includes/admin-main-page.php:448
+#: includes/admin-main-page.php:474
 msgid "Download Backups"
 msgstr ""
 
@@ -360,7 +372,7 @@ msgid "Elementor Content"
 msgstr ""
 
 #. translators: %s: Post ID
-#: includes/backups.php:288
+#: includes/backups.php:298
 msgid "Elementor cache cleared after restore for Post ID %s."
 msgstr ""
 
@@ -368,44 +380,48 @@ msgstr ""
 msgid "Enable Persistent Debug Logging (Logs detailed actions to the database table below)"
 msgstr ""
 
-#: includes/elementor-editor.php:65
+#: includes/elementor-editor.php:66
 msgid "Enter a search term first."
 msgstr ""
 
-#: includes/admin-main-page.php:429
+#: includes/admin-main-page.php:468
 msgid "Enter search/replace terms (or use Bulk Replace)."
 msgstr ""
 
-#: includes/admin-main-page.php:218
+#: includes/admin-main-page.php:244
 msgid "Enter the replacement text. Leave empty to delete the found text."
 msgstr ""
 
-#: includes/admin-main-page.php:149
+#: includes/admin-main-page.php:175
 msgid "Enter the text to find (and an optional replacement), or use Bulk Replace for multiple pairs."
 msgstr ""
 
-#: includes/admin-main-page.php:210
+#: includes/admin-main-page.php:236
 msgid "Enter the text you want to find. Case sensitivity depends on the Search Mode."
 msgstr ""
 
 #. translators: 1: String snippet, 2: Error message
-#: includes/search-engine.php:233
+#: includes/search-engine.php:276
 msgid "Error processing string [%1$s...]: %2$s"
 msgstr ""
 
-#: includes/elementor-editor.php:57
+#: includes/elementor-editor.php:58
 msgid "Exact"
 msgstr ""
 
-#: includes/admin-main-page.php:226
+#: includes/admin-main-page.php:252
 msgid "Exact Text (Case-Sensitive)"
+msgstr ""
+
+#: includes/presets.php:337
+msgid "Export"
 msgstr ""
 
 #: includes/log-history-page.php:217
 msgid "Export CSV"
 msgstr ""
 
-#: includes/backups.php:380
+#: includes/backups.php:401
 msgid "Export Error"
 msgstr ""
 
@@ -429,15 +445,15 @@ msgstr ""
 msgid "Export TXT"
 msgstr ""
 
-#: includes/admin-main-page.php:302
+#: includes/admin-main-page.php:328
 msgid "Field Keys"
 msgstr ""
 
-#: includes/elementor-editor.php:66
+#: includes/elementor-editor.php:67
 msgid "Fields"
 msgstr ""
 
-#: includes/admin-main-page.php:375
+#: includes/admin-main-page.php:401
 msgid "Fill & Search"
 msgstr ""
 
@@ -454,7 +470,7 @@ msgstr ""
 msgid "Filter by Type:"
 msgstr ""
 
-#: includes/admin-main-page.php:369
+#: includes/admin-main-page.php:395
 msgid "Find and preview a URL/domain replacement across all content sources."
 msgstr ""
 
@@ -467,7 +483,7 @@ msgstr ""
 msgid "Generating preview..."
 msgstr ""
 
-#: includes/elementor-editor.php:51
+#: includes/elementor-editor.php:52
 msgid "Highlight"
 msgstr ""
 
@@ -476,22 +492,34 @@ msgid "History Log"
 msgstr ""
 
 #. translators: %s: Database error message
-#: includes/search-engine.php:434
+#: includes/search-engine.php:477
 msgid "History Log Error: Failed to insert record into DB. Error: %s"
 msgstr ""
 
 #. translators: 1: User ID, 2: Post ID, 3: Changes Made
-#: includes/search-engine.php:390
+#: includes/search-engine.php:433
 msgid "History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d"
 msgstr ""
 
 #. translators: 1: Post ID, 2: Changes Made
-#: includes/search-engine.php:442
+#: includes/search-engine.php:485
 msgid "History Log Success: Record added for Post ID %1$s. Changes: %2$d"
 msgstr ""
 
-#: includes/admin-main-page.php:426
+#: includes/admin-main-page.php:465
 msgid "How It Works"
+msgstr ""
+
+#: includes/presets.php:359
+msgid "Import Preset"
+msgstr ""
+
+#: includes/presets.php:354
+msgid "Import preset"
+msgstr ""
+
+#: includes/presets.php:235
+msgid "Imported Preset"
 msgstr ""
 
 #: includes/ajax-handlers.php:133
@@ -499,20 +527,20 @@ msgstr ""
 msgid "Invalid regular expression pattern."
 msgstr ""
 
-#: includes/elementor-editor.php:56
+#: includes/elementor-editor.php:57
 msgid "Invalid regular expression."
 msgstr ""
 
 #. translators: %s: JSON error message
-#: includes/search-data.php:207
+#: includes/search-data.php:222
 msgid "JSON encoding failed: %s"
 msgstr ""
 
-#: includes/admin-main-page.php:358
+#: includes/admin-main-page.php:384
 msgid "Last Activity"
 msgstr ""
 
-#: includes/admin-main-page.php:295
+#: includes/admin-main-page.php:321
 msgid "Leave empty to search/replace in all widget types. Use Ctrl/Cmd + Click for standard multi-select."
 msgstr ""
 
@@ -526,7 +554,7 @@ msgstr ""
 msgid "Logging is currently disabled."
 msgstr ""
 
-#: includes/search-engine.php:260
+#: includes/search-engine.php:303
 msgid "Match - No Change Previewed"
 msgstr ""
 
@@ -558,7 +586,7 @@ msgstr ""
 msgid "N/A"
 msgstr ""
 
-#: includes/admin-main-page.php:372
+#: includes/admin-main-page.php:398
 msgid "New URL / domain"
 msgstr ""
 
@@ -596,35 +624,39 @@ msgstr ""
 msgid "No matches found for your %s criteria."
 msgstr ""
 
-#: includes/elementor-editor.php:55
+#: includes/elementor-editor.php:56
 msgid "No matches found."
 msgstr ""
 
-#: includes/admin-main-page.php:370
+#: includes/presets.php:318
+msgid "No saved presets yet. Use \"Save Current as Preset\" in the sidebar to create one."
+msgstr ""
+
+#: includes/admin-main-page.php:396
 msgid "Old URL / domain"
 msgstr ""
 
-#: includes/elementor-editor.php:53
+#: includes/elementor-editor.php:54
 msgid "Open in Amendor"
 msgstr ""
 
-#: includes/admin-main-page.php:305
+#: includes/admin-main-page.php:331
 msgid "Optional. Comma-separated Elementor settings keys to limit scanning to (e.g. editor, title, url). Leave empty to scan all fields."
 msgstr ""
 
-#: includes/elementor-editor.php:71
+#: includes/elementor-editor.php:72
 msgid "Other (incl. internal)"
 msgstr ""
 
-#: includes/admin-main-page.php:350
+#: includes/admin-main-page.php:376
 msgid "Pages Modified"
 msgstr ""
 
-#: includes/elementor-editor.php:58
+#: includes/elementor-editor.php:59
 msgid "Partial"
 msgstr ""
 
-#: includes/admin-main-page.php:225
+#: includes/admin-main-page.php:251
 msgid "Partial Match (Case-Insensitive, Default)"
 msgstr ""
 
@@ -632,7 +664,7 @@ msgstr ""
 msgid "Perform a search or preview to see results here."
 msgstr ""
 
-#: includes/backups.php:321
+#: includes/backups.php:342
 msgid "Permission Denied"
 msgstr ""
 
@@ -681,6 +713,10 @@ msgstr ""
 msgid "Posts Per Page:"
 msgstr ""
 
+#: includes/admin-main-page.php:412
+msgid "Preset name..."
+msgstr ""
+
 #: includes/render-results.php:178
 msgid "Preview"
 msgstr ""
@@ -689,8 +725,8 @@ msgstr ""
 msgid "Preview Mode:"
 msgstr ""
 
-#: includes/admin-main-page.php:399
-#: includes/admin-main-page.php:433
+#: includes/admin-main-page.php:438
+#: includes/admin-main-page.php:472
 msgid "Preview Selected"
 msgstr ""
 
@@ -698,50 +734,50 @@ msgstr ""
 msgid "Preview generation failed. Falling back to standard form submission."
 msgstr ""
 
-#: includes/admin-main-page.php:337
+#: includes/admin-main-page.php:363
 msgid "Quick Stats"
 msgstr ""
 
-#: includes/admin-main-page.php:204
+#: includes/admin-main-page.php:230
 msgid "Recent:"
 msgstr ""
 
-#: includes/elementor-editor.php:59
+#: includes/elementor-editor.php:60
 msgid "Regex"
 msgstr ""
 
-#: includes/admin-main-page.php:231
+#: includes/admin-main-page.php:257
 msgid "Regex Tips:"
 msgstr ""
 
 #. translators: %s: PCRE error message.
-#: includes/search-engine.php:218
+#: includes/search-engine.php:261
 msgid "Regex matching error: %s"
 msgstr ""
 
 #. translators: %s: PCRE error message.
-#: includes/search-engine.php:213
+#: includes/search-engine.php:256
 msgid "Regex replacement error: %s"
 msgstr ""
 
-#: includes/admin-main-page.php:227
+#: includes/admin-main-page.php:253
 msgid "Regular Expression (PCRE, Case-Insensitive)"
 msgstr ""
 
-#: includes/admin-main-page.php:253
+#: includes/admin-main-page.php:279
 msgid "Remove this pair"
 msgstr ""
 
-#: includes/elementor-editor.php:64
+#: includes/elementor-editor.php:65
 msgid "Replace %d value(s) on this page? You can undo afterwards."
 msgstr ""
 
-#: includes/admin-main-page.php:402
-#: includes/admin-main-page.php:434
+#: includes/admin-main-page.php:441
+#: includes/admin-main-page.php:473
 msgid "Replace Selected"
 msgstr ""
 
-#: includes/elementor-editor.php:72
+#: includes/elementor-editor.php:73
 msgid "Replace Selected (%d)"
 msgstr ""
 
@@ -751,15 +787,15 @@ msgstr ""
 msgid "Replace Term"
 msgstr ""
 
-#: includes/admin-main-page.php:215
+#: includes/admin-main-page.php:241
 msgid "Replace With"
 msgstr ""
 
-#: includes/elementor-editor.php:60
+#: includes/elementor-editor.php:61
 msgid "Replace with"
 msgstr ""
 
-#: includes/admin-main-page.php:252
+#: includes/admin-main-page.php:278
 msgid "Replace with..."
 msgstr ""
 
@@ -768,27 +804,27 @@ msgid "Restore"
 msgstr ""
 
 #. translators: 1: Backup Index, 2: Post ID
-#: includes/backups.php:198
+#: includes/backups.php:208
 msgid "Restore Error: Backup index %1$s not found or invalid for Post ID %2$s."
 msgstr ""
 
 #. translators: 1: Post ID, 2: Error message
-#: includes/backups.php:241
+#: includes/backups.php:251
 msgid "Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s"
 msgstr ""
 
 #. translators: 1: Post ID, 2: Database Error
-#: includes/backups.php:276
+#: includes/backups.php:286
 msgid "Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s"
 msgstr ""
 
 #. translators: 1: Post ID, 2: Backup Index
-#: includes/backups.php:258
+#: includes/backups.php:268
 msgid "Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s."
 msgstr ""
 
 #. translators: 1: Post ID, 2: Backup Index
-#: includes/backups.php:218
+#: includes/backups.php:228
 msgid "Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s."
 msgstr ""
 
@@ -796,36 +832,64 @@ msgstr ""
 msgid "Restore from:"
 msgstr ""
 
-#: includes/admin-main-page.php:438
+#: includes/admin-main-page.php:477
 msgid "Restore individual posts from backups within the results list."
 msgstr ""
 
-#: includes/admin-main-page.php:432
+#: includes/admin-main-page.php:471
 msgid "Results appear below. Select posts to modify."
 msgstr ""
 
-#: includes/admin-main-page.php:151
+#: includes/presets.php:315
+msgid "Reusable search/replace configurations. Export as JSON to reuse across sites, or import one from another install."
+msgstr ""
+
+#: includes/admin-main-page.php:177
 msgid "Review the results, use \"Preview Selected\" for a dry run, then \"Replace Selected\"."
+msgstr ""
+
+#: includes/search-data.php:50
+msgid "SEO Meta Description (Yoast / Rank Math)"
+msgstr ""
+
+#: includes/search-data.php:49
+msgid "SEO Title (Yoast / Rank Math)"
+msgstr ""
+
+#: includes/admin-main-page.php:414
+msgid "Save Current as Preset"
+msgstr ""
+
+#: includes/admin-main-page.php:408
+msgid "Save Preset"
 msgstr ""
 
 #: includes/log-debug-page.php:266
 msgid "Save Setting"
 msgstr ""
 
+#: includes/admin-main-page.php:410
+msgid "Save the current search/replace configuration to reuse it — also reusable across sites via Export/Import."
+msgstr ""
+
+#: includes/presets.php:313
+msgid "Saved Presets"
+msgstr ""
+
 #: includes/admin-chrome.php:211
 msgid "Scanning selected content sources..."
 msgstr ""
 
-#: includes/admin-main-page.php:192
+#: includes/admin-main-page.php:218
 msgid "Search For"
 msgstr ""
 
-#: includes/admin-main-page.php:222
+#: includes/admin-main-page.php:248
 msgid "Search Mode"
 msgstr ""
 
-#: includes/admin-main-page.php:390
-#: includes/admin-main-page.php:431
+#: includes/admin-main-page.php:429
+#: includes/admin-main-page.php:470
 msgid "Search Only"
 msgstr ""
 
@@ -839,15 +903,15 @@ msgstr ""
 msgid "Search Term"
 msgstr ""
 
-#: includes/elementor-editor.php:50
+#: includes/elementor-editor.php:51
 msgid "Search for text in this page..."
 msgstr ""
 
-#: includes/admin-main-page.php:250
+#: includes/admin-main-page.php:276
 msgid "Search for..."
 msgstr ""
 
-#: includes/admin-main-page.php:231
+#: includes/admin-main-page.php:257
 msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\\b</code> for word boundaries. Test carefully!"
 msgstr ""
 
@@ -876,7 +940,7 @@ msgstr ""
 msgid "Select All / None"
 msgstr ""
 
-#: includes/admin-main-page.php:420
+#: includes/admin-main-page.php:459
 msgid "Select items from results to enable Preview/Replace."
 msgstr ""
 
@@ -884,7 +948,7 @@ msgstr ""
 msgid "Select posts below to Preview or Replace."
 msgstr ""
 
-#: includes/elementor-editor.php:69
+#: includes/elementor-editor.php:70
 msgid "Shortcodes"
 msgstr ""
 
@@ -901,7 +965,7 @@ msgstr ""
 msgid "Single"
 msgstr ""
 
-#: includes/admin-main-page.php:386
+#: includes/admin-main-page.php:425
 msgid "Some selected posts do not have an existing backup yet. The plugin will create one automatically before replacement."
 msgstr ""
 
@@ -913,11 +977,11 @@ msgstr ""
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: includes/admin-main-page.php:202
+#: includes/admin-main-page.php:228
 msgid "Start typing or use arrow keys to see recent searches."
 msgstr ""
 
-#: includes/elementor-editor.php:67
+#: includes/elementor-editor.php:68
 msgid "Text & content"
 msgstr ""
 
@@ -946,11 +1010,11 @@ msgstr ""
 msgid "Timestamp (Site Time)"
 msgstr ""
 
-#: includes/admin-main-page.php:346
+#: includes/admin-main-page.php:372
 msgid "Total Changes"
 msgstr ""
 
-#: includes/admin-main-page.php:342
+#: includes/admin-main-page.php:368
 msgid "Total Operations"
 msgstr ""
 
@@ -958,27 +1022,27 @@ msgstr ""
 msgid "Type:"
 msgstr ""
 
-#: includes/admin-main-page.php:367
+#: includes/admin-main-page.php:393
 msgid "URL / Domain Swap"
 msgstr ""
 
-#: includes/elementor-editor.php:68
+#: includes/elementor-editor.php:69
 msgid "URLs & links"
 msgstr ""
 
-#: includes/backups.php:380
+#: includes/backups.php:401
 msgid "Unable to generate the backup export file because JSON encoding failed."
 msgstr ""
 
-#: includes/elementor-editor.php:61
+#: includes/elementor-editor.php:62
 msgid "Undo"
 msgstr ""
 
-#: includes/admin-main-page.php:405
+#: includes/admin-main-page.php:444
 msgid "Undo Last Replace"
 msgstr ""
 
-#: includes/search-data.php:208
+#: includes/search-data.php:223
 msgid "Unknown JSON error"
 msgstr ""
 
@@ -988,21 +1052,21 @@ msgid "Unknown User (ID: %d)"
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:437
+#: includes/admin-main-page.php:476
 msgid "Use %s (and enable logging on its page) for detailed troubleshooting."
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:435
+#: includes/admin-main-page.php:474
 msgid "Use %s to save all backups."
 msgstr ""
 
 #. translators: %s: Name of the button or action.
-#: includes/admin-main-page.php:436
+#: includes/admin-main-page.php:475
 msgid "Use %s to track changes."
 msgstr ""
 
-#: includes/admin-main-page.php:231
+#: includes/admin-main-page.php:257
 msgid "Use PCRE syntax (no delimiters needed here). Special characters like"
 msgstr ""
 
@@ -1016,13 +1080,13 @@ msgstr ""
 msgid "View"
 msgstr ""
 
-#: includes/admin-main-page.php:417
-#: includes/admin-main-page.php:437
+#: includes/admin-main-page.php:456
+#: includes/admin-main-page.php:476
 msgid "View Debug Log"
 msgstr ""
 
-#: includes/admin-main-page.php:413
-#: includes/admin-main-page.php:436
+#: includes/admin-main-page.php:452
+#: includes/admin-main-page.php:475
 msgid "View History Log"
 msgstr ""
 
@@ -1039,11 +1103,11 @@ msgstr ""
 msgid "WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server's maximum execution time is set sufficiently high."
 msgstr ""
 
-#: includes/admin-main-page.php:146
+#: includes/admin-main-page.php:172
 msgid "Welcome to Amendor!"
 msgstr ""
 
-#: includes/admin-main-page.php:285
+#: includes/admin-main-page.php:311
 msgid "Widget Types"
 msgstr ""
 
@@ -1052,7 +1116,7 @@ msgstr ""
 msgid "You are about to replace text in %d selected post(s)."
 msgstr ""
 
-#: includes/backups.php:321
+#: includes/backups.php:342
 msgid "You do not have sufficient permissions to access this feature."
 msgstr ""
 
@@ -1065,7 +1129,7 @@ msgstr ""
 msgid "added"
 msgstr ""
 
-#: includes/admin-main-page.php:231
+#: includes/admin-main-page.php:257
 msgid "need escaping with"
 msgstr ""
 
@@ -1073,7 +1137,7 @@ msgstr ""
 msgid "removed"
 msgstr ""
 
-#: includes/admin-main-page.php:359
+#: includes/admin-main-page.php:385
 msgid "—"
 msgstr ""
 
@@ -1085,7 +1149,7 @@ msgstr ""
 msgid "ℹ️ No posts matched your search criteria."
 msgstr ""
 
-#: includes/action-handlers.php:649
+#: includes/action-handlers.php:670
 msgid "ℹ️ No posts required replacement based on the provided terms, selected posts, and filters."
 msgstr ""
 
@@ -1107,7 +1171,7 @@ msgstr ""
 msgid "⚠️ %d post(s) could not be restored (no valid backup)."
 msgstr ""
 
-#: includes/admin-main-page.php:385
+#: includes/admin-main-page.php:424
 msgid "⚠️ Backup Recommended"
 msgstr ""
 
@@ -1136,8 +1200,27 @@ msgstr ""
 msgid "✅ Post ID %d successfully restored from backup."
 msgstr ""
 
+#. translators: %s: Preset name.
+#: includes/admin-main-page.php:99
+msgid "✅ Preset \"%s\" applied."
+msgstr ""
+
+#. translators: %s: Preset name.
+#: includes/presets.php:239
+msgid "✅ Preset \"%s\" imported."
+msgstr ""
+
+#. translators: %s: Preset name.
+#: includes/presets.php:275
+msgid "✅ Preset \"%s\" saved."
+msgstr ""
+
+#: includes/presets.php:281
+msgid "✅ Preset deleted."
+msgstr ""
+
 #. translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced.
-#: includes/action-handlers.php:624
+#: includes/action-handlers.php:645
 msgid "✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s."
 msgstr ""
 
@@ -1165,9 +1248,18 @@ msgstr ""
 msgid "❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s"
 msgstr ""
 
+#. translators: 1: Post ID, 2: Meta key, 3: Database error message.
+#: includes/action-handlers.php:615
+msgid "❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s"
+msgstr ""
+
 #. translators: 1: Post ID, 2: WordPress error message.
 #: includes/action-handlers.php:572
 msgid "❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s"
+msgstr ""
+
+#: includes/presets.php:223
+msgid "❌ Invalid preset JSON. Export a preset from Amendor and import that file."
 msgstr ""
 
 #. translators: %s: The invalid regular expression pattern.
@@ -1183,6 +1275,27 @@ msgstr ""
 #. translators: %s: The invalid regular expression pattern.
 #: includes/action-handlers.php:184
 msgid "❌ Invalid regular expression pattern provided for search: %s. Please check syntax."
+msgstr ""
+
+#: includes/presets.php:270
+msgid "❌ Please enter a preset name."
+msgstr ""
+
+#: includes/presets.php:229
+msgid "❌ Preset data is not valid."
+msgstr ""
+
+#: includes/presets.php:290
+msgid "❌ Preset not found for export."
+msgstr ""
+
+#: includes/admin-main-page.php:102
+#: includes/presets.php:283
+msgid "❌ Preset not found."
+msgstr ""
+
+#: includes/presets.php:262
+msgid "❌ Security check failed for preset action."
 msgstr ""
 
 #: includes/action-handlers.php:46
@@ -1203,6 +1316,10 @@ msgstr ""
 
 #: includes/action-handlers.php:425
 msgid "❌ Security check failed. Please try the replacement again."
+msgstr ""
+
+#: includes/presets.php:257
+msgid "❌ You do not have permission to manage presets."
 msgstr ""
 
 #: includes/action-handlers.php:291
@@ -1231,7 +1348,7 @@ msgid "👁️ Generating preview (Dry Run) for %d selected post(s). No changes 
 msgstr ""
 
 #. translators: %d: Number of search/replace pairs.
-#: includes/action-handlers.php:633
+#: includes/action-handlers.php:654
 msgid "📦 Operation type: Bulk Replace with %d pair(s)."
 msgstr ""
 

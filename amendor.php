@@ -46,6 +46,7 @@ require_once AMENDOR_PLUGIN_DIR . 'includes/search-data.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/backups.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/search-engine.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/search-cache.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/presets.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/render-results.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/action-handlers.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/admin-chrome.php';

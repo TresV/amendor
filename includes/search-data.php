@@ -46,6 +46,8 @@ function amendor_get_available_content_sources()
         'post_title' => __('Post Title', 'amendor'),
         'post_content' => __('Post Content', 'amendor'),
         'post_excerpt' => __('Post Excerpt', 'amendor'),
+        'seo_title' => __('SEO Title (Yoast / Rank Math)', 'amendor'),
+        'seo_description' => __('SEO Meta Description (Yoast / Rank Math)', 'amendor'),
     ];
 }
 
@@ -57,6 +59,19 @@ function amendor_get_available_content_sources()
 function amendor_get_default_content_sources()
 {
     return array_keys(amendor_get_available_content_sources());
+}
+
+/**
+ * Map SEO content sources to the underlying post meta keys for each plugin.
+ *
+ * @return array<string,array<int,string>>
+ */
+function amendor_get_seo_meta_field_groups()
+{
+    return [
+        'seo_title' => ['_yoast_wpseo_title', 'rank_math_title'],
+        'seo_description' => ['_yoast_wpseo_metadesc', 'rank_math_description'],
+    ];
 }
 
 /**
@@ -365,12 +380,22 @@ function amendor_annotate_diff_entries(array $diffs, $source_key, $source_label)
  */
 function amendor_build_post_content_state(WP_Post $post)
 {
+    $seo_state = [];
+    foreach (amendor_get_seo_meta_field_groups() as $seo_source => $seo_meta_keys) {
+        $seo_state[$seo_source] = [];
+        foreach ($seo_meta_keys as $seo_meta_key) {
+            $seo_state[$seo_source][$seo_meta_key] = (string) get_post_meta($post->ID, $seo_meta_key, true);
+        }
+    }
+
     return [
         'post_id' => (int) $post->ID,
         'post_title' => (string) $post->post_title,
         'post_content' => (string) $post->post_content,
         'post_excerpt' => (string) $post->post_excerpt,
         'elementor_data' => amendor_decode_elementor_data(get_post_meta($post->ID, '_elementor_data', true)),
+        'seo_title' => $seo_state['seo_title'],
+        'seo_description' => $seo_state['seo_description'],
     ];
 }
 

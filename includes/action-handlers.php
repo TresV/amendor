@@ -596,6 +596,27 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             }
         }
 
+        // Save SEO meta (Yoast / Rank Math) when those sources are selected.
+        $seo_groups = amendor_get_seo_meta_field_groups();
+        foreach ($seo_groups as $seo_source => $seo_meta_keys) {
+            if (!in_array($seo_source, $content_sources, true)) {
+                continue;
+            }
+            $seo_values = isset($current_state[$seo_source]) && is_array($current_state[$seo_source]) ? $current_state[$seo_source] : [];
+            foreach ($seo_meta_keys as $seo_meta_key) {
+                if (!array_key_exists($seo_meta_key, $seo_values)) {
+                    continue;
+                }
+                $seo_meta_saved = update_post_meta($post_id, $seo_meta_key, wp_slash((string) $seo_values[$seo_meta_key]));
+                if ($seo_meta_saved === false) {
+                    $db_error = $GLOBALS['wpdb']->last_error;
+                    amendor_add_debug_log('ERROR updating SEO meta after processing pairs.', 'ERROR', ['post_id' => $post_id, 'meta_key' => $seo_meta_key, 'db_error' => $db_error]);
+                    /* translators: 1: Post ID, 2: Meta key, 3: Database error message. */
+                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s', 'amendor'), $post_id, esc_html($seo_meta_key), esc_html($db_error))];
+                }
+            }
+        }
+
         amendor_add_debug_log("Post content updated successfully.", 'INFO', ['post_id' => $post_id, 'total_changes' => $total_changes_in_post_across_pairs, 'sources' => $content_sources]);
 
         /* translators: %s: Comma-separated list of content sources. */

@@ -22,11 +22,21 @@ function amendor_build_post_backup_snapshot($post_id)
         return null;
     }
 
+    $seo_snapshot = [];
+    foreach (amendor_get_seo_meta_field_groups() as $seo_source => $seo_meta_keys) {
+        $seo_snapshot[$seo_source] = [];
+        foreach ($seo_meta_keys as $seo_meta_key) {
+            $seo_snapshot[$seo_source][$seo_meta_key] = (string) get_post_meta($post_id, $seo_meta_key, true);
+        }
+    }
+
     return [
         'post_title' => (string) $post->post_title,
         'post_content' => (string) $post->post_content,
         'post_excerpt' => (string) $post->post_excerpt,
         'elementor_data' => amendor_decode_elementor_data(get_post_meta($post_id, '_elementor_data', true)),
+        'seo_title' => $seo_snapshot['seo_title'],
+        'seo_description' => $seo_snapshot['seo_description'],
     ];
 }
 
@@ -290,6 +300,17 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             );
             amendor_add_debug_log($log_msg, 'INFO', ['post_id' => $post_id]);
             error_log('ETP Restore Info: ' . $log_msg);
+        }
+    }
+
+    // Restore SEO meta (Yoast / Rank Math) captured in the snapshot.
+    $seo_groups = amendor_get_seo_meta_field_groups();
+    foreach ($seo_groups as $seo_source => $seo_meta_keys) {
+        $seo_values = isset($snapshot[$seo_source]) && is_array($snapshot[$seo_source]) ? $snapshot[$seo_source] : [];
+        foreach ($seo_meta_keys as $seo_meta_key) {
+            if (array_key_exists($seo_meta_key, $seo_values)) {
+                update_post_meta($post_id, $seo_meta_key, wp_slash((string) $seo_values[$seo_meta_key]));
+            }
         }
     }
 
