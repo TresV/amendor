@@ -1,8 +1,10 @@
 /**
  * Amendor — Elementor editor integration (experimental).
  *
- * Adds a floating search tool that highlights matching widgets in the
- * current document. Replacement is performed in the Amendor admin UI.
+ * Adds a floating search tool that highlights and optionally replaces
+ * matching text in the current document by updating Elementor's element
+ * models (with an in-editor undo). A deeper, backup-backed replace flow
+ * remains available in the Amendor admin UI.
  */
 jQuery(function ($) {
     'use strict';
@@ -15,6 +17,7 @@ jQuery(function ($) {
     var i18n = vars.i18n || {};
     var panel;
     var highlighted = 0;
+    var lastReplaceSnapshot = null;
 
     function getPreviewDocument() {
         if (elementor.$previewContents && elementor.$previewContents.length) {
@@ -99,7 +102,8 @@ jQuery(function ($) {
             }
         }
         var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-        return new RegExp(escaped, 'giu');
+        // Exact matches are case-sensitive (mirrors matchesTerm); partial is case-insensitive.
+        return new RegExp(escaped, mode === 'exact' ? 'gu' : 'giu');
     }
 
     function wrapTextMatches($root, regex, markClass) {
@@ -215,6 +219,134 @@ jQuery(function ($) {
             : (i18n.none || 'No matches found.')).show();
     }
 
+    function applyReplacement(value, regex, replacement, mode) {
+        regex.lastIndex = 0;
+        if (mode === 'regex') {
+            return value.replace(regex, replacement);
+        }
+        // Literal modes: function replacer keeps $ in the replacement literal.
+        return value.replace(regex, function () {
+            return replacement;
+        });
+    }
+
+    function setModelSetting(model, key, value) {
+        var settings = model.get('settings');
+        if (!settings || typeof settings.set !== 'function') {
+            return false;
+        }
+        settings.set(key, value);
+        return true;
+    }
+
+    function renderModel(model) {
+        try {
+            if (model.container && typeof model.container.render === 'function') {
+                model.container.render();
+                return;
+            }
+        } catch (e) { /* ignore */ }
+        try {
+            if (typeof model.render === 'function') {
+                model.render();
+            }
+        } catch (e) { /* ignore */ }
+    }
+
+    function setUndoVisible(visible) {
+        var $btn = $('#amendor-editor-undo');
+        if ($btn.length) {
+            $btn.toggle(!!visible);
+        }
+    }
+
+    function runReplace() {
+        var term = $.trim($('#amendor-editor-term').val());
+        var mode = $('#amendor-editor-mode').val() || 'partial';
+        var replacement = $('#amendor-editor-replace').val();
+        var $status = $('#amendor-editor-status');
+
+        if (!term) {
+            $status.text(i18n.enterTerm || 'Enter a search term first.').show();
+            return;
+        }
+
+        var regex = buildTermRegex(term, mode);
+        if (!regex) {
+            $status.text(i18n.invalidRegex || 'Invalid regular expression.').show();
+            return;
+        }
+
+        var changes = [];
+        collectModels().forEach(function (model) {
+            var settings = model.get('settings');
+            if (!settings || !settings.attributes) {
+                return;
+            }
+            Object.keys(settings.attributes).forEach(function (key) {
+                var value = settings.attributes[key];
+                if (typeof value !== 'string' || !matchesTerm(value, term, mode)) {
+                    return;
+                }
+                var newValue = applyReplacement(value, regex, replacement, mode);
+                if (newValue === value) {
+                    return;
+                }
+                changes.push({ model: model, key: key, oldValue: value, newValue: newValue });
+            });
+        });
+
+        if (!changes.length) {
+            $status.text(i18n.none || 'No matches found.').show();
+            return;
+        }
+
+        if (!window.confirm((i18n.confirmReplace || 'Replace %d value(s) on this page? You can undo afterwards.').replace('%d', changes.length))) {
+            return;
+        }
+
+        changes.forEach(function (c) {
+            setModelSetting(c.model, c.key, c.newValue);
+        });
+
+        var rendered = {};
+        changes.forEach(function (c) {
+            var cid = c.model.cid || c.model.get('_id') || c.model.get('id');
+            if (rendered[cid]) {
+                return;
+            }
+            rendered[cid] = true;
+            renderModel(c.model);
+        });
+
+        lastReplaceSnapshot = changes;
+        setUndoVisible(true);
+        runHighlight();
+        $status.text((i18n.replaced || '%d value(s) replaced').replace('%d', changes.length)).show();
+    }
+
+    function runUndo() {
+        if (!lastReplaceSnapshot) {
+            return;
+        }
+        lastReplaceSnapshot.forEach(function (c) {
+            setModelSetting(c.model, c.key, c.oldValue);
+        });
+        var rendered = {};
+        lastReplaceSnapshot.forEach(function (c) {
+            var cid = c.model.cid || c.model.get('_id') || c.model.get('id');
+            if (rendered[cid]) {
+                return;
+            }
+            rendered[cid] = true;
+            renderModel(c.model);
+        });
+        lastReplaceSnapshot = null;
+        setUndoVisible(false);
+        runHighlight();
+        $('#amendor-editor-status').text(i18n.reverted || 'Changes restored.').show();
+    }
+
     function buildPanel() {
         var panelCss = {
             position: 'fixed',
@@ -256,32 +388,46 @@ jQuery(function ($) {
             .append($('<option value="partial">').text(i18n.partial || 'Partial'))
             .append($('<option value="exact">').text(i18n.exact || 'Exact'))
             .append($('<option value="regex">').text(i18n.regex || 'Regex')));
+        panel.append($('<label></label>').text(i18n.replace || 'Replace with').css(labelCss));
+        panel.append($('<input id="amendor-editor-replace" type="text">').css(inputCss));
+
+        var btnPrimary = {
+            flex: '1',
+            padding: '6px 10px',
+            fontSize: '13px',
+            fontWeight: '600',
+            color: '#ffffff',
+            background: '#93003c',
+            border: 'none',
+            borderRadius: '3px',
+            cursor: 'pointer'
+        };
+        var btnSecondary = {
+            flex: '1',
+            padding: '6px 10px',
+            fontSize: '13px',
+            color: '#1d2327',
+            background: '#f0f0f1',
+            border: '1px solid #c3c4c7',
+            borderRadius: '3px',
+            cursor: 'pointer'
+        };
+
         panel.append($('<div></div>').css(rowCss)
             .append($('<button id="amendor-editor-highlight" type="button"></button>')
                 .text(i18n.highlight || 'Highlight')
-                .css({
-                    flex: '1',
-                    padding: '6px 10px',
-                    fontSize: '13px',
-                    fontWeight: '600',
-                    color: '#ffffff',
-                    background: '#93003c',
-                    border: 'none',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                }))
+                .css(btnPrimary))
+            .append($('<button id="amendor-editor-replace-btn" type="button"></button>')
+                .text(i18n.replaceAll || 'Replace All')
+                .css($.extend({}, btnPrimary, { background: '#006ba1' }))));
+        panel.append($('<div></div>').css(rowCss)
             .append($('<button id="amendor-editor-clear" type="button"></button>')
                 .text(i18n.clear || 'Clear')
-                .css({
-                    flex: '1',
-                    padding: '6px 10px',
-                    fontSize: '13px',
-                    color: '#1d2327',
-                    background: '#f0f0f1',
-                    border: '1px solid #c3c4c7',
-                    borderRadius: '3px',
-                    cursor: 'pointer'
-                })));
+                .css(btnSecondary))
+            .append($('<button id="amendor-editor-undo" type="button"></button>')
+                .text(i18n.undo || 'Undo')
+                .css(btnSecondary)
+                .hide()));
         panel.append($('<div id="amendor-editor-status"></div>')
             .css({ fontSize: '12px', fontWeight: '600', color: '#1d2327', marginBottom: '8px', display: 'none' }));
         panel.append($('<a id="amendor-editor-open" href="#" target="_blank"></a>')
@@ -373,6 +519,14 @@ jQuery(function ($) {
             runHighlight();
         }
     });
+    $(document).on('click', '#amendor-editor-replace-btn', runReplace);
+    $(document).on('keydown', '#amendor-editor-replace', function (event) {
+        if (event.key === 'Enter') {
+            event.preventDefault();
+            runReplace();
+        }
+    });
+    $(document).on('click', '#amendor-editor-undo', runUndo);
     $(document).on('click', '#amendor-editor-clear', function () {
         clearHighlights();
         $('#amendor-editor-status').hide();

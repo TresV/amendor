@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 12:12+0000\n"
+"POT-Creation-Date: 2026-08-12 12:35+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -28,6 +28,10 @@ msgstr ""
 #. translators: %d: Number of search/replace pairs.
 #: includes/action-handlers.php:605
 msgid "%d pairs applied"
+msgstr ""
+
+#: includes/elementor-editor.php:63
+msgid "%d value(s) replaced"
 msgstr ""
 
 #. translators: %s: Number of log items.
@@ -218,6 +222,10 @@ msgstr ""
 msgid "Changes"
 msgstr ""
 
+#: includes/elementor-editor.php:64
+msgid "Changes restored."
+msgstr ""
+
 #: includes/admin-main-page.php:229
 msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\\bword\\b`)."
 msgstr ""
@@ -352,6 +360,10 @@ msgstr ""
 msgid "Enable Persistent Debug Logging (Logs detailed actions to the database table below)"
 msgstr ""
 
+#: includes/elementor-editor.php:66
+msgid "Enter a search term first."
+msgstr ""
+
 #: includes/admin-main-page.php:429
 msgid "Enter search/replace terms (or use Bulk Replace)."
 msgstr ""
@@ -381,8 +393,8 @@ msgstr ""
 msgid "Exact Text (Case-Sensitive)"
 msgstr ""
 
-#: includes/elementor-editor.php:60
-msgid "Experimental — best-effort across Elementor versions; replacement happens in the Amendor admin."
+#: includes/elementor-editor.php:67
+msgid "Experimental — best-effort across Elementor versions. Replace All updates the page content; Undo restores the last replace."
 msgstr ""
 
 #: includes/log-history-page.php:217
@@ -708,6 +720,14 @@ msgstr ""
 msgid "Remove this pair"
 msgstr ""
 
+#: includes/elementor-editor.php:65
+msgid "Replace %d value(s) on this page? You can undo afterwards."
+msgstr ""
+
+#: includes/elementor-editor.php:61
+msgid "Replace All"
+msgstr ""
+
 #: includes/admin-main-page.php:402
 #: includes/admin-main-page.php:434
 msgid "Replace Selected"
@@ -721,6 +741,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:215
 msgid "Replace With"
+msgstr ""
+
+#: includes/elementor-editor.php:60
+msgid "Replace with"
 msgstr ""
 
 #: includes/admin-main-page.php:252
@@ -920,6 +944,10 @@ msgstr ""
 
 #: includes/backups.php:380
 msgid "Unable to generate the backup export file because JSON encoding failed."
+msgstr ""
+
+#: includes/elementor-editor.php:62
+msgid "Undo"
 msgstr ""
 
 #: includes/admin-main-page.php:405

@@ -57,7 +57,14 @@ function amendor_elementor_editor_assets()
             'exact' => __('Exact', 'amendor'),
             'partial' => __('Partial', 'amendor'),
             'regex' => __('Regex', 'amendor'),
-            'experimental' => __('Experimental — best-effort across Elementor versions; replacement happens in the Amendor admin.', 'amendor'),
+            'replace' => __('Replace with', 'amendor'),
+            'replaceAll' => __('Replace All', 'amendor'),
+            'undo' => __('Undo', 'amendor'),
+            'replaced' => __('%d value(s) replaced', 'amendor'),
+            'reverted' => __('Changes restored.', 'amendor'),
+            'confirmReplace' => __('Replace %d value(s) on this page? You can undo afterwards.', 'amendor'),
+            'enterTerm' => __('Enter a search term first.', 'amendor'),
+            'experimental' => __('Experimental — best-effort across Elementor versions. Replace All updates the page content; Undo restores the last replace.', 'amendor'),
         ],
     ]);
 }
