@@ -130,22 +130,36 @@ jQuery(function ($) {
             position: 'fixed',
             right: '16px',
             bottom: '70px',
-            width: '280px',
-            background: '#fff',
-            border: '1px solid #ccd0d4',
-            borderRadius: '4px',
-            boxShadow: '0 2px 14px rgba(0,0,0,.18)',
-            padding: '12px',
+            width: '300px',
+            background: '#ffffff',
+            color: '#1d2327',
+            border: '1px solid #dcdcde',
+            borderRadius: '6px',
+            boxShadow: '0 4px 20px rgba(0,0,0,.25)',
+            padding: '14px',
             zIndex: '99999',
             fontFamily: '-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif',
+            fontSize: '13px',
+            lineHeight: '1.4',
             display: 'none'
         };
-        var labelCss = { display: 'block', margin: '0 0 4px', fontWeight: '600', fontSize: '12px' };
-        var inputCss = { width: '100%', boxSizing: 'border-box', marginBottom: '8px', padding: '4px 6px' };
+        var labelCss = { display: 'block', margin: '0 0 4px', fontWeight: '600', fontSize: '12px', color: '#1d2327' };
+        var inputCss = {
+            width: '100%',
+            boxSizing: 'border-box',
+            marginBottom: '8px',
+            padding: '6px 8px',
+            fontSize: '13px',
+            color: '#1d2327',
+            background: '#ffffff',
+            border: '1px solid #8c8f94',
+            borderRadius: '3px'
+        };
         var rowCss = { display: 'flex', gap: '6px', marginBottom: '8px' };
 
         panel = $('<div id="amendor-editor-panel"></div>').css(panelCss);
-        panel.append($('<div></div>').text(i18n.title || 'Amendor Search').css({ fontWeight: '600', marginBottom: '8px' }));
+        panel.append($('<div></div>').text(i18n.title || 'Amendor Search')
+            .css({ fontWeight: '700', fontSize: '14px', color: '#1d2327', marginBottom: '10px' }));
         panel.append($('<label></label>').text(i18n.placeholder || 'Search for text in this page...').css(labelCss));
         panel.append($('<input id="amendor-editor-term" type="text">').css(inputCss));
         panel.append($('<select id="amendor-editor-mode"></select>').css(inputCss)
@@ -153,19 +167,45 @@ jQuery(function ($) {
             .append($('<option value="exact">').text(i18n.exact || 'Exact'))
             .append($('<option value="regex">').text(i18n.regex || 'Regex')));
         panel.append($('<div></div>').css(rowCss)
-            .append($('<button id="amendor-editor-highlight" class="button button-primary"></button>').text(i18n.highlight || 'Highlight'))
-            .append($('<button id="amendor-editor-clear" class="button"></button>').text(i18n.clear || 'Clear')));
-        panel.append($('<div id="amendor-editor-status"></div>').css({ fontSize: '12px', color: '#666', marginBottom: '8px', display: 'none' }));
-        panel.append($('<a id="amendor-editor-open" href="#" target="_blank" class="button button-link"></a>')
+            .append($('<button id="amendor-editor-highlight" type="button"></button>')
+                .text(i18n.highlight || 'Highlight')
+                .css({
+                    flex: '1',
+                    padding: '6px 10px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    color: '#ffffff',
+                    background: '#93003c',
+                    border: 'none',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                }))
+            .append($('<button id="amendor-editor-clear" type="button"></button>')
+                .text(i18n.clear || 'Clear')
+                .css({
+                    flex: '1',
+                    padding: '6px 10px',
+                    fontSize: '13px',
+                    color: '#1d2327',
+                    background: '#f0f0f1',
+                    border: '1px solid #c3c4c7',
+                    borderRadius: '3px',
+                    cursor: 'pointer'
+                })));
+        panel.append($('<div id="amendor-editor-status"></div>')
+            .css({ fontSize: '12px', fontWeight: '600', color: '#1d2327', marginBottom: '8px', display: 'none' }));
+        panel.append($('<a id="amendor-editor-open" href="#" target="_blank"></a>')
             .text(i18n.open || 'Open in Amendor')
-            .attr('href', vars.adminUrl + (vars.postId ? '&post=' + vars.postId : '')));
-        panel.append($('<p></p>').text(i18n.experimental || '').css({ fontSize: '11px', color: '#999', margin: '8px 0 0' }));
+            .attr('href', vars.adminUrl + (vars.postId ? '&post=' + vars.postId : ''))
+            .css({ display: 'inline-block', fontSize: '12px', fontWeight: '600', color: '#2271b1', textDecoration: 'underline', cursor: 'pointer' }));
+        panel.append($('<p></p>').text(i18n.experimental || '')
+            .css({ fontSize: '12px', color: '#50575e', margin: '8px 0 0' }));
 
         $('body').append(panel);
     }
 
     function buildFab() {
-        var fab = $('<button id="amendor-editor-fab" type="button" title="' + (i18n.title || 'Amendor Search') + '">🔍</button>')
+        var fab = $('<button id="amendor-editor-fab" type="button" title="' + (i18n.title || 'Amendor Search') + ' (Alt+Shift+F)">🔍</button>')
             .css({
                 position: 'fixed',
                 right: '16px',
@@ -185,6 +225,44 @@ jQuery(function ($) {
         return fab;
     }
 
+    // --- Shortcut (top document + preview iframe) ---
+    function isPanelShortcut(event) {
+        return event.altKey && event.shiftKey &&
+            (event.key === 'F' || event.key === 'f' || event.code === 'KeyF');
+    }
+
+    function handlePanelShortcut(event) {
+        if (!isPanelShortcut(event)) {
+            return;
+        }
+        event.preventDefault();
+        panel.show();
+        $('#amendor-editor-term').trigger('focus');
+    }
+
+    var shortcutsBound = false;
+    var lastPreviewDoc = null;
+
+    function bindShortcuts() {
+        if (!shortcutsBound) {
+            $(document).on('keydown', handlePanelShortcut);
+            shortcutsBound = true;
+        }
+        // While editing, focus lives inside the preview iframe, so keydown
+        // never bubbles up to the top document. Listen there as well.
+        var $doc = getPreviewDocument();
+        if ($doc && $doc.length && $doc[0] !== lastPreviewDoc) {
+            $doc.on('keydown', handlePanelShortcut);
+            lastPreviewDoc = $doc[0];
+        }
+    }
+
+    // The preview iframe reloads on save/page switch — re-bind inside it.
+    var $iframe = $('#elementor-preview-iframe');
+    if ($iframe.length) {
+        $iframe.on('load', bindShortcuts);
+    }
+
     // --- Init ---
     buildPanel();
     var fab = buildFab();
@@ -196,13 +274,7 @@ jQuery(function ($) {
         }
     });
 
-    $(document).on('keydown', function (event) {
-        if (event.altKey && event.shiftKey && (event.key === 'F' || event.key === 'f')) {
-            event.preventDefault();
-            panel.show();
-            $('#amendor-editor-term').trigger('focus');
-        }
-    });
+    bindShortcuts();
 
     $(document).on('click', '#amendor-editor-highlight', runHighlight);
     $(document).on('keydown', '#amendor-editor-term', function (event) {
