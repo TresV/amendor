@@ -2,6 +2,21 @@
 
 Standalone package for the Elementor search-and-replace tool.
 
+## Features
+
+- **Search & replace** across Elementor data plus native post fields (title, content, excerpt)
+- **Three search modes**: partial (case-insensitive), exact (case-sensitive), and PCRE regex
+- **Bulk replace** with multiple sequential search/replace pairs
+- **Batched AJAX scanning** with live progress and results caching (scales to large sites)
+- **Preview (dry run)** before committing changes
+- **Automatic backups** before every replacement, with **one-click Undo** and per-post restore (stored in a dedicated table)
+- **Dashboard quick stats** and **occurrence counts** by content source and widget type
+- **Change history log** with filtering and CSV/JSON/TXT export
+- **Persistent debug log** with level filtering and CSV/JSON/TXT export
+- **Content-source and widget-type filters**
+- **Recent search history** (20 entries) with one-click re-run
+- Fully **translation-ready** (`languages/amendor.pot`)
+
 ## Contents
 
 - `amendor.php`: plugin bootstrap (loads the module files below)
@@ -29,6 +44,22 @@ Standalone package for the Elementor search-and-replace tool.
 ## Activation
 
 Amendor is fully separated from the original combined package. It can be installed and activated alongside `Fluentor` on the same WordPress installation.
+
+## Developer: hooks & filters
+
+The plugin exposes the following filters (all prefixed `amendor_`):
+
+| Filter | Purpose |
+|---|---|
+| `amendor_supported_post_types` | Restrict which post types are scanned |
+| `amendor_search_batch_size` | Posts processed per AJAX scan batch |
+| `amendor_backup_retention_limit` | Max backups kept per post |
+| `amendor_search_posts_per_page` / `amendor_search_posts_per_page_options` | Default / allowed results-per-page values |
+| `amendor_default_debug_log_retention` / `amendor_default_history_log_retention` | Default retention row counts for the log tables |
+| `amendor_debug_log_items_per_page` / `amendor_history_items_per_page` | Admin log page pagination |
+| `amendor_debug_log_export_max_rows` / `amendor_history_log_export_max_rows` | Max rows included in a log export |
+
+A daily cron event, `amendor_daily_log_prune`, prunes the history and debug log tables to their configured retention limits.
 
 ## Development
 

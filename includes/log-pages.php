@@ -691,7 +691,8 @@ function amendor_display_change_history_log()
         <h1><span class="dashicons dashicons-backup" style="vertical-align: middle;"></span> <?php esc_html_e('Amendor - Change History Log', 'amendor'); ?></h1>
         <p><?php esc_html_e('This log records all successful replacement operations performed by the plugin.', 'amendor'); ?></p>
 
-        <?php // --- Filter & Export Toolbar --- ?>
+        <?php // --- Filter & Export Toolbar --- 
+        ?>
         <div class="debug_log__options" style="margin-bottom: 20px;">
             <form method="get" style="display: inline-block; margin-right: 10px;">
                 <input type="hidden" name="page" value="amendor-change-history">

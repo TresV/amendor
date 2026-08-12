@@ -2,9 +2,9 @@
 # This file is distributed under the same license as the Amendor plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Amendor 1.5.1\n"
+"Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-11 11:55+0000\n"
+"POT-Creation-Date: 2026-08-12 09:10+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,920 +16,1037 @@ msgstr ""
 "X-Generator: amendor-make-pot\n"
 "X-Domain: amendor\n"
 
-#. translators: %s: Number of log items. */
-#: admin-pages.php:807
-#: admin-pages.php:906
-#: admin-pages.php:1023
-#: admin-pages.php:1115
+
+#. translators: translators: %s: Comma-separated list of content sources. */
+#: includes/action-handlers.php:582
+msgid " [Sources: %s]"
+msgstr ""
+
+#. translators: translators: %d: Number of search/replace pairs. */
+#: includes/action-handlers.php:585
+msgid "%d pairs applied"
+msgstr ""
+
+#. translators: translators: %s: Number of log items. */
+#: includes/log-pages.php:346
+#: includes/log-pages.php:445
+#: includes/log-pages.php:738
+#: includes/log-pages.php:830
 msgid "%s item"
 msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#. translators: %s: Number of matched items. */
-#: admin-pages.php:577
+#. translators: translators: %s: Number of matched items. */
+#: includes/render-results.php:230
 msgid "%s matched item"
 msgid_plural "%s matched items"
 msgstr[0] ""
 msgstr[1] ""
 
-#. translators: %s: Comma-separated list of content sources. */
-#: admin-actions.php:893
-msgid " [Sources: %s]"
-msgstr ""
-
-#. translators: %d: Number of search/replace pairs. */
-#: admin-actions.php:896
-msgid "%d pairs applied"
-msgstr ""
-
-#: admin-pages.php:819
-#: admin-pages.php:913
-#: admin-pages.php:1030
-#: admin-pages.php:1122
+#: includes/log-pages.php:358
+#: includes/log-pages.php:452
+#: includes/log-pages.php:745
+#: includes/log-pages.php:837
 msgid "&laquo;"
 msgstr ""
 
-#: admin-pages.php:585
+#: includes/render-results.php:238
 msgid "&laquo; Prev"
 msgstr ""
 
-#: admin-pages.php:820
-#: admin-pages.php:914
-#: admin-pages.php:1031
-#: admin-pages.php:1123
+#: includes/log-pages.php:359
+#: includes/log-pages.php:453
+#: includes/log-pages.php:746
+#: includes/log-pages.php:838
 msgid "&raquo;"
 msgstr ""
 
-#: admin-actions.php:894
+#: includes/action-handlers.php:583
 msgid "(Bulk Operation)"
 msgstr ""
 
-#: admin-pages.php:1280
+#: includes/admin-chrome.php:399
 msgid "1. Search & Replace Terms"
 msgstr ""
 
-#: admin-pages.php:1328
+#: includes/admin-chrome.php:453
 msgid "2. Bulk Replace (Optional)"
 msgstr ""
 
-#: admin-pages.php:1353
+#: includes/admin-chrome.php:478
 msgid "3. Filters"
 msgstr ""
 
-#: admin-pages.php:495
+#: includes/render-results.php:148
 msgid "4. Results"
 msgstr ""
 
-#: admin-pages.php:311
+#: includes/admin-chrome.php:195
 msgid "A backup snapshot of the selected post content will be created for each modified post BEFORE changes are saved."
 msgstr ""
 
-#: admin-pages.php:1417
+#: includes/admin-chrome.php:572
 msgid "Actions"
 msgstr ""
 
-#. translators: %s: Comma-separated list of active content sources. */
-#: admin-pages.php:516
+#. translators: translators: %s: Comma-separated list of active content sources. */
+#: includes/render-results.php:169
 msgid "Active content sources: %s."
 msgstr ""
 
-#: admin-pages.php:1345
+#: includes/admin-chrome.php:470
 msgid "Add Another Pair"
 msgstr ""
 
-#: admin-pages.php:1330
+#: includes/admin-chrome.php:455
 msgid "Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement."
 msgstr ""
 
-#: admin-pages.php:787
+#: includes/log-pages.php:708
+msgid "All"
+msgstr ""
+
+#: includes/log-pages.php:326
 msgid "All Levels"
 msgstr ""
 
-#: admin-pages.php:542
+#: includes/log-pages.php:701
+msgid "All Modes"
+msgstr ""
+
+#: includes/render-results.php:195
 msgid "All Types"
 msgstr ""
 
-#: admin-pages.php:323
+#: includes/admin-chrome.php:208
 msgid "All selected posts already have at least one saved plugin backup."
 msgstr ""
 
-#: admin-pages.php:23
-#: admin-pages.php:24
-#: admin-pages.php:1254
-#: plugin-context.php:53
+#: includes/admin-chrome.php:23
+#: includes/admin-chrome.php:24
+#: includes/admin-chrome.php:372
+#: includes/plugin-context.php:66
 msgid "Amendor"
 msgstr ""
 
-#: admin-pages.php:1012
+#: includes/log-pages.php:691
 msgid "Amendor - Change History Log"
 msgstr ""
 
-#: admin-pages.php:688
+#: includes/log-pages.php:216
 msgid "Amendor - Debug Log"
 msgstr ""
 
-#: admin-pages.php:321
+#: includes/admin-chrome.php:206
 msgid "Are you sure you want to clear the ENTIRE debug log? This cannot be undone."
 msgstr ""
 
-#: admin-pages.php:313
+#: includes/admin-chrome.php:197
 msgid "Are you sure you want to proceed?"
 msgstr ""
 
-#. translators: %d: Post ID. */
-#: admin-pages.php:319
+#. translators: translators: %d: Post ID. */
+#: includes/admin-chrome.php:203
 msgid "Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post."
 msgstr ""
 
-#. translators: 1: Post ID, 2: Data type */
-#: functions.php:185
+#: includes/admin-chrome.php:204
+msgid "Are you sure you want to undo the last replacement operation? This will restore the affected posts to their state before the last replace."
+msgstr ""
+
+#. translators: translators: %s: Post ID */
+#: includes/backups.php:65
+msgid "Backup Error: Insert failed for Post ID %s."
+msgstr ""
+
+#. translators: translators: 1: Post ID, 2: Data type */
+#: includes/backups.php:120
 msgid "Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup."
 msgstr ""
 
-#. translators: %s: Post ID */
-#: functions.php:162
-msgid "Backup Error: update_post_meta failed for Post ID %s."
-msgstr ""
-
-#. translators: 1: Date and Time, 2: Human readable time difference */
-#: admin-pages.php:444
+#. translators: translators: 1: Date and Time, 2: Human readable time difference */
+#: includes/render-results.php:97
 msgid "Backup from %1$s (%2$s ago)"
 msgstr ""
 
-#: admin-pages.php:1087
+#: includes/admin-chrome.php:559
+msgid "Backups Stored"
+msgstr ""
+
+#: includes/log-pages.php:595
+#: includes/log-pages.php:709
+#: includes/log-pages.php:802
 msgid "Bulk"
 msgstr ""
 
-#: admin-pages.php:1087
+#: includes/log-pages.php:802
 msgid "Bulk Operation"
 msgstr ""
 
-#: admin-pages.php:1368
+#: includes/admin-chrome.php:493
 msgid "By default Amendor searches Elementor data plus native post fields. Uncheck sources to narrow the scan."
 msgstr ""
 
-#: admin-pages.php:34
+#: includes/admin-chrome.php:34
 msgid "Change History Log"
 msgstr ""
 
-#: admin-pages.php:1052
-#: admin-pages.php:1102
+#: includes/log-pages.php:596
+#: includes/log-pages.php:767
+#: includes/log-pages.php:817
 msgid "Changes"
 msgstr ""
 
-#: admin-pages.php:1316
-msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\\bword\\b`)."
+#: includes/admin-chrome.php:441
+msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `bwordb`)."
 msgstr ""
 
-#: admin-pages.php:1459
+#: includes/admin-chrome.php:617
 msgid "Choose the content sources to scan, then optionally filter Elementor widget types."
 msgstr ""
 
-#: admin-pages.php:1355
+#: includes/admin-chrome.php:480
 msgid "Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included."
 msgstr ""
 
-#: admin-pages.php:740
+#: includes/log-pages.php:279
 msgid "Clear Entire Log"
 msgstr ""
 
-#: admin-pages.php:794
+#: includes/log-pages.php:333
+#: includes/log-pages.php:714
 msgid "Clear Filter"
 msgstr ""
 
-#: admin-pages.php:1462
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:620
 msgid "Click %s for a dry run."
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1463
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:621
 msgid "Click %s to apply changes (backups created per post)."
 msgstr ""
 
-#: admin-pages.php:1460
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:618
 msgid "Click %s."
 msgstr ""
 
-#: admin-pages.php:320
+#: includes/admin-chrome.php:205
 msgid "Confirm Clear Log"
 msgstr ""
 
-#: admin-pages.php:308
+#: includes/admin-chrome.php:192
 msgid "Confirm Replacement"
 msgstr ""
 
-#: admin-pages.php:317
+#: includes/admin-chrome.php:201
 msgid "Confirm Restore"
 msgstr ""
 
-#: admin-pages.php:1358
+#: includes/admin-chrome.php:483
 msgid "Content Sources"
 msgstr ""
 
-#: admin-pages.php:189
-#: admin-pages.php:838
-#: admin-pages.php:893
+#: includes/log-pages.php:121
+#: includes/log-pages.php:377
+#: includes/log-pages.php:432
 msgid "Context"
 msgstr ""
 
-#: admin-pages.php:1384
+#: includes/admin-chrome.php:509
 msgid "Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active."
 msgstr ""
 
-#: admin-pages.php:44
-#: admin-pages.php:45
+#: includes/admin-chrome.php:44
+#: includes/admin-chrome.php:45
 msgid "Debug Log"
 msgstr ""
 
-#: admin-pages.php:632
+#: includes/log-pages.php:158
 msgid "Debug log cleared successfully."
 msgstr ""
 
-#: admin-pages.php:1282
+#: includes/admin-chrome.php:401
 msgid "Define the primary text you want to find and replace. Use the Bulk Replace section below for multiple pairs."
 msgstr ""
 
-#: admin-pages.php:703
+#: includes/log-pages.php:231
 msgid "Delete plugin data on uninstall (history, debug log, backups, and per-user search history)"
 msgstr ""
 
-#: admin-pages.php:1080
+#: includes/log-pages.php:795
 msgid "Deleted?"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1438
-#: admin-pages.php:1464
+#: includes/admin-chrome.php:596
+#: includes/admin-chrome.php:622
 msgid "Download Backups"
 msgstr ""
 
-#: admin-pages.php:406
+#: includes/render-results.php:49
 msgid "Edit Elementor"
 msgstr ""
 
-#. translators: %s: Post title. */
-#: admin-pages.php:1075
+#. translators: translators: %s: Post title. */
+#: includes/log-pages.php:790
 msgid "Edit Post: %s"
 msgstr ""
 
-#: admin-pages.php:405
+#: includes/render-results.php:48
 msgid "Edit WP"
 msgstr ""
 
-#: admin-pages.php:405
+#: includes/render-results.php:48
 msgid "Edit in WordPress Editor (Opens in new tab)"
 msgstr ""
 
-#: admin-pages.php:406
+#: includes/render-results.php:49
 msgid "Edit with Elementor (Opens in new tab)"
 msgstr ""
 
-#: functions.php:37
+#: includes/search-data.php:41
 msgid "Elementor Content"
 msgstr ""
 
-#. translators: %s: Post ID */
-#: functions.php:928
+#. translators: translators: %s: Post ID */
+#: includes/backups.php:288
 msgid "Elementor cache cleared after restore for Post ID %s."
 msgstr ""
 
-#: admin-pages.php:699
+#: includes/log-pages.php:227
 msgid "Enable Persistent Debug Logging (Logs detailed actions to the database table below)"
 msgstr ""
 
-#: admin-pages.php:1458
+#: includes/admin-chrome.php:616
 msgid "Enter search/replace terms (or use Bulk Replace)."
 msgstr ""
 
-#: admin-pages.php:1305
+#: includes/admin-chrome.php:430
 msgid "Enter the replacement text. Leave empty to delete the found text."
 msgstr ""
 
-#: admin-pages.php:1297
+#: includes/admin-chrome.php:422
 msgid "Enter the text you want to find. Case sensitivity depends on the Search Mode."
 msgstr ""
 
-#. translators: 1: String snippet, 2: Error message */
-#: functions.php:708
+#. translators: translators: 1: String snippet, 2: Error message */
+#: includes/search-engine.php:210
 msgid "Error processing string [%1$s...]: %2$s"
 msgstr ""
 
-#: admin-pages.php:1313
+#: includes/admin-chrome.php:438
 msgid "Exact Text (Case-Sensitive)"
 msgstr ""
 
-#: functions.php:1183
+#: includes/log-pages.php:725
+msgid "Export CSV"
+msgstr ""
+
+#: includes/backups.php:380
 msgid "Export Error"
 msgstr ""
 
-#: admin-pages.php:753
+#: includes/log-pages.php:725
+msgid "Export JSON"
+msgstr ""
+
+#: includes/log-pages.php:292
 msgid "Export Log CSV"
 msgstr ""
 
-#: admin-pages.php:765
+#: includes/log-pages.php:304
 msgid "Export Log JSON"
 msgstr ""
 
-#: admin-pages.php:777
+#: includes/log-pages.php:316
 msgid "Export Log TXT"
 msgstr ""
 
-#: admin-pages.php:792
+#: includes/log-pages.php:725
+msgid "Export TXT"
+msgstr ""
+
+#: includes/log-pages.php:331
+#: includes/log-pages.php:712
 msgid "Filter"
 msgstr ""
 
-#: admin-pages.php:785
+#: includes/log-pages.php:324
 msgid "Filter by Level:"
 msgstr ""
 
-#: admin-pages.php:540
+#: includes/render-results.php:193
 msgid "Filter by Type:"
 msgstr ""
 
-#. translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
-#: admin-pages.php:523
+#. translators: translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
+#: includes/render-results.php:176
 msgid "Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s."
 msgstr ""
 
-#: admin-pages.php:330
+#: includes/admin-chrome.php:215
 msgid "Generating preview..."
 msgstr ""
 
-#: admin-pages.php:35
+#: includes/admin-chrome.php:35
 msgid "History Log"
 msgstr ""
 
-#. translators: %s: Database error message */
-#: functions.php:1021
+#. translators: translators: %s: Database error message */
+#: includes/search-engine.php:411
 msgid "History Log Error: Failed to insert record into DB. Error: %s"
 msgstr ""
 
-#. translators: 1: User ID, 2: Post ID, 3: Changes Made */
-#: functions.php:977
+#. translators: translators: 1: User ID, 2: Post ID, 3: Changes Made */
+#: includes/search-engine.php:367
 msgid "History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d"
 msgstr ""
 
-#. translators: 1: Post ID, 2: Changes Made */
-#: functions.php:1029
+#. translators: translators: 1: Post ID, 2: Changes Made */
+#: includes/search-engine.php:419
 msgid "History Log Success: Record added for Post ID %1$s. Changes: %2$d"
 msgstr ""
 
-#: admin-pages.php:1455
+#: includes/admin-chrome.php:613
 msgid "How It Works"
 msgstr ""
 
-#: ajax-handlers.php:82
-#: ajax-handlers.php:130
+#: includes/ajax-handlers.php:82
+#: includes/ajax-handlers.php:130
 msgid "Invalid regular expression pattern."
 msgstr ""
 
-#. translators: %s: JSON error message */
-#: functions.php:260
+#. translators: translators: %s: JSON error message */
+#: includes/search-data.php:163
 msgid "JSON encoding failed: %s"
 msgstr ""
 
-#: admin-pages.php:1382
+#: includes/admin-chrome.php:563
+msgid "Last Activity"
+msgstr ""
+
+#: includes/admin-chrome.php:507
 msgid "Leave empty to search/replace in all widget types. Use Ctrl/Cmd + Click for standard multi-select."
 msgstr ""
 
-#: admin-pages.php:187
-#: admin-pages.php:836
-#: admin-pages.php:891
+#: includes/log-pages.php:119
+#: includes/log-pages.php:375
+#: includes/log-pages.php:430
 msgid "Level"
 msgstr ""
 
-#: admin-pages.php:853
+#: includes/log-pages.php:392
 msgid "Logging is currently disabled."
 msgstr ""
 
-#: functions.php:734
+#: includes/search-engine.php:237
 msgid "Match - No Change Previewed"
 msgstr ""
 
-#: admin-pages.php:706
+#: includes/log-pages.php:234
 msgid "Max debug log rows to retain"
 msgstr ""
 
-#: admin-pages.php:717
+#: includes/log-pages.php:245
 msgid "Max history log rows to retain"
 msgstr ""
 
-#: admin-pages.php:188
-#: admin-pages.php:837
-#: admin-pages.php:892
+#: includes/log-pages.php:120
+#: includes/log-pages.php:376
+#: includes/log-pages.php:431
 msgid "Message"
 msgstr ""
 
-#: admin-pages.php:1051
-#: admin-pages.php:1101
+#: includes/log-pages.php:594
+#: includes/log-pages.php:766
+#: includes/log-pages.php:816
 msgid "Mode"
 msgstr ""
 
-#: admin-pages.php:881
+#: includes/log-pages.php:699
+msgid "Mode:"
+msgstr ""
+
+#: includes/log-pages.php:420
 msgid "N/A"
 msgstr ""
 
-#: admin-pages.php:586
+#: includes/render-results.php:239
 msgid "Next &raquo;"
 msgstr ""
 
-#: admin-pages.php:459
+#: includes/render-results.php:112
 msgid "No backups available for this post."
 msgstr ""
 
-#: admin-pages.php:412
+#: includes/render-results.php:65
 msgid "No changes found in this item for the current criteria."
 msgstr ""
 
-#: admin-pages.php:412
+#: includes/render-results.php:65
 msgid "No changes predicted in this item for the current criteria."
 msgstr ""
 
-#. translators: %s: Debug log level (e.g. ERROR). */
-#: admin-pages.php:848
+#. translators: translators: %s: Debug log level (e.g. ERROR). */
+#: includes/log-pages.php:387
 msgid "No debug log records found for level %s."
 msgstr ""
 
-#: admin-pages.php:850
+#: includes/log-pages.php:389
 msgid "No debug log records found."
 msgstr ""
 
-#: admin-pages.php:1058
+#: includes/log-pages.php:773
 msgid "No history records found."
 msgstr ""
 
-#. translators: %s: Action name (search or preview). */
-#: admin-pages.php:508
+#. translators: translators: %s: Action name (search or preview). */
+#: includes/render-results.php:161
 msgid "No matches found for your %s criteria."
 msgstr ""
 
-#: admin-pages.php:1312
+#: includes/admin-chrome.php:555
+msgid "Pages Modified"
+msgstr ""
+
+#: includes/admin-chrome.php:437
 msgid "Partial Match (Case-Insensitive, Default)"
 msgstr ""
 
-#: admin-pages.php:504
+#: includes/render-results.php:157
 msgid "Perform a search or preview to see results here."
 msgstr ""
 
-#: functions.php:1120
+#: includes/backups.php:321
 msgid "Permission Denied"
 msgstr ""
 
-#: ajax-handlers.php:23
-#: ajax-handlers.php:65
-#: ajax-handlers.php:111
-#: ajax-handlers.php:180
+#: includes/ajax-handlers.php:23
+#: includes/ajax-handlers.php:65
+#: includes/ajax-handlers.php:111
+#: includes/ajax-handlers.php:180
 msgid "Permission denied."
 msgstr ""
 
-#: admin-pages.php:316
+#: includes/admin-chrome.php:200
 msgid "Please select at least one item from the results to replace."
 msgstr ""
 
-#: admin-pages.php:1048
-#: admin-pages.php:1098
+#: includes/log-pages.php:763
+#: includes/log-pages.php:813
 msgid "Post"
 msgstr ""
 
-#: functions.php:39
+#: includes/search-data.php:43
 msgid "Post Content"
 msgstr ""
 
-#: functions.php:40
+#: includes/search-data.php:44
 msgid "Post Excerpt"
 msgstr ""
 
-#: functions.php:38
+#: includes/log-pages.php:590
+msgid "Post ID"
+msgstr ""
+
+#: includes/log-pages.php:591
+#: includes/search-data.php:42
 msgid "Post Title"
 msgstr ""
 
-#: admin-pages.php:1080
+#: includes/log-pages.php:795
 msgid "Post may have been deleted"
 msgstr ""
 
-#: admin-pages.php:552
+#: includes/render-results.php:205
 msgid "Posts Per Page:"
 msgstr ""
 
-#: admin-pages.php:497
+#: includes/render-results.php:150
 msgid "Preview"
 msgstr ""
 
-#: admin-pages.php:514
+#: includes/render-results.php:167
 msgid "Preview Mode:"
 msgstr ""
 
-#: admin-pages.php:1431
-#: admin-pages.php:1462
+#: includes/admin-chrome.php:586
+#: includes/admin-chrome.php:620
 msgid "Preview Selected"
 msgstr ""
 
-#: admin-pages.php:331
+#: includes/admin-chrome.php:216
 msgid "Preview generation failed. Falling back to standard form submission."
 msgstr ""
 
-#: admin-pages.php:1318
+#: includes/admin-chrome.php:542
+msgid "Quick Stats"
+msgstr ""
+
+#: includes/admin-chrome.php:416
+msgid "Recent:"
+msgstr ""
+
+#: includes/admin-chrome.php:443
 msgid "Regex Tips:"
 msgstr ""
 
-#. translators: %s: PCRE error message. */
-#: functions.php:693
+#. translators: translators: %s: PCRE error message. */
+#: includes/search-engine.php:195
 msgid "Regex matching error: %s"
 msgstr ""
 
-#. translators: %s: PCRE error message. */
-#: functions.php:688
+#. translators: translators: %s: PCRE error message. */
+#: includes/search-engine.php:190
 msgid "Regex replacement error: %s"
 msgstr ""
 
-#: admin-pages.php:1314
+#: includes/admin-chrome.php:439
 msgid "Regular Expression (PCRE, Case-Insensitive)"
 msgstr ""
 
-#: admin-pages.php:1340
+#: includes/admin-chrome.php:465
 msgid "Remove this pair"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1434
-#: admin-pages.php:1463
+#: includes/admin-chrome.php:589
+#: includes/admin-chrome.php:621
 msgid "Replace Selected"
 msgstr ""
 
-#: admin-pages.php:1050
-#: admin-pages.php:1100
+#: includes/log-pages.php:593
+#: includes/log-pages.php:765
+#: includes/log-pages.php:815
 msgid "Replace Term"
 msgstr ""
 
-#: admin-pages.php:1302
+#: includes/admin-chrome.php:427
 msgid "Replace With"
 msgstr ""
 
-#: admin-pages.php:1339
+#: includes/admin-chrome.php:464
 msgid "Replace with..."
 msgstr ""
 
-#: admin-pages.php:455
+#: includes/render-results.php:108
 msgid "Restore"
 msgstr ""
 
-#. translators: 1: Backup Index, 2: Post ID */
-#: functions.php:838
+#. translators: translators: 1: Backup Index, 2: Post ID */
+#: includes/backups.php:198
 msgid "Restore Error: Backup index %1$s not found or invalid for Post ID %2$s."
 msgstr ""
 
-#. translators: 1: Post ID, 2: Error message */
-#: functions.php:881
+#. translators: translators: 1: Post ID, 2: Error message */
+#: includes/backups.php:241
 msgid "Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s"
 msgstr ""
 
-#. translators: 1: Post ID, 2: Database Error */
-#: functions.php:916
+#. translators: translators: 1: Post ID, 2: Database Error */
+#: includes/backups.php:276
 msgid "Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s"
 msgstr ""
 
-#. translators: 1: Post ID, 2: Backup Index */
-#: functions.php:898
+#. translators: translators: 1: Post ID, 2: Backup Index */
+#: includes/backups.php:258
 msgid "Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s."
 msgstr ""
 
-#. translators: 1: Post ID, 2: Backup Index */
-#: functions.php:858
+#. translators: translators: 1: Post ID, 2: Backup Index */
+#: includes/backups.php:218
 msgid "Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s."
 msgstr ""
 
-#: admin-pages.php:437
+#: includes/render-results.php:90
 msgid "Restore from:"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1467
+#: includes/admin-chrome.php:625
 msgid "Restore individual posts from backups within the results list."
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1461
+#: includes/admin-chrome.php:619
 msgid "Results appear below. Select posts to modify."
 msgstr ""
 
-#: admin-pages.php:728
+#: includes/log-pages.php:267
 msgid "Save Setting"
 msgstr ""
 
-#: admin-pages.php:326
+#: includes/admin-chrome.php:211
 msgid "Scanning selected content sources..."
 msgstr ""
 
-#: admin-pages.php:1285
+#: includes/admin-chrome.php:404
 msgid "Search For"
 msgstr ""
 
-#: admin-pages.php:1309
+#: includes/admin-chrome.php:434
 msgid "Search Mode"
 msgstr ""
 
-#: admin-pages.php:1425
-#: admin-pages.php:1460
+#: includes/admin-chrome.php:580
+#: includes/admin-chrome.php:618
 msgid "Search Only"
 msgstr ""
 
-#: admin-pages.php:499
+#: includes/render-results.php:152
 msgid "Search Results"
 msgstr ""
 
-#: admin-pages.php:1049
-#: admin-pages.php:1099
+#: includes/log-pages.php:592
+#: includes/log-pages.php:764
+#: includes/log-pages.php:814
 msgid "Search Term"
 msgstr ""
 
-#: admin-pages.php:1337
+#: includes/admin-chrome.php:462
 msgid "Search for..."
 msgstr ""
 
-#: admin-pages.php:1318
-msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\\b</code> for word boundaries. Test carefully!"
+#: includes/admin-chrome.php:443
+msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>b</code> for word boundaries. Test carefully!"
 msgstr ""
 
-#: admin-pages.php:327
+#: includes/log-pages.php:256
+msgid "Search scan batch size (posts per AJAX request)"
+msgstr ""
+
+#: includes/admin-chrome.php:212
 msgid "Search scan complete. Loading results..."
 msgstr ""
 
-#: admin-pages.php:328
+#: includes/admin-chrome.php:213
 msgid "Search scan failed. Falling back to standard form submission."
 msgstr ""
 
-#: ajax-handlers.php:77
-#: ajax-handlers.php:125
+#: includes/ajax-handlers.php:77
+#: includes/ajax-handlers.php:125
 msgid "Search term is required."
 msgstr ""
 
-#: admin-pages.php:537
+#: includes/render-results.php:190
 msgid "Select All / None"
 msgstr ""
 
-#: admin-pages.php:1449
+#: includes/admin-chrome.php:607
 msgid "Select items from results to enable Preview/Replace."
 msgstr ""
 
-#: admin-pages.php:532
+#: includes/render-results.php:185
 msgid "Select posts below to Preview or Replace."
 msgstr ""
 
-#: admin-pages.php:514
+#: includes/render-results.php:167
 msgid "Showing potential changes for selected items. No changes have been saved yet."
 msgstr ""
 
-#. translators: %s: Number of matches shown */
-#: admin-pages.php:418
+#. translators: translators: %s: Number of matches shown */
+#: includes/render-results.php:71
 msgid "Showing up to %s example matches for this post."
 msgstr ""
 
-#: admin-pages.php:1421
+#: includes/log-pages.php:710
+msgid "Single"
+msgstr ""
+
+#: includes/admin-chrome.php:576
 msgid "Some selected posts do not have an existing backup yet. The plugin will create one automatically before replacement."
 msgstr ""
 
-#: admin-pages.php:322
+#: includes/admin-chrome.php:207
 msgid "Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement."
 msgstr ""
 
-#: admin-pages.php:1145
+#: includes/admin-chrome.php:262
 msgid "Sorry, you are not allowed to access this page."
 msgstr ""
 
-#: admin-pages.php:1295
+#: includes/admin-chrome.php:414
 msgid "Start typing or use arrow keys to see recent searches."
 msgstr ""
 
-#: admin-pages.php:312
+#: includes/admin-chrome.php:196
 msgid "This action cannot be easily undone, except by restoring from a backup."
 msgstr ""
 
-#: admin-pages.php:1013
+#: includes/log-pages.php:692
 msgid "This log records all successful replacement operations performed by the plugin."
 msgstr ""
 
-#: admin-pages.php:689
+#: includes/log-pages.php:217
 msgid "This log records detailed plugin operations if persistent logging is enabled."
 msgstr ""
 
-#: admin-pages.php:186
-#: admin-pages.php:835
-#: admin-pages.php:890
-#: admin-pages.php:1046
-#: admin-pages.php:1096
+#: includes/log-pages.php:118
+#: includes/log-pages.php:374
+#: includes/log-pages.php:429
+#: includes/log-pages.php:588
+#: includes/log-pages.php:761
+#: includes/log-pages.php:811
 msgid "Timestamp (Site Time)"
 msgstr ""
 
-#: functions.php:1183
+#: includes/admin-chrome.php:551
+msgid "Total Changes"
+msgstr ""
+
+#: includes/admin-chrome.php:547
+msgid "Total Operations"
+msgstr ""
+
+#: includes/log-pages.php:706
+msgid "Type:"
+msgstr ""
+
+#: includes/backups.php:380
 msgid "Unable to generate the backup export file because JSON encoding failed."
 msgstr ""
 
-#: functions.php:261
+#: includes/admin-chrome.php:592
+msgid "Undo Last Replace"
+msgstr ""
+
+#: includes/search-data.php:164
 msgid "Unknown JSON error"
 msgstr ""
 
-#. translators: %d: User ID. */
-#: admin-pages.php:1068
+#. translators: translators: %d: User ID. */
+#: includes/log-pages.php:783
 msgid "Unknown User (ID: %d)"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1466
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:624
 msgid "Use %s (and enable logging on its page) for detailed troubleshooting."
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1464
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:622
 msgid "Use %s to save all backups."
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1465
+#. translators: translators: %s: Name of the button or action. */
+#: includes/admin-chrome.php:623
 msgid "Use %s to track changes."
 msgstr ""
 
-#: admin-pages.php:1318
+#: includes/admin-chrome.php:443
 msgid "Use PCRE syntax (no delimiters needed here). Special characters like"
 msgstr ""
 
-#: admin-pages.php:1047
-#: admin-pages.php:1097
+#: includes/log-pages.php:589
+#: includes/log-pages.php:762
+#: includes/log-pages.php:812
 msgid "User"
 msgstr ""
 
-#: admin-pages.php:404
+#: includes/render-results.php:47
 msgid "View"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1446
-#: admin-pages.php:1466
+#: includes/admin-chrome.php:604
+#: includes/admin-chrome.php:624
 msgid "View Debug Log"
 msgstr ""
 
-#. translators: %s: Name of the button or action. */
-#: admin-pages.php:1442
-#: admin-pages.php:1465
+#: includes/admin-chrome.php:600
+#: includes/admin-chrome.php:623
 msgid "View History Log"
 msgstr ""
 
-#: admin-pages.php:404
+#: includes/render-results.php:47
 msgid "View Post (Opens in new tab)"
 msgstr ""
 
-#. translators: %d: Number of selected posts. */
-#: admin-pages.php:315
+#. translators: translators: %d: Number of selected posts. */
+#: includes/admin-chrome.php:199
 msgid "WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server's maximum execution time is set sufficiently high."
 msgstr ""
 
-#: admin-pages.php:1372
+#: includes/admin-chrome.php:497
 msgid "Widget Types"
 msgstr ""
 
-#. translators: %d: Number of selected posts. */
-#: admin-pages.php:310
+#. translators: translators: %d: Number of selected posts. */
+#: includes/admin-chrome.php:194
 msgid "You are about to replace text in %d selected post(s)."
 msgstr ""
 
-#: functions.php:1120
+#: includes/backups.php:321
 msgid "You do not have sufficient permissions to access this feature."
 msgstr ""
 
-#: admin-pages.php:625
-#: admin-pages.php:991
+#: includes/log-pages.php:151
+#: includes/log-pages.php:627
 msgid "You do not have sufficient permissions to access this page."
 msgstr ""
 
-#: admin-pages.php:1318
+#: includes/admin-chrome.php:443
 msgid "need escaping with"
 msgstr ""
 
-#: admin-actions.php:679
+#: includes/admin-chrome.php:564
+msgid "—"
+msgstr ""
+
+#: includes/action-handlers.php:368
 msgid "ℹ️ No changes were predicted for the selected posts based on the provided terms and filters."
 msgstr ""
 
-#: admin-actions.php:517
+#: includes/action-handlers.php:216
 msgid "ℹ️ No posts matched your search criteria."
 msgstr ""
 
-#: admin-actions.php:940
+#: includes/action-handlers.php:629
 msgid "ℹ️ No posts required replacement based on the provided terms, selected posts, and filters."
 msgstr ""
 
-#: admin-pages.php:1420
+#: includes/action-handlers.php:85
+msgid "ℹ️ Nothing to undo yet. No replacement operations have been recorded."
+msgstr ""
+
+#: includes/action-handlers.php:95
+msgid "ℹ️ Nothing to undo."
+msgstr ""
+
+#. translators: translators: %d: Number of restored posts. */
+#: includes/action-handlers.php:114
+msgid "↩️ Undo complete: %1$d post(s) restored to the state before the last replacement."
+msgstr ""
+
+#. translators: translators: %d: Number of failed posts. */
+#: includes/action-handlers.php:117
+msgid "⚠️ %d post(s) could not be restored (no valid backup)."
+msgstr ""
+
+#: includes/admin-chrome.php:575
 msgid "⚠️ Backup Recommended"
 msgstr ""
 
-#: admin-pages.php:1155
+#: includes/admin-chrome.php:272
 msgid "⚠️ No backup data found to download. Perform some replacements first to create backups."
 msgstr ""
 
-#: admin-actions.php:755
+#: includes/action-handlers.php:444
 msgid "⚠️ No search term provided (single or bulk). Replacement operation cancelled."
 msgstr ""
 
-#: admin-actions.php:745
+#: includes/action-handlers.php:434
 msgid "⚠️ No valid bulk search terms provided (all were empty). Operation cancelled."
 msgstr ""
 
-#: admin-actions.php:370
+#: includes/search-cache.php:472
 msgid "⚠️ Search results are no longer available. Please run the search again."
 msgstr ""
 
-#. translators: %d: Post ID. */
-#: admin-actions.php:422
+#: includes/action-handlers.php:120
+msgid "⚠️ Undo could not restore any posts (no valid backups found for the last operation)."
+msgstr ""
+
+#. translators: translators: %d: Post ID. */
+#: includes/action-handlers.php:39
 msgid "✅ Post ID %d successfully restored from backup."
 msgstr ""
 
-#. translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced. */
-#: admin-actions.php:915
+#. translators: translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced. */
+#: includes/action-handlers.php:604
 msgid "✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s."
 msgstr ""
 
-#: admin-actions.php:734
+#: includes/action-handlers.php:423
 msgid "❌ Bulk Replace Error: The number of search terms does not match the number of replace terms. Operation cancelled."
 msgstr ""
 
-#. translators: %d: Post ID. */
-#: admin-actions.php:793
+#. translators: translators: %d: Post ID. */
+#: includes/action-handlers.php:482
 msgid "❌ Failed to create backup for Post ID %d. Replacement skipped for this post."
 msgstr ""
 
-#. translators: %d: Post ID. */
-#: admin-actions.php:872
+#. translators: translators: %d: Post ID. */
+#: includes/action-handlers.php:561
 msgid "❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved."
 msgstr ""
 
-#. translators: %d: Post ID. */
-#: admin-actions.php:426
+#. translators: translators: %d: Post ID. */
+#: includes/action-handlers.php:43
 msgid "❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity."
 msgstr ""
 
-#. translators: 1: Post ID, 2: Database error message. */
-#: admin-actions.php:881
+#. translators: translators: 1: Post ID, 2: Database error message. */
+#: includes/action-handlers.php:570
 msgid "❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s"
 msgstr ""
 
-#. translators: 1: Post ID, 2: WordPress error message. */
-#: admin-actions.php:863
+#. translators: translators: 1: Post ID, 2: WordPress error message. */
+#: includes/action-handlers.php:552
 msgid "❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s"
 msgstr ""
 
-#. translators: %s: The invalid regular expression pattern. */
-#: admin-actions.php:624
+#. translators: translators: %s: The invalid regular expression pattern. */
+#: includes/action-handlers.php:313
 msgid "❌ Invalid regular expression pattern for preview: %s. Please check syntax."
 msgstr ""
 
-#. translators: 1: Pair number, 2: The invalid regular expression pattern. */
-#: admin-actions.php:768
+#. translators: translators: 1: Pair number, 2: The invalid regular expression pattern. */
+#: includes/action-handlers.php:457
 msgid "❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted."
 msgstr ""
 
-#. translators: %s: The invalid regular expression pattern. */
-#: admin-actions.php:492
+#. translators: translators: %s: The invalid regular expression pattern. */
+#: includes/action-handlers.php:182
 msgid "❌ Invalid regular expression pattern provided for search: %s. Please check syntax."
 msgstr ""
 
-#: admin-actions.php:429
+#: includes/action-handlers.php:46
 msgid "❌ Security check failed for restore action. Please try again."
 msgstr ""
 
-#: admin-actions.php:474
+#: includes/action-handlers.php:73
+msgid "❌ Security check failed. Please try again."
+msgstr ""
+
+#: includes/action-handlers.php:164
 msgid "❌ Security check failed. Please try searching again."
 msgstr ""
 
-#: admin-actions.php:604
+#: includes/action-handlers.php:293
 msgid "❌ Security check failed. Please try the preview again."
 msgstr ""
 
-#: admin-actions.php:717
+#: includes/action-handlers.php:406
 msgid "❌ Security check failed. Please try the replacement again."
 msgstr ""
 
-#: admin-actions.php:597
+#: includes/action-handlers.php:286
 msgid "❌ You do not have permission to preview changes."
 msgstr ""
 
-#: admin-actions.php:410
+#: includes/action-handlers.php:27
 msgid "❌ You do not have permission to restore backups."
 msgstr ""
 
-#: admin-actions.php:710
+#: includes/action-handlers.php:399
 msgid "❌ You do not have permission to run replacements."
 msgstr ""
 
-#: admin-actions.php:467
+#: includes/action-handlers.php:157
 msgid "❌ You do not have permission to run searches."
 msgstr ""
 
-#. translators: %d: Number of selected posts. */
-#: admin-actions.php:631
+#: includes/action-handlers.php:67
+msgid "❌ You do not have permission to undo replacements."
+msgstr ""
+
+#. translators: translators: %d: Number of selected posts. */
+#: includes/action-handlers.php:320
 msgid "👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved."
 msgstr ""
 
-#. translators: %d: Number of search/replace pairs. */
-#: admin-actions.php:924
+#. translators: translators: %d: Number of search/replace pairs. */
+#: includes/action-handlers.php:613
 msgid "📦 Operation type: Bulk Replace with %d pair(s)."
 msgstr ""
-

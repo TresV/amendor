@@ -25,7 +25,7 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
     $post_status_label = $post_status_object && !empty($post_status_object->label)
         ? $post_status_object->label
         : ucfirst((string) $post_status);
-    ?>
+?>
     <div class="amendor-preview-item" data-type="<?php echo esc_attr($item['type']); ?>" data-backup-count="<?php echo esc_attr(isset($item['backup_count']) ? intval($item['backup_count']) : amendor_get_post_backup_count($item['ID'])); ?>">
         <div class="amendor-item-header hndle">
             <div class="result-left">
@@ -263,5 +263,3 @@ function amendor_get_results_section_html(array $args)
     amendor_render_results_section($args);
     return ob_get_clean();
 }
-
-

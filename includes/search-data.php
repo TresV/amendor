@@ -475,4 +475,3 @@ function amendor_get_dashboard_stats()
 
     return $defaults;
 }
-
