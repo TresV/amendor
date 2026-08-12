@@ -28,8 +28,10 @@ Standalone package for the Elementor search-and-replace tool.
   - `search-cache.php` — batched search backend (candidate scan, transient cache, pagination payloads)
   - `action-handlers.php` — admin form action handlers (search, preview, replace, restore, undo)
   - `render-results.php` — admin notices and search/preview result markup (shared with AJAX)
-  - `admin-chrome.php` — admin pages, settings, assets, main UI, and quick stats
-  - `log-pages.php` — debug log and history log pages plus export helpers
+  - `admin-chrome.php` — admin menu, settings, assets, and notices
+  - `admin-main-page.php` — the main search & replace UI page
+  - `log-debug-page.php` — debug log page and export
+  - `log-history-page.php` — change history log page and export
   - `ajax-handlers.php` — AJAX endpoints (batched search, results, preview, backup check)
 - `assets/`: admin CSS and JavaScript
 - `languages/`: translation template (`amendor.pot`)

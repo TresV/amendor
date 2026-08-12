@@ -49,7 +49,9 @@ require_once AMENDOR_PLUGIN_DIR . 'includes/search-cache.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/render-results.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/action-handlers.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/admin-chrome.php';
-require_once AMENDOR_PLUGIN_DIR . 'includes/log-pages.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/admin-main-page.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/log-debug-page.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/log-history-page.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/ajax-handlers.php';
 
 add_action('plugins_loaded', 'amendor_load_textdomain');

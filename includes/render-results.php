@@ -98,7 +98,8 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                                 &nbsp;|&nbsp;
                                 <span class="amendor-diff-del">-</span> <?php esc_html_e('removed', 'amendor'); ?>
                             </p>
-                            <pre class="amendor-json-diff-pre"><?php echo $json_diff_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></pre>
+                            <pre class="amendor-json-diff-pre"><?php echo $json_diff_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped 
+                                                                ?></pre>
                         <?php else: ?>
                             <p class="description"><?php esc_html_e('This page is too large for a line-level diff. Showing the resulting Elementor data.', 'amendor'); ?></p>
                             <pre class="amendor-json-diff-pre"><?php echo esc_html($item['json_diff']['after']); ?></pre>
