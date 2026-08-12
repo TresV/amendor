@@ -37,6 +37,7 @@ jQuery(function ($) {
     var panel;
     var highlighted = 0;
     var lastReplaceSnapshot = null;
+    var pendingRehighlight = false;
 
     // Current search state (term/mode/regex + results).
     var currentTerm = '';
@@ -464,6 +465,18 @@ jQuery(function ($) {
         });
     }
 
+    function refreshPreviewAfterChange() {
+        // Guarantee the change is visible: reload the preview iframe from the
+        // (now-updated) models. Targeted re-renders are best-effort across
+        // Elementor versions and may not refresh the canvas on their own.
+        try {
+            if (typeof elementor.reloadPreview === 'function') {
+                pendingRehighlight = true;
+                elementor.reloadPreview();
+            }
+        } catch (e) { /* ignore */ }
+    }
+
     function setUndoVisible(visible) {
         var $btn = $('#amendor-editor-undo');
         if ($btn.length) {
@@ -513,6 +526,7 @@ jQuery(function ($) {
         setUndoVisible(true);
         runSearch(); // refresh list + highlights
         $status.text((i18n.replaced || '%d value(s) replaced').replace('%d', changes.length)).show();
+        refreshPreviewAfterChange();
     }
 
     function runUndo() {
@@ -527,6 +541,7 @@ jQuery(function ($) {
         setUndoVisible(false);
         runSearch();
         $('#amendor-editor-status').text(i18n.reverted || 'Changes restored.').show();
+        refreshPreviewAfterChange();
     }
 
     function buildPanel() {
@@ -708,10 +723,18 @@ jQuery(function ($) {
         }
     }
 
-    // The preview iframe reloads on save/page switch — re-bind inside it.
+    // The preview iframe reloads on save/page switch, replace refresh, etc.
+    // Re-bind the shortcut inside it and re-apply highlights when a replace
+    // just refreshed the preview.
     var $iframe = $('#elementor-preview-iframe');
     if ($iframe.length) {
-        $iframe.on('load', bindShortcuts);
+        $iframe.on('load', function () {
+            bindShortcuts();
+            if (pendingRehighlight) {
+                pendingRehighlight = false;
+                runSearch();
+            }
+        });
     }
 
     // --- Init ---
