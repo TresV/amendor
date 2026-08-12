@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 12:35+0000\n"
+"POT-Creation-Date: 2026-08-12 12:50+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -25,12 +25,16 @@ msgstr ""
 msgid "%d match(es) highlighted"
 msgstr ""
 
+#: includes/elementor-editor.php:73
+msgid "%d of %d selected"
+msgstr ""
+
 #. translators: %d: Number of search/replace pairs.
 #: includes/action-handlers.php:605
 msgid "%d pairs applied"
 msgstr ""
 
-#: includes/elementor-editor.php:63
+#: includes/elementor-editor.php:62
 msgid "%d value(s) replaced"
 msgstr ""
 
@@ -222,7 +226,7 @@ msgstr ""
 msgid "Changes"
 msgstr ""
 
-#: includes/elementor-editor.php:64
+#: includes/elementor-editor.php:63
 msgid "Changes restored."
 msgstr ""
 
@@ -268,6 +272,10 @@ msgstr ""
 #. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:431
 msgid "Click %s."
+msgstr ""
+
+#: includes/elementor-editor.php:70
+msgid "Code & CSS"
 msgstr ""
 
 #: includes/admin-chrome.php:205
@@ -360,7 +368,7 @@ msgstr ""
 msgid "Enable Persistent Debug Logging (Logs detailed actions to the database table below)"
 msgstr ""
 
-#: includes/elementor-editor.php:66
+#: includes/elementor-editor.php:65
 msgid "Enter a search term first."
 msgstr ""
 
@@ -393,8 +401,8 @@ msgstr ""
 msgid "Exact Text (Case-Sensitive)"
 msgstr ""
 
-#: includes/elementor-editor.php:67
-msgid "Experimental — best-effort across Elementor versions. Replace All updates the page content; Undo restores the last replace."
+#: includes/elementor-editor.php:74
+msgid "Experimental — best-effort across Elementor versions. Use the Fields filter and occurrence list to choose what to replace; Undo restores the last replace."
 msgstr ""
 
 #: includes/log-history-page.php:217
@@ -427,6 +435,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:302
 msgid "Field Keys"
+msgstr ""
+
+#: includes/elementor-editor.php:66
+msgid "Fields"
 msgstr ""
 
 #: includes/admin-main-page.php:375
@@ -604,6 +616,10 @@ msgstr ""
 msgid "Optional. Comma-separated Elementor settings keys to limit scanning to (e.g. editor, title, url). Leave empty to scan all fields."
 msgstr ""
 
+#: includes/elementor-editor.php:71
+msgid "Other (incl. internal)"
+msgstr ""
+
 #: includes/admin-main-page.php:350
 msgid "Pages Modified"
 msgstr ""
@@ -720,17 +736,17 @@ msgstr ""
 msgid "Remove this pair"
 msgstr ""
 
-#: includes/elementor-editor.php:65
+#: includes/elementor-editor.php:64
 msgid "Replace %d value(s) on this page? You can undo afterwards."
-msgstr ""
-
-#: includes/elementor-editor.php:61
-msgid "Replace All"
 msgstr ""
 
 #: includes/admin-main-page.php:402
 #: includes/admin-main-page.php:434
 msgid "Replace Selected"
+msgstr ""
+
+#: includes/elementor-editor.php:72
+msgid "Replace Selected (%d)"
 msgstr ""
 
 #: includes/log-history-page.php:257
@@ -872,6 +888,10 @@ msgstr ""
 msgid "Select posts below to Preview or Replace."
 msgstr ""
 
+#: includes/elementor-editor.php:69
+msgid "Shortcodes"
+msgstr ""
+
 #: includes/render-results.php:195
 msgid "Showing potential changes for selected items. No changes have been saved yet."
 msgstr ""
@@ -899,6 +919,10 @@ msgstr ""
 
 #: includes/admin-main-page.php:202
 msgid "Start typing or use arrow keys to see recent searches."
+msgstr ""
+
+#: includes/elementor-editor.php:67
+msgid "Text & content"
 msgstr ""
 
 #: includes/admin-chrome.php:196
@@ -942,11 +966,15 @@ msgstr ""
 msgid "URL / Domain Swap"
 msgstr ""
 
+#: includes/elementor-editor.php:68
+msgid "URLs & links"
+msgstr ""
+
 #: includes/backups.php:380
 msgid "Unable to generate the backup export file because JSON encoding failed."
 msgstr ""
 
-#: includes/elementor-editor.php:62
+#: includes/elementor-editor.php:61
 msgid "Undo"
 msgstr ""
 
