@@ -163,7 +163,7 @@ function amendor_render_text_replacer_ui()
     // ======================================================================
     // --- RENDER THE ADMIN PAGE UI ---
     // ======================================================================
-    ?>
+?>
     <div class="wrap amendor-wrap">
         <h1><span class="dashicons dashicons-edit" style="font-size: 1.3em; vertical-align: middle;"></span> <?php esc_html_e('Amendor', 'amendor'); ?></h1>
 

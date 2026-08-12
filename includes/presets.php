@@ -308,7 +308,7 @@ function amendor_render_presets_box()
 {
     $presets = amendor_get_presets();
     $page_url = admin_url('admin.php?page=' . amendor_get_admin_parent_slug());
-    ?>
+?>
     <div id="amendor-presets" class="postbox" style="margin-top: 16px;">
         <h2 class="hndle"><span><?php esc_html_e('Saved Presets', 'amendor'); ?></span></h2>
         <div class="inside">
@@ -361,5 +361,5 @@ function amendor_render_presets_box()
             </form>
         </div>
     </div>
-    <?php
+<?php
 }
