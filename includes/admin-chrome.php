@@ -201,6 +201,7 @@ function amendor_admin_enqueue_scripts($hook_suffix)
         'confirm_restore_title' => __('Confirm Restore', 'amendor'),
         /* translators: %d: Post ID. */
         'confirm_restore_text' => __('Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post.', 'amendor'), // %d will be replaced
+        'confirm_undo_text' => __('Are you sure you want to undo the last replacement operation? This will restore the affected posts to their state before the last replace.', 'amendor'),
         'confirm_clear_log_title' => __('Confirm Clear Log', 'amendor'),
         'confirm_clear_log_text' => __('Are you sure you want to clear the ENTIRE debug log? This cannot be undone.', 'amendor'),
         'backup_selection_warning' => __('Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement.', 'amendor'),
@@ -316,6 +317,7 @@ function amendor_render_text_replacer_ui()
     $selected_content_sources = amendor_normalize_content_sources($selected_content_sources);
 
     amendor_handle_restore_action($action, $amendor_messages);
+    amendor_handle_undo_action($action, $amendor_messages);
 
     $search_payload = amendor_handle_search_action(
         $action,
@@ -381,6 +383,7 @@ function amendor_render_text_replacer_ui()
             <?php wp_nonce_field('amendor_search_action', 'amendor_search_nonce'); ?>
             <?php wp_nonce_field('amendor_replace_action', 'amendor_replace_nonce'); ?>
             <?php wp_nonce_field('amendor_preview_action', 'amendor_preview_nonce'); ?>
+            <?php wp_nonce_field('amendor_undo_action', 'amendor_undo_nonce'); ?>
             <input type="hidden" name="amendor_form_action" id="amendor-form-action" value="<?php echo esc_attr($action); ?>">
             <input type="hidden" name="paged" id="amendor-paged-input" value="<?php echo esc_attr($paged); ?>">
             <input type="hidden" name="results_per_page" id="amendor-results-per-page-input" value="<?php echo esc_attr($results_per_page); ?>">
@@ -578,6 +581,9 @@ function amendor_render_text_replacer_ui()
                                 </button>
                                 <button type="submit" name="action" value="replace_selected" class="button button-primary button-large amendor-action-button" id="replace-button" disabled onclick="return confirmReplaceAction();">
                                     <span class="dashicons dashicons-yes"></span> <?php esc_html_e('Replace Selected', 'amendor'); ?>
+                                </button>
+                                <button type="submit" name="action" value="undo" class="button button-secondary button-large amendor-action-button" id="undo-button" onclick="return confirm(amendor_admin_vars.confirm_undo_text);">
+                                    <span class="dashicons dashicons-undo"></span> <?php esc_html_e('Undo Last Replace', 'amendor'); ?>
                                 </button>
                                 <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=' . amendor_get_admin_parent_slug() . '&action=download_backup'), 'amendor_download_backup_action', 'amendor_download_nonce')); ?>"
                                     class="button button-secondary button-large amendor-action-button" id="backup-button">

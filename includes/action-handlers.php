@@ -51,6 +51,79 @@ function amendor_handle_restore_action($action, array &$messages)
 }
 
 /**
+ * Handle the one-click undo action (restore the last replace operation).
+ *
+ * @param string $action Current action.
+ * @param array  $messages Notices to append to.
+ * @return void
+ */
+function amendor_handle_undo_action($action, array &$messages)
+{
+    if ($action !== 'undo') {
+        return;
+    }
+
+    if (!amendor_current_user_can_manage()) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to undo replacements.', 'amendor')];
+        amendor_add_debug_log('Undo Error: Permission denied.', 'ERROR');
+        return;
+    }
+
+    if (!isset($_POST['amendor_undo_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_undo_nonce'])), 'amendor_undo_action')) {
+        $messages[] = ['type' => 'error', 'text' => __('❌ Security check failed. Please try again.', 'amendor')];
+        amendor_add_debug_log('Undo Error: Nonce verification failed.', 'ERROR');
+        return;
+    }
+
+    amendor_add_debug_log("Attempting Undo Action...", 'INFO');
+
+    global $wpdb;
+    $history_table = amendor_get_history_table_name();
+
+    $last_timestamp = $wpdb->get_var("SELECT MAX(timestamp) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    if (!$last_timestamp) {
+        $messages[] = ['type' => 'info', 'text' => __('ℹ️ Nothing to undo yet. No replacement operations have been recorded.', 'amendor')];
+        amendor_add_debug_log("Undo Action Finished: no history.", 'DEBUG');
+        return;
+    }
+
+    $post_ids = $wpdb->get_col(
+        $wpdb->prepare("SELECT DISTINCT post_id FROM {$history_table} WHERE timestamp = %s", $last_timestamp)
+    ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+    if (empty($post_ids)) {
+        $messages[] = ['type' => 'info', 'text' => __('ℹ️ Nothing to undo.', 'amendor')];
+        amendor_add_debug_log("Undo Action Finished: no posts to undo.", 'DEBUG');
+        return;
+    }
+
+    $restored = 0;
+    $failed = 0;
+    foreach ($post_ids as $post_id) {
+        if (amendor_restore_elementor_backup((int) $post_id, 0)) {
+            $restored++;
+            amendor_add_debug_log('Undo restored post from backup.', 'INFO', ['post_id' => (int) $post_id]);
+        } else {
+            $failed++;
+            amendor_add_debug_log('Undo failed to restore post.', 'WARN', ['post_id' => (int) $post_id]);
+        }
+    }
+
+    if ($restored > 0) {
+        /* translators: %d: Number of restored posts. */
+        $messages[] = ['type' => 'success', 'text' => sprintf(__('↩️ Undo complete: %1$d post(s) restored to the state before the last replacement.', 'amendor'), $restored)];
+        if ($failed > 0) {
+            /* translators: %d: Number of failed posts. */
+            $messages[] = ['type' => 'warning', 'text' => sprintf(__('⚠️ %d post(s) could not be restored (no valid backup).', 'amendor'), $failed)];
+        }
+    } else {
+        $messages[] = ['type' => 'warning', 'text' => __('⚠️ Undo could not restore any posts (no valid backups found for the last operation).', 'amendor')];
+    }
+
+    amendor_add_debug_log("====== Undo Action Finished ======", 'DEBUG');
+}
+
+/**
  * Handle search action requests.
  *
  * @param string $action Current action.
