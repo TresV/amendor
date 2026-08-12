@@ -369,6 +369,21 @@ jQuery(function ($) {
         $(this).hide();
     });
 
+    $(document).on('click', '#amendor-swap-run', function () {
+        const oldUrl = $.trim($('#amendor-swap-old').val());
+        const newUrl = $.trim($('#amendor-swap-new').val());
+        if (!oldUrl) {
+            window.alert(amendor_admin_vars.swap_require_old);
+            return;
+        }
+        $('#search').val(oldUrl);
+        $('#replace').val(newUrl);
+        const form = $('#elementor-search-form');
+        ensureActionInput(form, 'search');
+        activeSubmitAction = 'search';
+        form.trigger('submit');
+    });
+
     $(document).on('change', '#results-per-page', function () {
         const form = $('#elementor-search-form');
         syncResultsPerPageInput();

@@ -213,6 +213,7 @@ function amendor_admin_enqueue_scripts($hook_suffix)
         'search_progress_error' => __('Search scan failed. Falling back to standard form submission.', 'amendor'),
         'search_cancel_label' => __('Cancel Scan', 'amendor'),
         'search_cancelled' => __('Search scan cancelled.', 'amendor'),
+        'swap_require_old' => __('Please enter the URL or domain to search for.', 'amendor'),
         'preview_nonce' => wp_create_nonce('amendor_run_preview'),
         'preview_progress_label' => __('Generating preview...', 'amendor'),
         'preview_progress_error' => __('Preview generation failed. Falling back to standard form submission.', 'amendor'),
@@ -566,6 +567,21 @@ function amendor_render_text_replacer_ui()
                                     <strong><?php echo $stats['last_activity'] !== '' ? esc_html($stats['last_activity']) : esc_html__('—', 'amendor'); ?></strong>
                                 </li>
                             </ul>
+                        </div>
+                    </div>
+
+                    <!-- URL / Domain Swap Preset -->
+                    <div id="amendor-url-swap" class="postbox">
+                        <h2 class="hndle"><span><?php esc_html_e('URL / Domain Swap', 'amendor'); ?></span></h2>
+                        <div class="inside">
+                            <p class="description"><?php esc_html_e('Find and preview a URL/domain replacement across all content sources.', 'amendor'); ?></p>
+                            <label for="amendor-swap-old"><?php esc_html_e('Old URL / domain', 'amendor'); ?></label>
+                            <input type="text" id="amendor-swap-old" class="regular-text" style="width: 100%; margin-bottom: 8px;" placeholder="https://old.example.com">
+                            <label for="amendor-swap-new"><?php esc_html_e('New URL / domain', 'amendor'); ?></label>
+                            <input type="text" id="amendor-swap-new" class="regular-text" style="width: 100%; margin-bottom: 8px;" placeholder="https://new.example.com">
+                            <button type="button" id="amendor-swap-run" class="button button-secondary button-large" style="width: 100%;">
+                                <span class="dashicons dashicons-admin-links"></span> <?php esc_html_e('Fill & Search', 'amendor'); ?>
+                            </button>
                         </div>
                     </div>
 
