@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: Amendor 1.6.0\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
-"POT-Creation-Date: 2026-08-12 09:31+0000\n"
+"POT-Creation-Date: 2026-08-12 12:12+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,22 +16,21 @@ msgstr ""
 "X-Generator: amendor-make-pot\n"
 "X-Domain: amendor\n"
 
-
-#. translators: translators: %s: Comma-separated list of content sources. */
+#. translators: %s: Comma-separated list of content sources.
 #: includes/action-handlers.php:602
 msgid " [Sources: %s]"
 msgstr ""
 
-#: includes/elementor-editor.php:53
+#: includes/elementor-editor.php:54
 msgid "%d match(es) highlighted"
 msgstr ""
 
-#. translators: translators: %d: Number of search/replace pairs. */
+#. translators: %d: Number of search/replace pairs.
 #: includes/action-handlers.php:605
 msgid "%d pairs applied"
 msgstr ""
 
-#. translators: translators: %s: Number of log items. */
+#. translators: %s: Number of log items.
 #: includes/log-debug-page.php:345
 #: includes/log-debug-page.php:444
 #: includes/log-history-page.php:230
@@ -41,7 +40,7 @@ msgid_plural "%s items"
 msgstr[0] ""
 msgstr[1] ""
 
-#. translators: translators: %s: Number of matched items. */
+#. translators: %s: Number of matched items.
 #: includes/render-results.php:258
 msgid "%s matched item"
 msgid_plural "%s matched items"
@@ -98,7 +97,7 @@ msgstr ""
 msgid "Actions"
 msgstr ""
 
-#. translators: translators: %s: Comma-separated list of active content sources. */
+#. translators: %s: Comma-separated list of active content sources.
 #: includes/render-results.php:197
 msgid "Active content sources: %s."
 msgstr ""
@@ -146,7 +145,7 @@ msgstr ""
 msgid "Amendor - Debug Log"
 msgstr ""
 
-#: includes/elementor-editor.php:48
+#: includes/elementor-editor.php:49
 msgid "Amendor Search"
 msgstr ""
 
@@ -162,7 +161,7 @@ msgstr ""
 msgid "Are you sure you want to proceed?"
 msgstr ""
 
-#. translators: translators: %d: Post ID. */
+#. translators: %d: Post ID.
 #: includes/admin-chrome.php:203
 msgid "Are you sure you want to restore Post ID %d from this backup? This will overwrite the saved content fields for this post."
 msgstr ""
@@ -171,17 +170,17 @@ msgstr ""
 msgid "Are you sure you want to undo the last replacement operation? This will restore the affected posts to their state before the last replace."
 msgstr ""
 
-#. translators: translators: %s: Post ID */
+#. translators: %s: Post ID
 #: includes/backups.php:65
 msgid "Backup Error: Insert failed for Post ID %s."
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Data type */
+#. translators: 1: Post ID, 2: Data type
 #: includes/backups.php:120
 msgid "Backup Error: Invalid Post ID (%1$s) or Data type (%2$s) for backup."
 msgstr ""
 
-#. translators: translators: 1: Date and Time, 2: Human readable time difference */
+#. translators: 1: Date and Time, 2: Human readable time difference
 #: includes/render-results.php:125
 msgid "Backup from %1$s (%2$s ago)"
 msgstr ""
@@ -190,9 +189,9 @@ msgstr ""
 msgid "Backups Stored"
 msgstr ""
 
-#: includes/log-history-page.php:87
 #: includes/log-history-page.php:201
 #: includes/log-history-page.php:294
+#: includes/log-history-page.php:87
 msgid "Bulk"
 msgstr ""
 
@@ -213,14 +212,14 @@ msgstr ""
 msgid "Change History Log"
 msgstr ""
 
-#: includes/log-history-page.php:88
 #: includes/log-history-page.php:259
 #: includes/log-history-page.php:309
+#: includes/log-history-page.php:88
 msgid "Changes"
 msgstr ""
 
 #: includes/admin-main-page.php:229
-msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `bwordb`)."
+msgid "Choose matching method. Exact Text matches the typed text exactly, including case, within larger content. Regex uses PHP PCRE syntax (e.g., `\\bword\\b`)."
 msgstr ""
 
 #: includes/admin-main-page.php:150
@@ -235,7 +234,7 @@ msgstr ""
 msgid "Choose which post content sources should be searched or replaced. Widget filtering only applies when Elementor content is included."
 msgstr ""
 
-#: includes/elementor-editor.php:51
+#: includes/elementor-editor.php:52
 msgid "Clear"
 msgstr ""
 
@@ -248,17 +247,17 @@ msgstr ""
 msgid "Clear Filter"
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:433
 msgid "Click %s for a dry run."
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:434
 msgid "Click %s to apply changes (backups created per post)."
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:431
 msgid "Click %s."
 msgstr ""
@@ -323,7 +322,7 @@ msgstr ""
 msgid "Edit Elementor"
 msgstr ""
 
-#. translators: translators: %s: Post title. */
+#. translators: %s: Post title.
 #: includes/log-history-page.php:282
 msgid "Edit Post: %s"
 msgstr ""
@@ -344,7 +343,7 @@ msgstr ""
 msgid "Elementor Content"
 msgstr ""
 
-#. translators: translators: %s: Post ID */
+#. translators: %s: Post ID
 #: includes/backups.php:288
 msgid "Elementor cache cleared after restore for Post ID %s."
 msgstr ""
@@ -369,12 +368,12 @@ msgstr ""
 msgid "Enter the text you want to find. Case sensitivity depends on the Search Mode."
 msgstr ""
 
-#. translators: translators: 1: String snippet, 2: Error message */
+#. translators: 1: String snippet, 2: Error message
 #: includes/search-engine.php:233
 msgid "Error processing string [%1$s...]: %2$s"
 msgstr ""
 
-#: includes/elementor-editor.php:55
+#: includes/elementor-editor.php:57
 msgid "Exact"
 msgstr ""
 
@@ -382,7 +381,7 @@ msgstr ""
 msgid "Exact Text (Case-Sensitive)"
 msgstr ""
 
-#: includes/elementor-editor.php:58
+#: includes/elementor-editor.php:60
 msgid "Experimental — best-effort across Elementor versions; replacement happens in the Amendor admin."
 msgstr ""
 
@@ -439,7 +438,7 @@ msgstr ""
 msgid "Find and preview a URL/domain replacement across all content sources."
 msgstr ""
 
-#. translators: translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary */
+#. translators: 1: Count of matched posts on the current page, 2: Current page number, 3: Total pages, 4: Total matched posts, 5: Total scanned candidate posts, 6: Source summary
 #: includes/render-results.php:204
 msgid "Found %1$s matched post(s) on this page (Page %2$s of %3$s). Total matched posts across the full scan: %4$s. Candidate posts scanned: %5$s. Active content sources: %6$s."
 msgstr ""
@@ -448,7 +447,7 @@ msgstr ""
 msgid "Generating preview..."
 msgstr ""
 
-#: includes/elementor-editor.php:50
+#: includes/elementor-editor.php:51
 msgid "Highlight"
 msgstr ""
 
@@ -456,17 +455,17 @@ msgstr ""
 msgid "History Log"
 msgstr ""
 
-#. translators: translators: %s: Database error message */
+#. translators: %s: Database error message
 #: includes/search-engine.php:434
 msgid "History Log Error: Failed to insert record into DB. Error: %s"
 msgstr ""
 
-#. translators: translators: 1: User ID, 2: Post ID, 3: Changes Made */
+#. translators: 1: User ID, 2: Post ID, 3: Changes Made
 #: includes/search-engine.php:390
 msgid "History Log Skipped: Missing data or zero changes. User: %1$s, Post: %2$s, Changes: %3$d"
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Changes Made */
+#. translators: 1: Post ID, 2: Changes Made
 #: includes/search-engine.php:442
 msgid "History Log Success: Record added for Post ID %1$s. Changes: %2$d"
 msgstr ""
@@ -475,12 +474,16 @@ msgstr ""
 msgid "How It Works"
 msgstr ""
 
-#: includes/ajax-handlers.php:84
 #: includes/ajax-handlers.php:133
+#: includes/ajax-handlers.php:84
 msgid "Invalid regular expression pattern."
 msgstr ""
 
-#. translators: translators: %s: JSON error message */
+#: includes/elementor-editor.php:56
+msgid "Invalid regular expression."
+msgstr ""
+
+#. translators: %s: JSON error message
 #: includes/search-data.php:207
 msgid "JSON encoding failed: %s"
 msgstr ""
@@ -521,9 +524,9 @@ msgstr ""
 msgid "Message"
 msgstr ""
 
-#: includes/log-history-page.php:86
 #: includes/log-history-page.php:258
 #: includes/log-history-page.php:308
+#: includes/log-history-page.php:86
 msgid "Mode"
 msgstr ""
 
@@ -555,7 +558,7 @@ msgstr ""
 msgid "No changes predicted in this item for the current criteria."
 msgstr ""
 
-#. translators: translators: %s: Debug log level (e.g. ERROR). */
+#. translators: %s: Debug log level (e.g. ERROR).
 #: includes/log-debug-page.php:386
 msgid "No debug log records found for level %s."
 msgstr ""
@@ -568,12 +571,12 @@ msgstr ""
 msgid "No history records found."
 msgstr ""
 
-#. translators: translators: %s: Action name (search or preview). */
+#. translators: %s: Action name (search or preview).
 #: includes/render-results.php:189
 msgid "No matches found for your %s criteria."
 msgstr ""
 
-#: includes/elementor-editor.php:54
+#: includes/elementor-editor.php:55
 msgid "No matches found."
 msgstr ""
 
@@ -581,7 +584,7 @@ msgstr ""
 msgid "Old URL / domain"
 msgstr ""
 
-#: includes/elementor-editor.php:52
+#: includes/elementor-editor.php:53
 msgid "Open in Amendor"
 msgstr ""
 
@@ -593,7 +596,7 @@ msgstr ""
 msgid "Pages Modified"
 msgstr ""
 
-#: includes/elementor-editor.php:56
+#: includes/elementor-editor.php:58
 msgid "Partial"
 msgstr ""
 
@@ -609,10 +612,10 @@ msgstr ""
 msgid "Permission Denied"
 msgstr ""
 
-#: includes/ajax-handlers.php:24
-#: includes/ajax-handlers.php:66
 #: includes/ajax-handlers.php:114
 #: includes/ajax-handlers.php:183
+#: includes/ajax-handlers.php:24
+#: includes/ajax-handlers.php:66
 msgid "Permission denied."
 msgstr ""
 
@@ -679,7 +682,7 @@ msgstr ""
 msgid "Recent:"
 msgstr ""
 
-#: includes/elementor-editor.php:57
+#: includes/elementor-editor.php:59
 msgid "Regex"
 msgstr ""
 
@@ -687,12 +690,12 @@ msgstr ""
 msgid "Regex Tips:"
 msgstr ""
 
-#. translators: translators: %s: PCRE error message. */
+#. translators: %s: PCRE error message.
 #: includes/search-engine.php:218
 msgid "Regex matching error: %s"
 msgstr ""
 
-#. translators: translators: %s: PCRE error message. */
+#. translators: %s: PCRE error message.
 #: includes/search-engine.php:213
 msgid "Regex replacement error: %s"
 msgstr ""
@@ -710,9 +713,9 @@ msgstr ""
 msgid "Replace Selected"
 msgstr ""
 
-#: includes/log-history-page.php:85
 #: includes/log-history-page.php:257
 #: includes/log-history-page.php:307
+#: includes/log-history-page.php:85
 msgid "Replace Term"
 msgstr ""
 
@@ -728,27 +731,27 @@ msgstr ""
 msgid "Restore"
 msgstr ""
 
-#. translators: translators: 1: Backup Index, 2: Post ID */
+#. translators: 1: Backup Index, 2: Post ID
 #: includes/backups.php:198
 msgid "Restore Error: Backup index %1$s not found or invalid for Post ID %2$s."
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Error message */
+#. translators: 1: Post ID, 2: Error message
 #: includes/backups.php:241
 msgid "Restore Error: Failed to update post fields for Post ID %1$s. Error: %2$s"
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Database Error */
+#. translators: 1: Post ID, 2: Database Error
 #: includes/backups.php:276
 msgid "Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s"
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Backup Index */
+#. translators: 1: Post ID, 2: Backup Index
 #: includes/backups.php:258
 msgid "Restore Error: Invalid Elementor backup data format for Post ID %1$s, Index %2$s."
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Backup Index */
+#. translators: 1: Post ID, 2: Backup Index
 #: includes/backups.php:218
 msgid "Restore Error: Invalid backup snapshot for Post ID %1$s, Index %2$s."
 msgstr ""
@@ -794,13 +797,13 @@ msgstr ""
 msgid "Search Results"
 msgstr ""
 
-#: includes/log-history-page.php:84
 #: includes/log-history-page.php:256
 #: includes/log-history-page.php:306
+#: includes/log-history-page.php:84
 msgid "Search Term"
 msgstr ""
 
-#: includes/elementor-editor.php:49
+#: includes/elementor-editor.php:50
 msgid "Search for text in this page..."
 msgstr ""
 
@@ -809,7 +812,7 @@ msgid "Search for..."
 msgstr ""
 
 #: includes/admin-main-page.php:231
-msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>b</code> for word boundaries. Test carefully!"
+msgid "Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\\b</code> for word boundaries. Test carefully!"
 msgstr ""
 
 #: includes/log-debug-page.php:255
@@ -828,8 +831,8 @@ msgstr ""
 msgid "Search scan failed. Falling back to standard form submission."
 msgstr ""
 
-#: includes/ajax-handlers.php:79
 #: includes/ajax-handlers.php:128
+#: includes/ajax-handlers.php:79
 msgid "Search term is required."
 msgstr ""
 
@@ -849,7 +852,7 @@ msgstr ""
 msgid "Showing potential changes for selected items. No changes have been saved yet."
 msgstr ""
 
-#. translators: translators: %s: Number of matches shown */
+#. translators: %s: Number of matches shown
 #: includes/render-results.php:71
 msgid "Showing up to %s example matches for this post."
 msgstr ""
@@ -893,9 +896,9 @@ msgstr ""
 #: includes/log-debug-page.php:117
 #: includes/log-debug-page.php:373
 #: includes/log-debug-page.php:428
-#: includes/log-history-page.php:80
 #: includes/log-history-page.php:253
 #: includes/log-history-page.php:303
+#: includes/log-history-page.php:80
 msgid "Timestamp (Site Time)"
 msgstr ""
 
@@ -927,22 +930,22 @@ msgstr ""
 msgid "Unknown JSON error"
 msgstr ""
 
-#. translators: translators: %d: User ID. */
+#. translators: %d: User ID.
 #: includes/log-history-page.php:275
 msgid "Unknown User (ID: %d)"
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:437
 msgid "Use %s (and enable logging on its page) for detailed troubleshooting."
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:435
 msgid "Use %s to save all backups."
 msgstr ""
 
-#. translators: translators: %s: Name of the button or action. */
+#. translators: %s: Name of the button or action.
 #: includes/admin-main-page.php:436
 msgid "Use %s to track changes."
 msgstr ""
@@ -951,9 +954,9 @@ msgstr ""
 msgid "Use PCRE syntax (no delimiters needed here). Special characters like"
 msgstr ""
 
-#: includes/log-history-page.php:81
 #: includes/log-history-page.php:254
 #: includes/log-history-page.php:304
+#: includes/log-history-page.php:81
 msgid "User"
 msgstr ""
 
@@ -979,7 +982,7 @@ msgstr ""
 msgid "View Post (Opens in new tab)"
 msgstr ""
 
-#. translators: translators: %d: Number of selected posts. */
+#. translators: %d: Number of selected posts.
 #: includes/admin-chrome.php:199
 msgid "WARNING: You have selected a large number of posts (%d). This operation might take some time. Ensure your server's maximum execution time is set sufficiently high."
 msgstr ""
@@ -992,7 +995,7 @@ msgstr ""
 msgid "Widget Types"
 msgstr ""
 
-#. translators: translators: %d: Number of selected posts. */
+#. translators: %d: Number of selected posts.
 #: includes/admin-chrome.php:194
 msgid "You are about to replace text in %d selected post(s)."
 msgstr ""
@@ -1042,12 +1045,12 @@ msgstr ""
 msgid "ℹ️ Nothing to undo."
 msgstr ""
 
-#. translators: translators: %d: Number of restored posts. */
+#. translators: %d: Number of restored posts.
 #: includes/action-handlers.php:114
 msgid "↩️ Undo complete: %1$d post(s) restored to the state before the last replacement."
 msgstr ""
 
-#. translators: translators: %d: Number of failed posts. */
+#. translators: %d: Number of failed posts.
 #: includes/action-handlers.php:117
 msgid "⚠️ %d post(s) could not be restored (no valid backup)."
 msgstr ""
@@ -1076,12 +1079,12 @@ msgstr ""
 msgid "⚠️ Undo could not restore any posts (no valid backups found for the last operation)."
 msgstr ""
 
-#. translators: translators: %d: Post ID. */
+#. translators: %d: Post ID.
 #: includes/action-handlers.php:39
 msgid "✅ Post ID %d successfully restored from backup."
 msgstr ""
 
-#. translators: translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced. */
+#. translators: 1: Number of selected posts, 2: Number of modified posts, 3: Total instances replaced.
 #: includes/action-handlers.php:624
 msgid "✅ Successfully processed %1$s selected post(s).<br>➡️ %2$s post(s) were modified.<br>📊 Total instances replaced across all modified posts: %3$s."
 msgstr ""
@@ -1090,42 +1093,42 @@ msgstr ""
 msgid "❌ Bulk Replace Error: The number of search terms does not match the number of replace terms. Operation cancelled."
 msgstr ""
 
-#. translators: translators: %d: Post ID. */
+#. translators: %d: Post ID.
 #: includes/action-handlers.php:501
 msgid "❌ Failed to create backup for Post ID %d. Replacement skipped for this post."
 msgstr ""
 
-#. translators: translators: %d: Post ID. */
+#. translators: %d: Post ID.
 #: includes/action-handlers.php:581
 msgid "❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved."
 msgstr ""
 
-#. translators: translators: %d: Post ID. */
+#. translators: %d: Post ID.
 #: includes/action-handlers.php:43
 msgid "❌ Failed to restore Post ID %d from backup. Check debug logs or backup data validity."
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: Database error message. */
+#. translators: 1: Post ID, 2: Database error message.
 #: includes/action-handlers.php:590
 msgid "❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s"
 msgstr ""
 
-#. translators: translators: 1: Post ID, 2: WordPress error message. */
+#. translators: 1: Post ID, 2: WordPress error message.
 #: includes/action-handlers.php:572
 msgid "❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s"
 msgstr ""
 
-#. translators: translators: %s: The invalid regular expression pattern. */
+#. translators: %s: The invalid regular expression pattern.
 #: includes/action-handlers.php:318
 msgid "❌ Invalid regular expression pattern for preview: %s. Please check syntax."
 msgstr ""
 
-#. translators: translators: 1: Pair number, 2: The invalid regular expression pattern. */
+#. translators: 1: Pair number, 2: The invalid regular expression pattern.
 #: includes/action-handlers.php:476
 msgid "❌ Invalid regular expression pattern found in pair #%1$d: %2$s. Replacement operation aborted."
 msgstr ""
 
-#. translators: translators: %s: The invalid regular expression pattern. */
+#. translators: %s: The invalid regular expression pattern.
 #: includes/action-handlers.php:184
 msgid "❌ Invalid regular expression pattern provided for search: %s. Please check syntax."
 msgstr ""
@@ -1170,12 +1173,13 @@ msgstr ""
 msgid "❌ You do not have permission to undo replacements."
 msgstr ""
 
-#. translators: translators: %d: Number of selected posts. */
+#. translators: %d: Number of selected posts.
 #: includes/action-handlers.php:325
 msgid "👁️ Generating preview (Dry Run) for %d selected post(s). No changes will be saved."
 msgstr ""
 
-#. translators: translators: %d: Number of search/replace pairs. */
+#. translators: %d: Number of search/replace pairs.
 #: includes/action-handlers.php:633
 msgid "📦 Operation type: Bulk Replace with %d pair(s)."
 msgstr ""
+

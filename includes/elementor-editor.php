@@ -53,6 +53,7 @@ function amendor_elementor_editor_assets()
             'open' => __('Open in Amendor', 'amendor'),
             'found' => __('%d match(es) highlighted', 'amendor'),
             'none' => __('No matches found.', 'amendor'),
+            'invalidRegex' => __('Invalid regular expression.', 'amendor'),
             'exact' => __('Exact', 'amendor'),
             'partial' => __('Partial', 'amendor'),
             'regex' => __('Regex', 'amendor'),

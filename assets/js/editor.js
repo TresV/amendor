@@ -68,7 +68,8 @@ jQuery(function ($) {
         }
         $doc.find('head').append(
             '<style id="amendor-editor-highlight-style">' +
-            '.amendor-match-highlight{outline:3px solid #ff5722 !important;box-shadow:0 0 0 6px rgba(255,87,34,.25) !important;}' +
+            '.amendor-match-highlight{outline:2px dashed #ff5722 !important;}' +
+            '.amendor-word-highlight{background:#ffdd57 !important;color:#1d2327 !important;border-radius:2px !important;box-shadow:0 0 0 1px rgba(255,165,0,.5) !important;padding:0 1px !important;}' +
             '</style>'
         );
     }
@@ -77,8 +78,85 @@ jQuery(function ($) {
         var $doc = getPreviewDocument();
         if ($doc) {
             $doc.find('.amendor-match-highlight').removeClass('amendor-match-highlight');
+            // Unwrap <mark> nodes, restoring the original text nodes.
+            $doc.find('.amendor-word-highlight').each(function () {
+                var el = this;
+                while (el.firstChild) {
+                    el.parentNode.insertBefore(el.firstChild, el);
+                }
+                el.parentNode.removeChild(el);
+            });
         }
         highlighted = 0;
+    }
+
+    function buildTermRegex(term, mode) {
+        if (mode === 'regex') {
+            try {
+                return new RegExp(term, 'giu');
+            } catch (e) {
+                return null;
+            }
+        }
+        var escaped = term.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        return new RegExp(escaped, 'giu');
+    }
+
+    function wrapTextMatches($root, regex, markClass) {
+        var doc = $root[0].ownerDocument || document;
+        var count = 0;
+        var walker = doc.createTreeWalker($root[0], NodeFilter.SHOW_TEXT, {
+            acceptNode: function (node) {
+                if (!node.nodeValue || !node.nodeValue.length) {
+                    return NodeFilter.FILTER_REJECT;
+                }
+                var parent = node.parentNode;
+                if (parent && parent.nodeType === 1) {
+                    var tag = parent.tagName.toLowerCase();
+                    if (tag === 'mark' || tag === 'script' || tag === 'style' || tag === 'textarea') {
+                        return NodeFilter.FILTER_REJECT;
+                    }
+                }
+                return NodeFilter.FILTER_ACCEPT;
+            }
+        });
+
+        var textNodes = [];
+        while (walker.nextNode()) {
+            textNodes.push(walker.currentNode);
+        }
+
+        textNodes.forEach(function (node) {
+            var text = node.nodeValue;
+            regex.lastIndex = 0;
+            var match;
+            var last = 0;
+            var nodeCount = 0;
+            var frag = doc.createDocumentFragment();
+            while ((match = regex.exec(text)) !== null) {
+                if (match.index > last) {
+                    frag.appendChild(doc.createTextNode(text.slice(last, match.index)));
+                }
+                var mark = doc.createElement('mark');
+                mark.className = markClass;
+                mark.textContent = match[0];
+                frag.appendChild(mark);
+                nodeCount++;
+                count++;
+                last = match.index + match[0].length;
+                if (match[0].length === 0) {
+                    regex.lastIndex++;
+                }
+            }
+            if (nodeCount && last < text.length) {
+                frag.appendChild(doc.createTextNode(text.slice(last)));
+            }
+            if (nodeCount) {
+                node.parentNode.replaceChild(frag, node);
+            }
+        });
+
+        return count;
     }
 
     function runHighlight() {
@@ -89,6 +167,12 @@ jQuery(function ($) {
         clearHighlights();
         if (!term) {
             $status.hide();
+            return;
+        }
+
+        var regex = buildTermRegex(term, mode);
+        if (!regex) {
+            $status.text(i18n.invalidRegex || 'Invalid regular expression.').show();
             return;
         }
 
@@ -111,13 +195,19 @@ jQuery(function ($) {
                     }
                 });
             }
-            if (found) {
-                var id = model.get('id');
-                if (id) {
-                    $doc.find('[data-id="' + id + '"]').addClass('amendor-match-highlight');
-                    highlighted++;
-                }
+            if (!found) {
+                return;
             }
+            var id = model.get('id');
+            if (!id) {
+                return;
+            }
+            var $el = $doc.find('[data-id="' + id + '"]');
+            if (!$el.length) {
+                return;
+            }
+            $el.addClass('amendor-match-highlight');
+            highlighted += wrapTextMatches($el, regex, 'amendor-word-highlight');
         });
 
         $status.text(highlighted > 0
