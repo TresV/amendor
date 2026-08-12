@@ -139,9 +139,10 @@ function amendor_analyze_elementor_data($data, $search, $replace, $search_mode, 
  * @param bool   $perform_replace  Whether to replace.
  * @param array  $changes_details  Summary of changes.
  * @param array  $selected_widgets Optional widget filters.
+ * @param string $widget_context   Current Elementor widget type context.
  * @return mixed
  */
-function amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, array &$changes_details, array $selected_widgets = [])
+function amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, array &$changes_details, array $selected_widgets = [], $widget_context = '')
 {
     $changes_details['matched_count'] = $changes_details['matched_count'] ?? 0;
     $changes_details['replaced_count'] = $changes_details['replaced_count'] ?? 0;
@@ -222,6 +223,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                     'before' => $original_value,
                     'after' => $new_value,
                     'changed' => true,
+                    'widget' => $widget_context,
                 ];
                 if ($perform_replace) {
                     $changes_details['replaced_count']++;
@@ -233,6 +235,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                     'after' => $original_value,
                     'changed' => false,
                     'note' => __('Match - No Change Previewed', 'amendor'),
+                    'widget' => $widget_context,
                 ];
             }
         }
@@ -247,13 +250,18 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
         $process_this_element_settings = empty($selected_widgets) || !$is_widget_or_element || ($widget_type && in_array($widget_type, $selected_widgets, true));
 
         $modified_data = [];
+        $child_context = $widget_context;
+        if ($element_type === 'widget' && !empty($widget_type)) {
+            $child_context = (string) $widget_type;
+        }
+
         foreach ($data as $key => $value) {
             if ($key === 'settings' && $is_widget_or_element && !$process_this_element_settings) {
                 $modified_data[$key] = $value;
                 continue;
             }
 
-            $modified_data[$key] = amendor_process_elementor_data_recursive($value, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets);
+            $modified_data[$key] = amendor_process_elementor_data_recursive($value, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets, $child_context);
         }
 
         return $modified_data;

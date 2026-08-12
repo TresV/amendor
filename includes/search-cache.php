@@ -257,12 +257,27 @@ function amendor_set_search_cache($cache_key, array $cache)
  */
 function amendor_build_search_result_entry(WP_Post $post, array $changes_details)
 {
+    $source_counts = [];
+    $widget_counts = [];
+    foreach ((array) ($changes_details['diffs'] ?? []) as $diff) {
+        $label = isset($diff['source_label']) ? (string) $diff['source_label'] : '';
+        if ($label !== '') {
+            $source_counts[$label] = ($source_counts[$label] ?? 0) + 1;
+        }
+        $widget = isset($diff['widget']) ? (string) $diff['widget'] : '';
+        if ($widget !== '') {
+            $widget_counts[$widget] = ($widget_counts[$widget] ?? 0) + 1;
+        }
+    }
+
     return [
         'ID' => (int) $post->ID,
         'title' => (string) $post->post_title,
         'type' => (string) $post->post_type,
         'matches' => array_slice($changes_details['diffs'], 0, 10),
         'backup_count' => amendor_get_post_backup_count($post->ID),
+        'source_counts' => $source_counts,
+        'widget_counts' => $widget_counts,
     ];
 }
 

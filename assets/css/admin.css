@@ -434,3 +434,27 @@ tr.log-level-error,
 tr.log-level-critical {
     background-color: #f8d7da !important;
 }
+
+.amendor-match-summary {
+    margin-bottom: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px dashed #ddd;
+}
+
+.amendor-match-badge {
+    display: inline-block;
+    background: #eef2f7;
+    border: 1px solid #d5dde5;
+    border-radius: 3px;
+    color: #3c434a;
+    font-size: 11px;
+    font-weight: 600;
+    margin: 0 6px 4px 0;
+    padding: 2px 8px;
+}
+
+.amendor-match-badge-widget {
+    background: #fdf6e3;
+    border-color: #e6d9b8;
+    color: #7a5c00;
+}

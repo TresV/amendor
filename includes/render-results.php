@@ -50,6 +50,16 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
             </span>
         </div>
         <div class="amendor-item-content">
+            <?php if (!empty($item['source_counts'])): ?>
+                <div class="amendor-match-summary">
+                    <?php foreach ($item['source_counts'] as $label => $count): ?>
+                        <span class="amendor-match-badge"><?php echo esc_html($label); ?> ×<?php echo esc_html(number_format_i18n($count)); ?></span>
+                    <?php endforeach; ?>
+                    <?php foreach ($item['widget_counts'] as $widget => $count): ?>
+                        <span class="amendor-match-badge amendor-match-badge-widget"><?php echo esc_html($widget); ?> ×<?php echo esc_html(number_format_i18n($count)); ?></span>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
             <div class="amendor-diffs">
                 <?php if (empty($item['matches'])): ?>
                     <p><em><?php echo $is_preview ? esc_html__('No changes predicted in this item for the current criteria.', 'amendor') : esc_html__('No changes found in this item for the current criteria.', 'amendor'); ?></em></p>
