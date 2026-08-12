@@ -327,6 +327,7 @@ function amendor_render_text_replacer_ui()
     $available_widgets = amendor_get_available_widgets();
     $available_content_sources = amendor_get_available_content_sources();
     $selected_content_sources = amendor_normalize_content_sources($selected_content_sources);
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     amendor_handle_restore_action($action, $amendor_messages);
     amendor_handle_undo_action($action, $amendor_messages);
@@ -340,7 +341,8 @@ function amendor_render_text_replacer_ui()
         $supported_post_types,
         $paged,
         $results_per_page,
-        $amendor_messages
+        $amendor_messages,
+        $allowed_fields
     );
     $results = $search_payload['results'];
     $scanned_posts = $search_payload['scanned_posts'];
@@ -358,7 +360,8 @@ function amendor_render_text_replacer_ui()
         $selected_widgets,
         $selected_content_sources,
         $supported_post_types,
-        $amendor_messages
+        $amendor_messages,
+        $allowed_fields
     );
 
     amendor_handle_replace_action(
@@ -372,7 +375,8 @@ function amendor_render_text_replacer_ui()
         $selected_widgets,
         $selected_content_sources,
         $supported_post_types,
-        $amendor_messages
+        $amendor_messages,
+        $allowed_fields
     );
 
 
@@ -538,6 +542,13 @@ function amendor_render_text_replacer_ui()
                                         <?php else: ?>
                                             <p><em><?php esc_html_e('Could not load Elementor widgets list. Filtering by widget type is unavailable. Ensure Elementor plugin is active.', 'amendor'); ?></em></p>
                                         <?php endif; ?>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <th><label for="field_keys"><?php esc_html_e('Field Keys', 'amendor'); ?></label></th>
+                                    <td>
+                                        <input type="text" name="field_keys" id="field_keys" class="regular-text" value="<?php echo esc_attr(implode(', ', $allowed_fields)); ?>" placeholder="editor, title, url">
+                                        <p class="description"><?php esc_html_e('Optional. Comma-separated Elementor settings keys to limit scanning to (e.g. editor, title, url). Leave empty to scan all fields.', 'amendor'); ?></p>
                                     </td>
                                 </tr>
                             </table>

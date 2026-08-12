@@ -82,7 +82,7 @@ function amendor_normalize_selected_widgets(array $selected_widgets)
  * @param array  $supported_post_types Supported post types.
  * @return string
  */
-function amendor_get_search_signature($search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types)
+function amendor_get_search_signature($search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array $allowed_fields = [])
 {
     return wp_hash(wp_json_encode([
         'search' => (string) $search,
@@ -90,6 +90,7 @@ function amendor_get_search_signature($search, $search_mode, array $selected_wid
         'selected_widgets' => amendor_normalize_selected_widgets($selected_widgets),
         'content_sources' => amendor_normalize_content_sources($content_sources),
         'supported_post_types' => array_values($supported_post_types),
+        'allowed_fields' => amendor_normalize_allowed_fields($allowed_fields),
     ]));
 }
 
@@ -325,7 +326,8 @@ function amendor_process_search_batch_next(array $cache, $search, $search_mode, 
             $search_mode,
             false,
             $selected_widgets,
-            $content_sources
+            $content_sources,
+            isset($cache['allowed_fields']) ? $cache['allowed_fields'] : []
         );
         $changes_details = $analysis['changes_details'];
 
@@ -373,12 +375,13 @@ function amendor_process_search_batch_next(array $cache, $search, $search_mode, 
  * @param bool        $reset Whether to start a new cache.
  * @return array
  */
-function amendor_run_search_batch_request($search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $cache_key = null, $reset = false)
+function amendor_run_search_batch_request($search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $cache_key = null, $reset = false, array $allowed_fields = [])
 {
     $search = amendor_limit_search_term($search);
     $selected_widgets = amendor_normalize_selected_widgets($selected_widgets);
     $content_sources = amendor_normalize_content_sources($content_sources);
-    $signature = amendor_get_search_signature($search, $search_mode, $selected_widgets, $content_sources, $supported_post_types);
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+    $signature = amendor_get_search_signature($search, $search_mode, $selected_widgets, $content_sources, $supported_post_types, $allowed_fields);
     $batch_size = amendor_get_default_search_batch_size();
     $user_id = get_current_user_id();
 
@@ -397,6 +400,7 @@ function amendor_run_search_batch_request($search, $search_mode, array $selected
             'selected_widgets' => $selected_widgets,
             'content_sources' => $content_sources,
             'supported_post_types' => array_values($supported_post_types),
+            'allowed_fields' => $allowed_fields,
             'total_candidate_posts' => amendor_get_search_candidate_count($supported_post_types, $content_sources),
             'last_post_id' => 0,
             'matched_ids' => [],
@@ -504,7 +508,8 @@ function amendor_get_cached_search_results_payload($search, $search_mode, array 
             $cache_mode,
             false,
             $cache_widgets,
-            $cache_sources
+            $cache_sources,
+            isset($cache['allowed_fields']) ? $cache['allowed_fields'] : []
         );
         $payload['results'][] = amendor_build_search_result_entry($post, $analysis['changes_details']);
     }

@@ -137,8 +137,10 @@ function amendor_handle_undo_action($action, array &$messages)
  * @param array  $messages Notices to append to.
  * @return array
  */
-function amendor_handle_search_action($action, $search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $paged, $results_per_page, array &$messages)
+function amendor_handle_search_action($action, $search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $paged, $results_per_page, array &$messages, array $allowed_fields = [])
 {
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+
     $payload = [
         'results' => [],
         'scanned_posts' => 0,
@@ -188,7 +190,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
     amendor_store_search_history($search);
 
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
-    $signature = amendor_get_search_signature($search, $search_mode, $selected_widgets, $content_sources, $supported_post_types);
+    $signature = amendor_get_search_signature($search, $search_mode, $selected_widgets, $content_sources, $supported_post_types, $allowed_fields);
     $cache = amendor_get_valid_search_cache($cache_key, $signature);
 
     if (!$cache) {
@@ -205,7 +207,8 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
                 $content_sources,
                 $supported_post_types,
                 $fallback_cache_key,
-                $is_first_batch
+                $is_first_batch,
+                $allowed_fields
             );
             $is_first_batch = false;
             $fallback_cache_key = $batch['cache_key'];
@@ -274,8 +277,10 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
  * @param array  $messages Notices to append to.
  * @return array
  */
-function amendor_handle_preview_action($action, array $selected_ids, $search, $replace, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages)
+function amendor_handle_preview_action($action, array $selected_ids, $search, $replace, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+
     $preview_results = [];
 
     if ($action !== 'preview_selected' || empty($selected_ids) || $search === '') {
@@ -334,7 +339,8 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
             $search_mode,
             false,
             $selected_widgets,
-            $content_sources
+            $content_sources,
+            $allowed_fields
         );
         $changes_details = $analysis['changes_details'];
 
@@ -389,8 +395,10 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
  * @param array  $messages Notices to append to.
  * @return void
  */
-function amendor_handle_replace_action($action, array $selected_ids, $search, $replace, $search_mode, array $bulk_search, array $bulk_replace, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages)
+function amendor_handle_replace_action($action, array $selected_ids, $search, $replace, $search_mode, array $bulk_search, array $bulk_replace, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+
     if ($action !== 'replace_selected' || empty($selected_ids)) {
         return;
     }
@@ -497,7 +505,8 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
                 $search_mode,
                 true,
                 $selected_widgets,
-                $content_sources
+                $content_sources,
+                $allowed_fields
             );
             $changes_details_for_pair = $pair_analysis['changes_details'];
             $current_state = $pair_analysis['state'];

@@ -72,6 +72,7 @@ function amendor_run_search_batch_callback()
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
     $reset = !empty($_POST['reset']);
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     if ($search === '') {
         wp_send_json_error(['message' => __('Search term is required.', 'amendor')], 400);
@@ -90,7 +91,8 @@ function amendor_run_search_batch_callback()
         $content_sources,
         amendor_get_supported_post_types(),
         $cache_key,
-        $reset
+        $reset,
+        $allowed_fields
     );
 
     wp_send_json_success($response);
@@ -188,6 +190,7 @@ function amendor_run_preview_callback()
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $selected_ids = isset($_POST['selected_posts']) ? array_map('intval', (array) wp_unslash($_POST['selected_posts'])) : [];
     $selected_ids = array_values(array_filter($selected_ids));
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     $messages = [];
     $preview_results = amendor_handle_preview_action(
@@ -199,7 +202,8 @@ function amendor_run_preview_callback()
         $selected_widgets,
         $content_sources,
         amendor_get_supported_post_types(),
-        $messages
+        $messages,
+        $allowed_fields
     );
 
     $results_html = amendor_get_results_section_html([

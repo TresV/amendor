@@ -150,6 +150,7 @@ jQuery(function ($) {
             search_mode: $('#search_mode').val(),
             widget_types: getSelectedWidgetTypes(),
             content_sources: getSelectedContentSources(),
+            field_keys: $.trim($('#field_keys').val() || ''),
             search_cache_key: $('#amendor-search-cache-key').val(),
             paged: paged || 1,
             results_per_page: $('#amendor-results-per-page-input').val() || ''
@@ -215,6 +216,7 @@ jQuery(function ($) {
                 search_mode: searchMode,
                 widget_types: widgetTypes,
                 content_sources: contentSources,
+                field_keys: $.trim($('#field_keys').val() || ''),
                 search_cache_key: cacheKey || '',
                 reset: reset ? 1 : 0
             }).done(function (response) {

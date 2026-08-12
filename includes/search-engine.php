@@ -72,13 +72,14 @@ function amendor_analyze_native_post_fields(array $state, $search, $replace, $se
  * @param array  $content_sources Selected content sources.
  * @return array{state:array,changes_details:array,matched:bool,changed:bool}
  */
-function amendor_analyze_post_content_state(array $state, $search, $replace, $search_mode, $perform_replace, array $selected_widgets, array $content_sources)
+function amendor_analyze_post_content_state(array $state, $search, $replace, $search_mode, $perform_replace, array $selected_widgets, array $content_sources, array $allowed_fields = [])
 {
     // Clamp terms once here; every scan/preview/replace path funnels through this method.
     $search = amendor_limit_search_term($search);
     $replace = amendor_limit_search_term($replace);
     $content_sources = amendor_normalize_content_sources($content_sources);
     $changes_details = amendor_create_changes_details();
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
 
     // Per-page size guardrail: skip oversized Elementor pages with a warning.
     if (
@@ -98,7 +99,7 @@ function amendor_analyze_post_content_state(array $state, $search, $replace, $se
     }
 
     if (amendor_content_sources_include_elementor($content_sources) && is_array($state['elementor_data'] ?? null)) {
-        $elementor_analysis = amendor_analyze_elementor_data($state['elementor_data'], $search, $replace, $search_mode, $perform_replace, $selected_widgets);
+        $elementor_analysis = amendor_analyze_elementor_data($state['elementor_data'], $search, $replace, $search_mode, $perform_replace, $selected_widgets, $allowed_fields);
         $elementor_changes = $elementor_analysis['changes_details'];
         $elementor_changes['diffs'] = amendor_annotate_diff_entries(
             isset($elementor_changes['diffs']) && is_array($elementor_changes['diffs']) ? $elementor_changes['diffs'] : [],
@@ -135,10 +136,10 @@ function amendor_analyze_post_content_state(array $state, $search, $replace, $se
  * @param array  $selected_widgets Optional widget filters.
  * @return array{data:mixed,changes_details:array}
  */
-function amendor_analyze_elementor_data($data, $search, $replace, $search_mode, $perform_replace, array $selected_widgets = [])
+function amendor_analyze_elementor_data($data, $search, $replace, $search_mode, $perform_replace, array $selected_widgets = [], array $allowed_fields = [])
 {
     $changes_details = amendor_create_changes_details();
-    $processed_data = amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets);
+    $processed_data = amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets, '', '', $allowed_fields);
 
     return [
         'data' => $processed_data,
@@ -159,7 +160,7 @@ function amendor_analyze_elementor_data($data, $search, $replace, $search_mode, 
  * @param string $widget_context   Current Elementor widget type context.
  * @return mixed
  */
-function amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, array &$changes_details, array $selected_widgets = [], $widget_context = '')
+function amendor_process_elementor_data_recursive($data, $search, $replace, $search_mode, $perform_replace, array &$changes_details, array $selected_widgets = [], $widget_context = '', $field_key = '', array $allowed_fields = [])
 {
     $changes_details['matched_count'] = $changes_details['matched_count'] ?? 0;
     $changes_details['replaced_count'] = $changes_details['replaced_count'] ?? 0;
@@ -167,6 +168,11 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
     $changes_details['errors'] = $changes_details['errors'] ?? [];
 
     if (is_string($data)) {
+        // Field-key targeting: skip string values whose key is not in the allowlist.
+        if (!empty($allowed_fields) && $field_key !== '' && !in_array($field_key, $allowed_fields, true)) {
+            return $data;
+        }
+
         $original_value = $data;
         if ($original_value === '' && $search !== '') {
             return $original_value;
@@ -278,7 +284,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                 continue;
             }
 
-            $modified_data[$key] = amendor_process_elementor_data_recursive($value, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets, $child_context);
+            $modified_data[$key] = amendor_process_elementor_data_recursive($value, $search, $replace, $search_mode, $perform_replace, $changes_details, $selected_widgets, $child_context, $key, $allowed_fields);
         }
 
         return $modified_data;

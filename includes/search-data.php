@@ -131,6 +131,27 @@ function amendor_limit_search_term($term)
 }
 
 /**
+ * Normalize a raw field-keys input (comma-separated string or array) into a clean allowlist.
+ *
+ * @param mixed $raw Raw field keys.
+ * @return array<int,string>
+ */
+function amendor_normalize_allowed_fields($raw)
+{
+    $parts = is_array($raw) ? $raw : explode(',', (string) $raw);
+    $fields = [];
+
+    foreach ($parts as $part) {
+        $part = sanitize_key(trim((string) $part));
+        if ($part !== '') {
+            $fields[] = $part;
+        }
+    }
+
+    return array_values(array_unique($fields));
+}
+
+/**
  * Return whether decoded Elementor data exceeds the per-page size guardrail.
  *
  * Oversized pages are skipped (with a debug-log warning) instead of being scanned.
