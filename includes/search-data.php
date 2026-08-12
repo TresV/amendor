@@ -30,6 +30,10 @@ if (!defined('AMENDOR_MAX_SEARCH_TERM_LENGTH')) {
     define('AMENDOR_MAX_SEARCH_TERM_LENGTH', 1000);
 }
 
+if (!defined('AMENDOR_MAX_ELEMENTOR_DATA_SIZE')) {
+    define('AMENDOR_MAX_ELEMENTOR_DATA_SIZE', 10 * 1024 * 1024); // 10 MB
+}
+
 /**
  * Return the available content sources that can be searched or replaced.
  *
@@ -124,6 +128,25 @@ function amendor_limit_search_term($term)
     }
 
     return mb_substr($term, 0, AMENDOR_MAX_SEARCH_TERM_LENGTH);
+}
+
+/**
+ * Return whether decoded Elementor data exceeds the per-page size guardrail.
+ *
+ * Oversized pages are skipped (with a debug-log warning) instead of being scanned.
+ *
+ * @param mixed $data Decoded Elementor data.
+ * @return bool
+ */
+function amendor_elementor_data_size_exceeded($data)
+{
+    if (!is_array($data)) {
+        return false;
+    }
+
+    $limit = max(1024, (int) apply_filters('amendor_max_elementor_data_size', AMENDOR_MAX_ELEMENTOR_DATA_SIZE));
+
+    return strlen((string) wp_json_encode($data)) > $limit;
 }
 
 /**

@@ -80,6 +80,23 @@ function amendor_analyze_post_content_state(array $state, $search, $replace, $se
     $content_sources = amendor_normalize_content_sources($content_sources);
     $changes_details = amendor_create_changes_details();
 
+    // Per-page size guardrail: skip oversized Elementor pages with a warning.
+    if (
+        amendor_content_sources_include_elementor($content_sources)
+        && is_array($state['elementor_data'] ?? null)
+        && amendor_elementor_data_size_exceeded($state['elementor_data'])
+    ) {
+        amendor_add_debug_log('Skipped oversized Elementor page (over size guardrail).', 'WARN', [
+            'post_id' => (int) ($state['post_id'] ?? 0),
+        ]);
+        return [
+            'state' => $state,
+            'changes_details' => $changes_details,
+            'matched' => false,
+            'changed' => false,
+        ];
+    }
+
     if (amendor_content_sources_include_elementor($content_sources) && is_array($state['elementor_data'] ?? null)) {
         $elementor_analysis = amendor_analyze_elementor_data($state['elementor_data'], $search, $replace, $search_mode, $perform_replace, $selected_widgets);
         $elementor_changes = $elementor_analysis['changes_details'];
