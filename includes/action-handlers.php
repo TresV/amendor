@@ -353,7 +353,18 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
         }
 
         if ($changes_details['matched_count'] > 0 && !empty($changes_details['diffs'])) {
-            $preview_results[] = amendor_build_search_result_entry($post, $changes_details);
+            $entry = amendor_build_search_result_entry($post, $changes_details);
+
+            // Attach a visual JSON diff for Elementor changes when a replacement is set.
+            if ($replace !== '' && amendor_content_sources_include_elementor($content_sources)) {
+                $diff_state = amendor_build_post_content_state($post);
+                if (is_array($diff_state['elementor_data'] ?? null)) {
+                    $after_analysis = amendor_analyze_elementor_data($diff_state['elementor_data'], $search, $replace, $search_mode, true, $selected_widgets, $allowed_fields);
+                    $entry['json_diff'] = amendor_build_json_diff($diff_state['elementor_data'], $after_analysis['data']);
+                }
+            }
+
+            $preview_results[] = $entry;
             $processed_preview_count++;
             amendor_add_debug_log('Preview generated for post.', 'INFO', [
                 'post_id' => $post_id,

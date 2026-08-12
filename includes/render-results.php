@@ -79,6 +79,33 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                     <?php endforeach; ?>
                 <?php endif; ?>
             </div>
+            <?php if (!empty($item['json_diff'])): ?>
+                <div class="amendor-json-diff">
+                    <button type="button" class="button button-small amendor-json-diff-toggle">
+                        <span class="dashicons dashicons-visibility"></span> <?php esc_html_e('View JSON Diff', 'amendor'); ?>
+                    </button>
+                    <div class="amendor-json-diff-body" style="display: none; margin-top: 10px;">
+                        <?php if (is_array($item['json_diff']['diff'])): ?>
+                            <?php
+                            $json_diff_html = '';
+                            foreach ($item['json_diff']['diff'] as $diff_line) {
+                                $marker = $diff_line['type'] === 'add' ? '+' : ($diff_line['type'] === 'del' ? '-' : ' ');
+                                $json_diff_html .= '<span class="amendor-diff-' . esc_attr($diff_line['type']) . '">' . esc_html($marker . ' ' . $diff_line['line']) . "</span>\n";
+                            }
+                            ?>
+                            <p class="description">
+                                <span class="amendor-diff-add">+</span> <?php esc_html_e('added', 'amendor'); ?>
+                                &nbsp;|&nbsp;
+                                <span class="amendor-diff-del">-</span> <?php esc_html_e('removed', 'amendor'); ?>
+                            </p>
+                            <pre class="amendor-json-diff-pre"><?php echo $json_diff_html; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped ?></pre>
+                        <?php else: ?>
+                            <p class="description"><?php esc_html_e('This page is too large for a line-level diff. Showing the resulting Elementor data.', 'amendor'); ?></p>
+                            <pre class="amendor-json-diff-pre"><?php echo esc_html($item['json_diff']['after']); ?></pre>
+                        <?php endif; ?>
+                    </div>
+                </div>
+            <?php endif; ?>
             <?php if (!$is_preview): ?>
                 <div class="amendor-restore-section">
                     <?php $backups = amendor_get_elementor_backups($item['ID']); ?>

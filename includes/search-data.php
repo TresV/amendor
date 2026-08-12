@@ -519,3 +519,73 @@ function amendor_get_dashboard_stats()
 
     return $defaults;
 }
+
+/**
+ * Build a line-diff of the before/after Elementor data for a visual JSON diff.
+ *
+ * @param mixed $before_data Decoded Elementor data before.
+ * @param mixed $after_data  Decoded Elementor data after replacements.
+ * @return array{before:string,after:string,diff:array|null}
+ */
+function amendor_build_json_diff($before_data, $after_data)
+{
+    $encode = static function ($data) {
+        return (string) wp_json_encode($data, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
+    };
+
+    $before_lines = preg_split('/\R/', $encode($before_data));
+    $after_lines = preg_split('/\R/', $encode($after_data));
+
+    // Bound the LCS table for very large payloads.
+    if (count($before_lines) + count($after_lines) > 2000) {
+        return [
+            'before' => implode("\n", $before_lines),
+            'after' => implode("\n", $after_lines),
+            'diff' => null,
+        ];
+    }
+
+    $m = count($before_lines);
+    $n = count($after_lines);
+    $lcs = array_fill(0, $m + 1, array_fill(0, $n + 1, 0));
+    for ($i = $m - 1; $i >= 0; $i--) {
+        for ($j = $n - 1; $j >= 0; $j--) {
+            if ($before_lines[$i] === $after_lines[$j]) {
+                $lcs[$i][$j] = $lcs[$i + 1][$j + 1] + 1;
+            } else {
+                $lcs[$i][$j] = max($lcs[$i + 1][$j], $lcs[$i][$j + 1]);
+            }
+        }
+    }
+
+    $diff = [];
+    $i = 0;
+    $j = 0;
+    while ($i < $m && $j < $n) {
+        if ($before_lines[$i] === $after_lines[$j]) {
+            $diff[] = ['type' => 'same', 'line' => $before_lines[$i]];
+            $i++;
+            $j++;
+        } elseif ($lcs[$i + 1][$j] >= $lcs[$i][$j + 1]) {
+            $diff[] = ['type' => 'del', 'line' => $before_lines[$i]];
+            $i++;
+        } else {
+            $diff[] = ['type' => 'add', 'line' => $after_lines[$j]];
+            $j++;
+        }
+    }
+    while ($i < $m) {
+        $diff[] = ['type' => 'del', 'line' => $before_lines[$i]];
+        $i++;
+    }
+    while ($j < $n) {
+        $diff[] = ['type' => 'add', 'line' => $after_lines[$j]];
+        $j++;
+    }
+
+    return [
+        'before' => implode("\n", $before_lines),
+        'after' => implode("\n", $after_lines),
+        'diff' => $diff,
+    ];
+}

@@ -386,6 +386,10 @@ jQuery(function ($) {
         form.trigger('submit');
     });
 
+    $(document).on('click', '.amendor-json-diff-toggle', function () {
+        $(this).closest('.amendor-json-diff').find('.amendor-json-diff-body').slideToggle(150);
+    });
+
     $(document).on('change', '#results-per-page', function () {
         const form = $('#elementor-search-form');
         syncResultsPerPageInput();
