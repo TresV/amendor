@@ -412,6 +412,12 @@ function amendor_render_text_replacer_ui()
                                                     <?php endforeach; ?>
                                             </datalist>
                                             <p class="description"><?php esc_html_e('Start typing or use arrow keys to see recent searches.', 'amendor'); ?></p>
+                                            <div class="amendor-recent-searches">
+                                                <span class="description"><?php esc_html_e('Recent:', 'amendor'); ?></span>
+                                                <?php foreach (array_slice($history, 0, 5) as $past_search) : ?>
+                                                    <button type="button" class="button button-link amendor-recent-search" data-search="<?php echo esc_attr($past_search); ?>"><?php echo esc_html($past_search); ?></button>
+                                                <?php endforeach; ?>
+                                            </div>
                                         <?php else: ?>
                                             <p class="description"><?php esc_html_e('Enter the text you want to find. Case sensitivity depends on the Search Mode.', 'amendor'); ?></p>
                                         <?php endif; ?>

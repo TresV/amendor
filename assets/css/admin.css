@@ -458,3 +458,13 @@ tr.log-level-critical {
     border-color: #e6d9b8;
     color: #7a5c00;
 }
+
+.amendor-recent-searches {
+    margin-top: 8px;
+}
+
+.amendor-recent-search {
+    margin-right: 6px;
+    padding: 0;
+    text-decoration: underline;
+}

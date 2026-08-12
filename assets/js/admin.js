@@ -329,6 +329,18 @@ jQuery(function ($) {
         syncContentSourceUi();
     });
 
+    $(document).on('click', '.amendor-recent-search', function () {
+        const form = $('#elementor-search-form');
+        const term = $(this).data('search');
+        if (typeof term !== 'string') {
+            return;
+        }
+        $('#search').val(term);
+        ensureActionInput(form, 'search');
+        activeSubmitAction = 'search';
+        form.trigger('submit');
+    });
+
     $(document).on('change', '#results-per-page', function () {
         const form = $('#elementor-search-form');
         syncResultsPerPageInput();

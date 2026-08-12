@@ -436,7 +436,7 @@ function amendor_store_search_history($search, $user_id = null)
             return $item !== $search;
         }));
         array_unshift($history, $search);
-        update_user_meta($user_id, 'amendor_search_history', array_slice($history, 0, 10));
+        update_user_meta($user_id, 'amendor_search_history', array_slice($history, 0, 20));
     }
 }
 
