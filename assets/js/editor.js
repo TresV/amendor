@@ -439,6 +439,49 @@ jQuery(function ($) {
         return true;
     }
 
+    function applySettingsViaCommand(model, settings) {
+        // Elementor's own settings command applies the change AND re-renders
+        // the element in place (no preview reload, no scroll reset). Falls
+        // back to direct settings.set when unavailable.
+        try {
+            if (elementor.$e && typeof elementor.$e.run === 'function' && model.container) {
+                elementor.$e.run('document/elements/settings', {
+                    container: model.container,
+                    settings: settings,
+                    options: { external: true }
+                });
+                return true;
+            }
+        } catch (e) { /* fall through */ }
+        return false;
+    }
+
+    function applyChangeList(changes) {
+        // changes: [{ model, key, value }]. Applies in-place via Elementor's
+        // command (batched per model); on any failure falls back to direct
+        // settings.set + targeted re-render. Returns true when fully in-place.
+        var byModel = {};
+        changes.forEach(function (c) {
+            var cid = c.model.cid || c.model.get('_id') || c.model.get('id');
+            byModel[cid] = byModel[cid] || { model: c.model, settings: {} };
+            byModel[cid].settings[c.key] = c.value;
+        });
+        var cids = Object.keys(byModel);
+        var allInPlace = true;
+        cids.forEach(function (cid) {
+            if (!applySettingsViaCommand(byModel[cid].model, byModel[cid].settings)) {
+                allInPlace = false;
+            }
+        });
+        if (!allInPlace) {
+            changes.forEach(function (c) {
+                setModelSetting(c.model, c.key, c.value);
+            });
+            renderChangedModels(changes);
+        }
+        return allInPlace;
+    }
+
     function renderModel(model) {
         try {
             if (model.container && typeof model.container.render === 'function') {
@@ -517,31 +560,33 @@ jQuery(function ($) {
             return;
         }
 
-        changes.forEach(function (c) {
-            setModelSetting(c.model, c.key, c.newValue);
-        });
-        renderChangedModels(changes);
+        var inPlace = applyChangeList(changes.map(function (c) {
+            return { model: c.model, key: c.key, value: c.newValue };
+        }));
 
         lastReplaceSnapshot = changes;
         setUndoVisible(true);
         runSearch(); // refresh list + highlights
         $status.text((i18n.replaced || '%d value(s) replaced').replace('%d', changes.length)).show();
-        refreshPreviewAfterChange();
+        if (!inPlace) {
+            refreshPreviewAfterChange();
+        }
     }
 
     function runUndo() {
         if (!lastReplaceSnapshot) {
             return;
         }
-        lastReplaceSnapshot.forEach(function (c) {
-            setModelSetting(c.model, c.key, c.oldValue);
-        });
-        renderChangedModels(lastReplaceSnapshot);
+        var inPlace = applyChangeList(lastReplaceSnapshot.map(function (c) {
+            return { model: c.model, key: c.key, value: c.oldValue };
+        }));
         lastReplaceSnapshot = null;
         setUndoVisible(false);
         runSearch();
         $('#amendor-editor-status').text(i18n.reverted || 'Changes restored.').show();
-        refreshPreviewAfterChange();
+        if (!inPlace) {
+            refreshPreviewAfterChange();
+        }
     }
 
     function buildPanel() {
