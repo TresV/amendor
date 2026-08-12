@@ -20,5 +20,5 @@ Amendor is the search-and-replace portion of the original combined plugin, packa
 
 == Notes ==
 
-Do not activate this package alongside Fluentor until the codebases are fully namespaced.
+Amendor is fully separated from Fluentor. Both plugins can be installed and activated on the same WordPress installation.
 

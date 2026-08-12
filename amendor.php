@@ -42,10 +42,14 @@ if (!defined('AMENDOR_TEXT_DOMAIN')) {
 require_once AMENDOR_PLUGIN_DIR . 'includes/plugin-context.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/i18n.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/activation.php';
-require_once AMENDOR_PLUGIN_DIR . 'includes/functions.php';
-require_once AMENDOR_PLUGIN_DIR . 'includes/admin-actions.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/search-data.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/search-engine.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/search-cache.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/render-results.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/action-handlers.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/admin-chrome.php';
+require_once AMENDOR_PLUGIN_DIR . 'includes/log-pages.php';
 require_once AMENDOR_PLUGIN_DIR . 'includes/ajax-handlers.php';
-require_once AMENDOR_PLUGIN_DIR . 'includes/admin-pages.php';
 
 add_action('plugins_loaded', 'amendor_load_textdomain');
 

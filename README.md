@@ -4,8 +4,17 @@ Standalone package for the Elementor search-and-replace tool.
 
 ## Contents
 
-- `amendor.php`: plugin bootstrap
-- `includes/`: self-contained PHP runtime used by this package
+- `amendor.php`: plugin bootstrap (loads the module files below)
+- `includes/` — self-contained PHP runtime, split into focused modules:
+  - `plugin-context.php` / `i18n.php` / `activation.php` — bootstrap, localization, and table setup
+  - `search-data.php` — data helpers: content sources, backups, retention limits, search history
+  - `search-engine.php` — search/replace analysis engine and logging
+  - `search-cache.php` — batched search backend (candidate scan, transient cache, pagination payloads)
+  - `action-handlers.php` — admin form action handlers (search, preview, replace, restore)
+  - `render-results.php` — admin notices and search/preview result markup (shared with AJAX)
+  - `admin-chrome.php` — admin pages, settings, assets, and the main UI
+  - `log-pages.php` — debug log and history log pages plus export helpers
+  - `ajax-handlers.php` — AJAX endpoints (batched search, results, preview, backup check)
 - `assets/`: admin CSS and JavaScript
 - `languages/`: translation template (`amendor.pot`)
 - `uninstall.php`: Amendor-only cleanup
@@ -18,7 +27,7 @@ Standalone package for the Elementor search-and-replace tool.
 
 ## Activation
 
-This package is designed to ship only the Amendor search-and-replace feature surface. It can be installed independently from `Fluentor`.
+Amendor is fully separated from the original combined package. It can be installed and activated alongside `Fluentor` on the same WordPress installation.
 
 ## Development
 
