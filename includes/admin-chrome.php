@@ -528,6 +528,36 @@ function amendor_render_text_replacer_ui()
                 ?>
                 <div class="amendor-sidebar">
 
+                    <!-- Quick Stats Panel -->
+                    <div id="amendor-quick-stats" class="postbox">
+                        <h2 class="hndle"><span><?php esc_html_e('Quick Stats', 'amendor'); ?></span></h2>
+                        <div class="inside">
+                            <?php $stats = amendor_get_dashboard_stats(); ?>
+                            <ul style="margin: 0; padding: 0; list-style: none;">
+                                <li style="padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                                    <span><?php esc_html_e('Total Operations', 'amendor'); ?></span>
+                                    <strong><?php echo esc_html(number_format_i18n($stats['total_operations'])); ?></strong>
+                                </li>
+                                <li style="padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                                    <span><?php esc_html_e('Total Changes', 'amendor'); ?></span>
+                                    <strong><?php echo esc_html(number_format_i18n($stats['total_changes'])); ?></strong>
+                                </li>
+                                <li style="padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                                    <span><?php esc_html_e('Pages Modified', 'amendor'); ?></span>
+                                    <strong><?php echo esc_html(number_format_i18n($stats['pages_modified'])); ?></strong>
+                                </li>
+                                <li style="padding: 6px 0; border-bottom: 1px solid #f0f0f0; display: flex; justify-content: space-between;">
+                                    <span><?php esc_html_e('Backups Stored', 'amendor'); ?></span>
+                                    <strong><?php echo esc_html(number_format_i18n($stats['total_backups'])); ?></strong>
+                                </li>
+                                <li style="padding: 6px 0; display: flex; justify-content: space-between;">
+                                    <span><?php esc_html_e('Last Activity', 'amendor'); ?></span>
+                                    <strong><?php echo $stats['last_activity'] !== '' ? esc_html($stats['last_activity']) : esc_html__('—', 'amendor'); ?></strong>
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+
                     <!-- Actions Panel -->
                     <div id="amendor-actions-panel" class="postbox">
                         <h2 class="hndle"><span><?php esc_html_e('Actions', 'amendor'); ?></span></h2>

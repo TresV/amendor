@@ -440,3 +440,39 @@ function amendor_store_search_history($search, $user_id = null)
     }
 }
 
+/**
+ * Gather quick dashboard statistics from the log and backups tables.
+ *
+ * @return array<string,mixed>
+ */
+function amendor_get_dashboard_stats()
+{
+    global $wpdb;
+    $history_table = amendor_get_history_table_name();
+    $backups_table = amendor_get_backups_table_name();
+
+    $defaults = [
+        'total_operations' => 0,
+        'total_changes' => 0,
+        'pages_modified' => 0,
+        'total_backups' => 0,
+        'last_activity' => '',
+    ];
+
+    if (!amendor_table_exists($history_table) || !amendor_table_exists($backups_table)) {
+        return $defaults;
+    }
+
+    $defaults['total_operations'] = (int) $wpdb->get_var("SELECT COUNT(id) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $defaults['total_changes'] = (int) $wpdb->get_var("SELECT COALESCE(SUM(changes_made), 0) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $defaults['pages_modified'] = (int) $wpdb->get_var("SELECT COUNT(DISTINCT post_id) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $defaults['total_backups'] = (int) $wpdb->get_var("SELECT COUNT(id) FROM {$backups_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+    $last_timestamp = $wpdb->get_var("SELECT MAX(timestamp) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    if ($last_timestamp) {
+        $defaults['last_activity'] = wp_date(get_option('date_format', 'Y-m-d') . ' ' . get_option('time_format', 'H:i:s'), strtotime($last_timestamp));
+    }
+
+    return $defaults;
+}
+
