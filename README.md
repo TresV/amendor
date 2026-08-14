@@ -56,7 +56,7 @@ Search, see and replace text directly in the Elementor editor — no need to lea
   - `ajax-handlers.php` — AJAX endpoints (batched search, results, preview, backup check)
 - `assets/`: admin CSS and JavaScript
 - `languages/`: translation template (`amendor.pot`)
-- `uninstall.php`: Amendor-only cleanup
+- Uninstall cleanup runs via the Freemius `after_uninstall` hook (`fs_after_uninstall_amendor`, defined in `amendor.php`)
 - `composer.json` / `phpcs.xml.dist`: development tooling (WordPress Coding Standards)
 
 ## Requirements

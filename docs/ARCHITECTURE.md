@@ -13,7 +13,7 @@
 ## Layout
 
 ```
-amendor.php                 Bootstrap — requires every module in dependency order
+amendor.php                 Bootstrap: requires every module, Freemius SDK init, after_uninstall cleanup hook
 includes/
   plugin-context.php        Context helpers: mode, capability gate, table names
   i18n.php                  Text-domain loading
@@ -33,7 +33,6 @@ includes/
   elementor-editor.php      Elementor editor tool (search/highlight/replace)
 assets/                     admin.js, editor.js, admin.css
 languages/                  amendor.pot
-uninstall.php               Amendor-only cleanup
 bin/check-structure.php     Structural guardrail script (composer run check-structure)
 ```
 

@@ -10,7 +10,6 @@
 
     <!-- Paths to check. -->
     <file>amendor.php</file>
-    <file>uninstall.php</file>
     <file>includes/</file>
     <file>assets/</file>
 
