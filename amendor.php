@@ -2,7 +2,6 @@
 
 /**
  * Plugin Name:       Amendor
- * Plugin URI:        https://thebrandplace.com/
  * Description:       Search and replace text within Elementor data, with backup, history, and persistent debug logging.
  * Version:           1.0.0
  * Author:            TheBrandPlace
