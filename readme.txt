@@ -3,7 +3,7 @@ Contributors: TheBrandPlace
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.6.0
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,11 +56,14 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 
 == Changelog ==
 
-= 1.6.0 =
+= 1.0.0 =
 
-* Performance: keyset-cursor search scan, lightweight search cache, scoped Elementor CSS cache clearing, cached widget-type list, daily log-table pruning, configurable batch size, backups moved to a dedicated table
-* Security: central capability helper, search/replace term length limits, bounded PCRE resource limits, debug-log redaction, uninstall cleanup (transients, tables, options)
-* UX: one-click Undo for the last replacement, dashboard quick stats, history log export (CSV/JSON/TXT) and filters, occurrence counts by source and widget, search history raised to 20 with one-click re-run, UTF-8 BOM on CSV exports
+* Initial public release, split into Free and Pro editions (via Freemius)
+* Search & replace in Elementor data and native post fields, with preview (dry run), automatic backups, one-click undo, and per-post restore
+* Free: partial/exact matching, content-source & widget-type filters, dashboard stats, search history, history/debug log viewing
+* Pro: regex matching, bulk replace, field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, in-editor live tool (Alt+Shift+F5), and CSV/JSON/TXT log exports
+* Performance: keyset-cursor search scan, lightweight search cache, batched AJAX scanning, daily log pruning
+* Security: central capability helper, term-length limits, bounded PCRE resource limits, debug-log redaction
 
 == Notes ==
 
