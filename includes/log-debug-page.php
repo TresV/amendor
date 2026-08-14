@@ -185,11 +185,7 @@ function amendor_display_debug_log_page()
 
                 // Table name is plugin-owned; the optional level filter is prepared below.
                 $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
-                if (!empty($export_params)) {
-                    $export_query = $wpdb->prepare($export_query, ...$export_params);
-                }
-
-                $export_rows = $wpdb->get_results($export_query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                $export_rows = $wpdb->get_results($wpdb->prepare($export_query, ...$export_params), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $export_max_rows = max(1, (int) apply_filters('amendor_debug_log_export_max_rows', 50000));
                 $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
                 $filename_suffix = !empty($selected_level) ? strtolower($selected_level) : 'all-levels';

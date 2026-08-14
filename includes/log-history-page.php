@@ -149,10 +149,7 @@ function amendor_display_change_history_log()
             ) {
                 $history_format = isset($_GET['history_format']) && in_array(sanitize_key($_GET['history_format']), ['csv', 'json', 'txt'], true) ? sanitize_key($_GET['history_format']) : 'csv';
                 $export_sql = "SELECT * FROM {$table_name}{$where_sql} ORDER BY timestamp DESC";
-                if (!empty($where_params)) {
-                    $export_sql = $wpdb->prepare($export_sql, ...$where_params);
-                }
-                $export_rows = $wpdb->get_results($export_sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                $export_rows = $wpdb->get_results($wpdb->prepare($export_sql, ...$where_params), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
                 $export_max_rows = max(1, (int) apply_filters('amendor_history_log_export_max_rows', 50000));
                 $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
                 $filename_suffix = $selected_mode !== '' ? $selected_mode : 'all';
@@ -171,10 +168,7 @@ function amendor_display_change_history_log()
 
     // Get total number of history items for pagination calculation (respecting filters)
     $count_sql = "SELECT COUNT(id) FROM {$table_name}{$where_sql}";
-    if (!empty($where_params)) {
-        $count_sql = $wpdb->prepare($count_sql, ...$where_params);
-    }
-    $total_items = (int) $wpdb->get_var($count_sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $total_items = (int) $wpdb->get_var($wpdb->prepare($count_sql, ...$where_params)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $total_pages = ceil($total_items / $per_page);
 
     // Get the history items for the current page (respecting filters)

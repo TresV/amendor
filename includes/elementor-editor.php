@@ -58,6 +58,7 @@ function amendor_elementor_editor_assets()
                 'highlight' => __('Highlight', 'amendor'),
                 'clear' => __('Clear', 'amendor'),
                 'open' => __('Open in Amendor', 'amendor'),
+                /* translators: %d: Number of matches highlighted. */
                 'found' => __('%d match(es) highlighted', 'amendor'),
                 'none' => __('No matches found.', 'amendor'),
                 'invalidRegex' => __('Invalid regular expression.', 'amendor'),
@@ -66,8 +67,10 @@ function amendor_elementor_editor_assets()
                 'regex' => __('Regex', 'amendor'),
                 'replace' => __('Replace with', 'amendor'),
                 'undo' => __('Undo', 'amendor'),
+                /* translators: %d: Number of values replaced. */
                 'replaced' => __('%d value(s) replaced', 'amendor'),
                 'reverted' => __('Changes restored.', 'amendor'),
+                /* translators: %d: Number of values that will be replaced. */
                 'confirmReplace' => __('Replace %d value(s) on this page? You can undo afterwards.', 'amendor'),
                 'enterTerm' => __('Enter a search term first.', 'amendor'),
                 'fields' => __('Fields', 'amendor'),
@@ -76,8 +79,10 @@ function amendor_elementor_editor_assets()
                 'fieldShortcode' => __('Shortcodes', 'amendor'),
                 'fieldCode' => __('Code & CSS', 'amendor'),
                 'fieldOther' => __('Other (incl. internal)', 'amendor'),
+                /* translators: %d: Number of selected occurrences to replace. */
                 'replaceSelected' => __('Replace Selected (%d)', 'amendor'),
-                'selectedOf' => __('%d of %d selected', 'amendor'),
+                /* translators: 1: Number of selected occurrences, 2: Total number of occurrences. */
+                'selectedOf' => __('%1$d of %2$d selected', 'amendor'),
             ],
         ]);
     }
