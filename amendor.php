@@ -59,8 +59,9 @@ if (function_exists('ame_fs')) {
                     'menu'                => array(
                         // Attach Freemius submenu items (Account, Contact Us) under Amendor.
                         'slug'        => 'amendor',
-                        // Custom redirect after plugin activation.
-                        'first-path'  => 'admin.php?page=amendor@welcome-message=true',
+                        // Custom redirect after plugin activation (plain path only —
+                        // the SDK does not convert `@` to `&`, so no query args here).
+                        'first-path'  => 'admin.php?page=amendor',
                         'support'     => false,
                     ),
                 ));
