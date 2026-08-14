@@ -32,7 +32,8 @@ if (function_exists('ame_fs')) {
      */
     if (!function_exists('ame_fs')) {
         // Create a helper function for easy SDK access.
-        function ame_fs() {
+        function ame_fs()
+        {
             global $ame_fs;
 
             if (!isset($ame_fs)) {

@@ -30,7 +30,7 @@ function amendor_elementor_editor_assets()
     }
 
     // The in-editor live tool is a Pro feature (stripped from the free build).
-    if ( ame_fs()->is__premium_only() ) {
+    if (ame_fs()->is__premium_only()) {
         if (!amendor_can_use_premium_features()) {
             return;
         }
