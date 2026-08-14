@@ -166,31 +166,36 @@ function amendor_display_debug_log_page()
     $allowed_levels = ['DEBUG', 'INFO', 'WARN', 'ERROR', 'CRITICAL'];
     $selected_level = isset($_GET['log_level']) && in_array(strtoupper(sanitize_key($_GET['log_level'])), $allowed_levels) ? strtoupper(sanitize_key($_GET['log_level'])) : '';
 
-    if (
-        isset($_GET['amendor_action'], $_GET['_wpnonce']) &&
-        $_GET['amendor_action'] === 'export_debug_log' &&
-        wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_debug_log')
-    ) {
-        $export_format = amendor_get_debug_log_export_format();
-        $export_where_clause = '';
-        $export_params = [];
+    // --- Export Action (Pro) ---
+    if ( ame_fs()->is__premium_only() ) {
+        if (amendor_can_use_premium_features()) {
+            if (
+                isset($_GET['amendor_action'], $_GET['_wpnonce']) &&
+                $_GET['amendor_action'] === 'export_debug_log' &&
+                wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_debug_log')
+            ) {
+                $export_format = amendor_get_debug_log_export_format();
+                $export_where_clause = '';
+                $export_params = [];
 
-        if (!empty($selected_level)) {
-            $export_where_clause = ' WHERE log_level = %s';
-            $export_params[] = $selected_level;
+                if (!empty($selected_level)) {
+                    $export_where_clause = ' WHERE log_level = %s';
+                    $export_params[] = $selected_level;
+                }
+
+                // Table name is plugin-owned; the optional level filter is prepared below.
+                $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
+                if (!empty($export_params)) {
+                    $export_query = $wpdb->prepare($export_query, ...$export_params);
+                }
+
+                $export_rows = $wpdb->get_results($export_query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                $export_max_rows = max(1, (int) apply_filters('amendor_debug_log_export_max_rows', 50000));
+                $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
+                $filename_suffix = !empty($selected_level) ? strtolower($selected_level) : 'all-levels';
+                amendor_send_debug_log_export($export_rows, $export_format, $filename_suffix);
+            }
         }
-
-        // Table name is plugin-owned; the optional level filter is prepared below.
-        $export_query = "SELECT timestamp, log_level, message, context FROM {$table_name}" . $export_where_clause . " ORDER BY timestamp DESC"; // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.PreparedSQL.NotPrepared
-        if (!empty($export_params)) {
-            $export_query = $wpdb->prepare($export_query, ...$export_params);
-        }
-
-        $export_rows = $wpdb->get_results($export_query, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $export_max_rows = max(1, (int) apply_filters('amendor_debug_log_export_max_rows', 50000));
-        $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
-        $filename_suffix = !empty($selected_level) ? strtolower($selected_level) : 'all-levels';
-        amendor_send_debug_log_export($export_rows, $export_format, $filename_suffix);
     }
 
     // --- Build Query ---
@@ -279,41 +284,45 @@ function amendor_display_debug_log_page()
                 </button>
             </form>
 
-            <a
-                href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                            'page' => 'amendor-debug-log',
-                            'amendor_action' => 'export_debug_log',
-                            'export_format' => 'csv',
-                            'log_level' => $selected_level,
-                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'amendor'); ?>
-            </a>
+            <?php if ( ame_fs()->is__premium_only() ) { ?>
+                <?php if (amendor_can_use_premium_features()) { ?>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'csv',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'amendor'); ?>
+                </a>
 
-            <a
-                href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                            'page' => 'amendor-debug-log',
-                            'amendor_action' => 'export_debug_log',
-                            'export_format' => 'json',
-                            'log_level' => $selected_level,
-                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'amendor'); ?>
-            </a>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'json',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'amendor'); ?>
+                </a>
 
-            <a
-                href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                            'page' => 'amendor-debug-log',
-                            'amendor_action' => 'export_debug_log',
-                            'export_format' => 'txt',
-                            'log_level' => $selected_level,
-                        ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                class="button button-secondary"
-                style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'amendor'); ?>
-            </a>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'txt',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'amendor'); ?>
+                </a>
+                <?php } ?>
+            <?php } ?>
 
             <?php // --- Log Level Filter --- 
             ?>

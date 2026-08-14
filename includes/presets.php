@@ -253,6 +253,12 @@ function amendor_handle_presets_action($action, array &$messages)
         return;
     }
 
+    // Saved presets are a Pro feature.
+    if (!amendor_can_use_premium_features()) {
+        $messages[] = ['type' => 'info', 'text' => __('Saved presets are available in Amendor Pro.', 'amendor')];
+        return;
+    }
+
     if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to manage presets.', 'amendor')];
         return;
@@ -306,6 +312,11 @@ function amendor_handle_presets_action($action, array &$messages)
  */
 function amendor_render_presets_box()
 {
+    // Saved presets are a Pro feature (the call site is also gated in the admin UI).
+    if (!amendor_can_use_premium_features()) {
+        return;
+    }
+
     $presets = amendor_get_presets();
     $page_url = admin_url('admin.php?page=' . amendor_get_admin_parent_slug());
 ?>
