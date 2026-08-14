@@ -1,0 +1,94 @@
+name: Deploy to Freemius
+
+# Builds the Amendor Pro ZIP from a version tag, uploads it to Freemius as a
+# pending release, and lets Freemius auto-generate the Free version. The
+# generated Free + Pro ZIPs are also uploaded as workflow artifacts (the Free
+# one can then be pushed to the wp.org SVN repo).
+#
+# Requirements:
+#   - Add GitHub secrets: FREEMIUS_PUBLIC_KEY, FREEMIUS_DEV_ID, FREEMIUS_SECRET_KEY
+#     (all found in your Freemius dashboard; PLUGIN_ID = 37047, PLUGIN_SLUG = amendor).
+#   - Push a tag matching the plugin version, e.g. `git tag v1.7.0 && git push --tags`.
+#   - Bump the plugin version first (amendor.php header + AMENDOR_VERSION + readme
+#     Stable tag + pot) so the tag matches what the SDK reports.
+#   - For a dry run, set `sandbox` to `true` below.
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      # vendor/ is gitignored, so the SDK is not in the checkout. Fetch the exact
+      # version used locally (see vendor/freemius/start.php) from the SDK repo.
+      - name: Fetch Freemius SDK (v2.13.4)
+        run: |
+          set -euo pipefail
+          curl -fsSL https://github.com/Freemius/wordpress-sdk/archive/refs/tags/2.13.4.zip -o "${RUNNER_TEMP}/fs-sdk.zip"
+          rm -rf "${RUNNER_TEMP}/fs-sdk"
+          unzip -q "${RUNNER_TEMP}/fs-sdk.zip" -d "${RUNNER_TEMP}/fs-sdk"
+          rm -rf vendor
+          mkdir -p vendor/freemius
+          cp -R "${RUNNER_TEMP}/fs-sdk/wordpress-sdk-2.13.4/." vendor/freemius/
+
+      # Build the plugin package (amendor/ wrapper + SDK) at the repo root,
+      # which is where the deploy action expects file_name to live.
+      - name: Build Pro ZIP
+        run: |
+          set -euo pipefail
+          STAGE="${RUNNER_TEMP}/build"
+          rm -rf "$STAGE"
+          mkdir -p "$STAGE/amendor"
+          rsync -a \
+            --exclude '.git' \
+            --exclude '.github' \
+            --exclude 'bin' \
+            --exclude 'docs' \
+            --exclude 'composer.json' \
+            --exclude 'composer.lock' \
+            --exclude 'phpcs.xml.dist' \
+            --exclude '*.zip' \
+            --exclude '*.log' \
+            --exclude '.DS_Store' \
+            "$GITHUB_WORKSPACE/" "$STAGE/amendor/"
+          ( cd "$STAGE" && zip -qr "${GITHUB_WORKSPACE}/amendor-pro.zip" amendor )
+          ls -lh amendor-pro.zip
+
+      - name: Deploy to Freemius
+        id: freemius
+        uses: buttonizer/freemius-deploy@v0.1.3
+        with:
+          file_name: amendor-pro.zip
+          # pending = upload but don't release to license holders yet.
+          # Switch to beta or released when you want it shipped.
+          release_mode: pending
+          version: ${{ steps.version.outputs.version }}
+          # Flip to true for a sandbox dry run that doesn't create a real release.
+          sandbox: 'false'
+        env:
+          PUBLIC_KEY: ${{ secrets.FREEMIUS_PUBLIC_KEY }}
+          DEV_ID: ${{ secrets.FREEMIUS_DEV_ID }}
+          SECRET_KEY: ${{ secrets.FREEMIUS_SECRET_KEY }}
+          PLUGIN_SLUG: amendor
+          PLUGIN_ID: '37047'
+
+      # Upload the generated Free + Pro ZIPs so they can be downloaded from the
+      # Actions run (e.g. the Free one goes to the wp.org SVN repo).
+      - name: Upload generated Free + Pro ZIPs
+        uses: actions/upload-artifact@v4
+        with:
+          name: amendor-freemius-builds
+          path: |
+            ${{ steps.freemius.outputs.free_version }}
+            ${{ steps.freemius.outputs.pro_version }}
+          if-no-files-found: ignore
