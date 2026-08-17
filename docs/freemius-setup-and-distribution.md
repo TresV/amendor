@@ -248,6 +248,45 @@ flowchart LR
 - **Operational requirement:** the Freemius release must be `released`
   (pending/beta releases are not pushed to license holders by default).
 
+### 8.1 Uninstall & data cleanup (Freemius deployment rule)
+
+**Freemius rule:** when deploying a plugin with Freemius, **you cannot include
+a plain `uninstall.php`** at the plugin root. The SDK registers its own
+uninstall hook to track the uninstall event (including user feedback); a
+`uninstall.php` at the root blocks that event reporting.
+
+**Correct pattern:**
+
+```php
+// Main plugin file (always loaded), after the SDK is initialized:
+add_action( 'fs_after_uninstall_{PLUGIN_SLUG}', '{PREFIX}_uninstall_cleanup' );
+// Equivalent: {PREFIX}_fs()->add_action( 'after_uninstall', '{PREFIX}_uninstall_cleanup' );
+```
+
+```php
+function {PREFIX}_uninstall_cleanup() {
+    // Optional: respect an opt-in setting (e.g. "delete data on uninstall").
+    if ( ! get_option( '{PREFIX}_delete_data_on_uninstall', false ) ) {
+        delete_option( '{PREFIX}_delete_data_on_uninstall' );
+        return;
+    }
+    // delete_option() every plugin option ...
+    // DROP TABLE IF EXISTS every plugin-owned table ...
+    // DELETE FROM {$wpdb->options} WHERE option_name LIKE '_transient_{PREFIX}_%' ...
+    // delete post/user meta by key ...
+}
+```
+
+**Behavior to rely on:** the SDK's uninstall hook returns early when the *other*
+version (Free or Pro) is still active, so cleanup runs **exactly once** — when
+the last version is deleted. That makes Free/Pro switching safe.
+
+**Do NOT:** keep `uninstall.php`, or call `register_uninstall_hook()` yourself
+(it duplicates the SDK's path).
+
+**Caveat:** if the plugin is distributed **only** via wp.org (no Freemius), a
+plain `uninstall.php` is acceptable and this rule does not apply.
+
 ---
 
 ## 9. Compliance audit before wp.org upload (run on the Free zip)
@@ -279,8 +318,10 @@ separately" (explicitly permitted by wp.org guidelines).
    `Stable tag` + POT + git tag identical.
 6. **`first-path` with query args** — the SDK doesn't convert `@` to `&`; use a
    plain path (`admin.php?page={PLUGIN_SLUG}`) or drop query args.
-7. **Uninstall cleanup** — if you moved cleanup to the Freemius
-   `after_uninstall` hook, don't re-add a plain `uninstall.php`.
+7. **Uninstall cleanup** — a plain `uninstall.php` is **forbidden** for
+   Freemius-deployed plugins (it blocks uninstall-event tracking). Cleanup
+   lives in a normal function hooked to `fs_after_uninstall_{PLUGIN_SLUG}`
+   (§8.1).
 8. **Zip hygiene** — single top-level `{PLUGIN_SLUG}/` folder, no
    `__MACOSX`/`.DS_Store`, exclude dev files.
 
