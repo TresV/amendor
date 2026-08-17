@@ -14,8 +14,8 @@
 
 | # | Area | Guideline | Status |
 |---|---|---|---|
-| 1 | Trialware / locked features | §5, §1, §9 | 🟠 **OPEN — see finding A** |
-| 2 | Free-path gating survives in Free build | §5 | 🔴 **OPEN — see finding A** |
+| 1 | Trialware / locked features | §5, §1, §9 | ✅ RESOLVED (see Finding A) |
+| 2 | Free-path gating survives in Free build | §5 | ✅ RESOLVED (see Finding A) |
 | 3 | GPL compliance | §1, §2 | ✅ PASS |
 | 4 | Human-readable code | §4 | ✅ PASS |
 | 5 | Serviceware | §6 | ✅ PASS |
@@ -95,6 +95,27 @@ gatekeeper stripped).
 gating the shared engine code inside `is__premium_only()` blocks so it is
 stripped — invasive across `search-engine.php`/`search-data.php` and fragile
 (dead-code elimination may not remove it all). Not recommended.
+
+### Resolution (implemented 2026-08-17, commit `e06773c`)
+
+Decision (autonomous, user unavailable): the **recommended** option was applied.
+
+- **Regex → FREE**: removed all 6 downgrade guards + the history filter skip;
+  un-gated the regex UI option and help box. Regex engine is shared code that
+  the stripper can't cleanly remove, so it ships free.
+- **Bulk replace → FREE**: removed the zeroing guard; un-gated the bulk UI.
+- **Presets stay PRO**: removed the two redundant early-return guards
+  (`presets.php` now has zero `is__premium_only` references; the call sites are
+  inside stripped blocks, so presets are dead code in the Free build).
+- **Field-key targeting**: left Pro; population stays inside stripped blocks,
+  so it is inert in the Free build with no lock pattern (no guard survives).
+- **README**: regex + bulk moved into Free "Key Features"; Pro note trimmed to
+  field-key targeting, SEO sources, presets, in-editor tool, log exports.
+
+**Post-fix verification:** `grep` for `!is__premium_only()`, `restrict_search`,
+`can_use_premium`, `downgrade` in `includes/` → **zero hits**. Remaining
+`is__premium_only` references (13) are all inside `if (is__premium_only())`
+PRO-gated blocks that the Freemius generator removes entirely.
 
 ---
 
