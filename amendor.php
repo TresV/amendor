@@ -3,8 +3,8 @@
 /**
  * Plugin Name:       Amendor
  * Description:       Search and replace text within Elementor data, with backup, history, and persistent debug logging.
- * Version:           1.0.1
- * Author:            TheBrandPlace
+ * Version:           1.0.0
+ * Author:            TheBrandPlaceLTD
  * Author URI:        https://thebrandplace.com/
  * License:           GPLv2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
@@ -79,7 +79,7 @@ if (function_exists('ame_fs')) {
         define('AMENDOR_PLUGIN_MODE', 'amendor');
     }
     if (!defined('AMENDOR_VERSION')) {
-        define('AMENDOR_VERSION', '1.0.1');
+        define('AMENDOR_VERSION', '1.0.0');
     }
     if (!defined('AMENDOR_PLUGIN_DIR')) {
         define('AMENDOR_PLUGIN_DIR', plugin_dir_path(__FILE__));

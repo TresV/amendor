@@ -4,7 +4,7 @@ Tags: elementor, search, replace, find, backup
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.0
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -58,20 +58,13 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 
 == Changelog ==
 
-= 1.0.1 =
-
-* Compliance: refactored Freemius gating so the generated Free build strips all Pro features cleanly — no locked functionality ships in the wp.org version
-* Compliance: moved inline styles into the enqueued stylesheet and removed inline JS handlers
-* Compliance: removed the unnecessary `load_plugin_textdomain()` call (WordPress auto-loads translations for wp.org plugins)
-* Compliance: corrected the readme Contributors list and aligned the feature list with the Free build
-* Feature: regex matching and bulk replace are now included in the free version
-
 = 1.0.0 =
 
 * Initial public release, split into Free and Pro editions (via Freemius)
 * Search & replace in Elementor data and native post fields, with preview (dry run), automatic backups, one-click undo, and per-post restore
-* Free: partial/exact matching, content-source & widget-type filters, dashboard stats, search history, history/debug log viewing
-* Pro: regex matching, bulk replace, field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, in-editor live tool (Alt+Shift+F5), and CSV/JSON/TXT log exports
+* Free: partial, exact, and regex matching; bulk search & replace; content-source & widget-type filters; dashboard stats; search history; history/debug log viewing
+* Pro: field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, in-editor live tool (Alt+Shift+F5), and CSV/JSON/TXT log exports
+* Compliance: Freemius gating refactored so the generated Free build strips all Pro features cleanly — no locked functionality ships in the wp.org version; inline styles/handlers moved to the enqueued assets; load_plugin_textdomain() removed; Contributors corrected and the feature list aligned with the Free build
 * Performance: keyset-cursor search scan, lightweight search cache, batched AJAX scanning, daily log pruning
 * Security: central capability helper, term-length limits, bounded PCRE resource limits, debug-log redaction
 
