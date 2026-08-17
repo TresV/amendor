@@ -229,7 +229,7 @@ function amendor_encode_elementor_data($data, $log_context = [])
             function_exists('json_last_error_msg') ? json_last_error_msg() : __('Unknown JSON error', 'amendor')
         );
         amendor_add_debug_log($error_message, 'ERROR', $log_context);
-        error_log('ETP ' . $error_message);
+        error_log('AMENDOR ' . $error_message);
         return false;
     }
 

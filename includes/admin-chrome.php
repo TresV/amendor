@@ -239,7 +239,7 @@ function amendor_render_admin_notices(array $messages)
         <div class="notice notice-<?php echo esc_attr($message['type']); ?> is-dismissible" style="margin-bottom: 15px;">
             <p><?php echo wp_kses_post($message['text']); ?></p>
         </div>
-    <?php
+<?php
     endforeach;
 }
 
@@ -255,4 +255,3 @@ function amendor_get_admin_notices_html(array $messages)
     amendor_render_admin_notices($messages);
     return ob_get_clean();
 }
-

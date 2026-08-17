@@ -253,11 +253,6 @@ function amendor_handle_presets_action($action, array &$messages)
         return;
     }
 
-    // Saved presets are a Pro feature (stripped from the Free build).
-    if (!ame_fs()->is__premium_only()) {
-        return;
-    }
-
     if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to manage presets.', 'amendor')];
         return;
@@ -311,11 +306,6 @@ function amendor_handle_presets_action($action, array &$messages)
  */
 function amendor_render_presets_box()
 {
-    // Saved presets are a Pro feature (the call site is also gated in the admin UI).
-    if (!ame_fs()->is__premium_only()) {
-        return;
-    }
-
     $presets = amendor_get_presets();
     $page_url = admin_url('admin.php?page=' . amendor_get_admin_parent_slug());
 ?>

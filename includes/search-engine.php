@@ -388,7 +388,7 @@ function amendor_clear_elementor_cache_for_post($post_id)
         return true;
     } catch (Exception $e) {
         amendor_add_debug_log('Error clearing Elementor cache.', 'WARN', ['post_id' => $post_id, 'error' => $e->getMessage()]);
-        error_log('ETP Cache Clear Warning: ' . $e->getMessage());
+        error_log('AMENDOR Cache Clear Warning: ' . $e->getMessage());
         return false;
     }
 }
@@ -440,7 +440,7 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
             'post_id' => $post_id,
             'changes_made' => $changes_made
         ]);
-        error_log('ETP Log Error: ' . $log_msg);
+        error_log('AMENDOR Log Error: ' . $log_msg);
         return; // Don't log if no changes were made or data is missing
     }
 
@@ -478,7 +478,7 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
             esc_html($db_error)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['db_error' => $db_error]);
-        error_log('ETP Log Error: ' . $error_msg);
+        error_log('AMENDOR Log Error: ' . $error_msg);
     } else {
         $log_msg = sprintf(
             /* translators: 1: Post ID, 2: Changes Made */

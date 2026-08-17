@@ -1,5 +1,6 @@
 === Amendor ===
 Contributors: thebrandplaceltd
+Tags: elementor, search, replace, find, backup
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
@@ -18,7 +19,8 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 = Key Features =
 
 * Search Elementor content plus native post fields (title, content, excerpt)
-* Partial (case-insensitive) and exact (case-sensitive) matching
+* Partial (case-insensitive), exact (case-sensitive), and PCRE regular-expression matching
+* Bulk search & replace with multiple sequential search/replace pairs
 * Batched AJAX scanning with live progress (scales to large sites)
 * Preview (dry run) before committing any change
 * Automatic backups before every replacement, with one-click Undo and per-post restore
@@ -29,7 +31,7 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 * Recent search history (20 entries) with one-click re-run
 * Fully translation-ready (`languages/amendor.pot`)
 
-An extended Amendor Pro plugin adds regex matching, bulk search & replace, field-key targeting, SEO meta sources (Yoast / Rank Math), saved presets, an in-editor Elementor tool, and CSV/JSON/TXT log exports. It is available separately.
+An extended Amendor Pro plugin adds field-key targeting, SEO meta sources (Yoast / Rank Math), saved presets, an in-editor Elementor tool, and CSV/JSON/TXT log exports. It is available separately.
 
 == Installation ==
 
@@ -62,6 +64,7 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 * Compliance: moved inline styles into the enqueued stylesheet and removed inline JS handlers
 * Compliance: removed the unnecessary `load_plugin_textdomain()` call (WordPress auto-loads translations for wp.org plugins)
 * Compliance: corrected the readme Contributors list and aligned the feature list with the Free build
+* Feature: regex matching and bulk replace are now included in the free version
 
 = 1.0.0 =
 

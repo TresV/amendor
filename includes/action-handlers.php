@@ -139,15 +139,7 @@ function amendor_handle_undo_action($action, array &$messages)
  */
 function amendor_handle_search_action($action, $search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $paged, $results_per_page, array &$messages, array $allowed_fields = [])
 {
-    // Regex search is a Pro-only mode; the Free build strips the regex UI.
-    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
-        $search_mode = 'partial';
-    }
-    if (ame_fs()->is__premium_only()) {
-        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    } else {
-        $allowed_fields = [];
-    }
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
 
     $payload = [
         'results' => [],
@@ -287,15 +279,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
  */
 function amendor_handle_preview_action($action, array $selected_ids, $search, $replace, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    // Regex search is a Pro-only mode; the Free build strips the regex UI.
-    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
-        $search_mode = 'partial';
-    }
-    if (ame_fs()->is__premium_only()) {
-        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    } else {
-        $allowed_fields = [];
-    }
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
 
     $preview_results = [];
 
@@ -424,18 +408,7 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
  */
 function amendor_handle_replace_action($action, array $selected_ids, $search, $replace, $search_mode, array $bulk_search, array $bulk_replace, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    // Regex search is a Pro-only mode; the Free build strips the regex UI.
-    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
-        $search_mode = 'partial';
-    }
-    if (ame_fs()->is__premium_only()) {
-        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    } else {
-        // Bulk replace and field-key targeting are Pro-only.
-        $allowed_fields = [];
-        $bulk_search = [];
-        $bulk_replace = [];
-    }
+    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
 
     if ($action !== 'replace_selected' || empty($selected_ids)) {
         return;

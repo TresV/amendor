@@ -188,9 +188,6 @@ function amendor_display_change_history_log()
                 <select name="history_mode" id="history_mode_filter">
                     <option value="" <?php selected($selected_mode, ''); ?>><?php esc_html_e('All Modes', 'amendor'); ?></option>
                     <?php foreach ($allowed_modes as $mode): ?>
-                        <?php if ('regex' === $mode && !ame_fs()->is__premium_only()) {
-                            continue;
-                        } ?>
                         <option value="<?php echo esc_attr($mode); ?>" <?php selected($selected_mode, $mode); ?>><?php echo esc_html(ucfirst($mode)); ?></option>
                     <?php endforeach; ?>
                 </select>
@@ -207,16 +204,16 @@ function amendor_display_change_history_log()
             </form>
 
             <?php if (ame_fs()->is__premium_only()) { ?>
-                    <?php
-                    $export_base = [
-                        'page' => 'amendor-change-history',
-                        'amendor_action' => 'export_history_log',
-                        'history_mode' => $selected_mode,
-                        'history_bulk' => $selected_bulk,
-                    ];
-                    foreach (['csv' => __('Export CSV', 'amendor'), 'json' => __('Export JSON', 'amendor'), 'txt' => __('Export TXT', 'amendor')] as $fmt => $label) : ?>
-                        <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array_merge($export_base, ['history_format' => $fmt]), admin_url('admin.php')), 'amendor_export_history_log')); ?>" class="button button-secondary"><?php echo esc_html($label); ?></a>
-                    <?php endforeach; ?>
+                <?php
+                $export_base = [
+                    'page' => 'amendor-change-history',
+                    'amendor_action' => 'export_history_log',
+                    'history_mode' => $selected_mode,
+                    'history_bulk' => $selected_bulk,
+                ];
+                foreach (['csv' => __('Export CSV', 'amendor'), 'json' => __('Export JSON', 'amendor'), 'txt' => __('Export TXT', 'amendor')] as $fmt => $label) : ?>
+                    <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array_merge($export_base, ['history_format' => $fmt]), admin_url('admin.php')), 'amendor_export_history_log')); ?>" class="button button-secondary"><?php echo esc_html($label); ?></a>
+                <?php endforeach; ?>
             <?php } ?>
         </div>
 

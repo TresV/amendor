@@ -279,41 +279,41 @@ function amendor_display_debug_log_page()
             </form>
 
             <?php if (ame_fs()->is__premium_only()) { ?>
-                    <a
-                        href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                                    'page' => 'amendor-debug-log',
-                                    'amendor_action' => 'export_debug_log',
-                                    'export_format' => 'csv',
-                                    'log_level' => $selected_level,
-                                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                        class="button button-secondary"
-                        style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                        <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'amendor'); ?>
-                    </a>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'csv',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-download"></span> <?php esc_html_e('Export Log CSV', 'amendor'); ?>
+                </a>
 
-                    <a
-                        href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                                    'page' => 'amendor-debug-log',
-                                    'amendor_action' => 'export_debug_log',
-                                    'export_format' => 'json',
-                                    'log_level' => $selected_level,
-                                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                        class="button button-secondary"
-                        style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                        <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'amendor'); ?>
-                    </a>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'json',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-media-code"></span> <?php esc_html_e('Export Log JSON', 'amendor'); ?>
+                </a>
 
-                    <a
-                        href="<?php echo esc_url(wp_nonce_url(add_query_arg([
-                                    'page' => 'amendor-debug-log',
-                                    'amendor_action' => 'export_debug_log',
-                                    'export_format' => 'txt',
-                                    'log_level' => $selected_level,
-                                ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
-                        class="button button-secondary"
-                        style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
-                        <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'amendor'); ?>
-                    </a>
+                <a
+                    href="<?php echo esc_url(wp_nonce_url(add_query_arg([
+                                'page' => 'amendor-debug-log',
+                                'amendor_action' => 'export_debug_log',
+                                'export_format' => 'txt',
+                                'log_level' => $selected_level,
+                            ], admin_url('admin.php')), 'amendor_export_debug_log')); ?>"
+                    class="button button-secondary"
+                    style="display: inline-flex; align-items: center; gap: 8px; margin-right: 10px;">
+                    <span class="dashicons dashicons-media-text"></span> <?php esc_html_e('Export Log TXT', 'amendor'); ?>
+                </a>
             <?php } ?>
 
             <?php // --- Log Level Filter --- 

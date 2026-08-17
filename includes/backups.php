@@ -76,7 +76,7 @@ function amendor_create_post_backup($post_id, array $snapshot)
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id]);
-        error_log('ETP ' . $error_msg);
+        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -132,7 +132,7 @@ function amendor_create_elementor_backup($post_id, $data)
             esc_html(gettype($data))
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'data_type' => gettype($data)]);
-        error_log('ETP ' . $error_msg);
+        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -210,7 +210,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-        error_log('ETP ' . $error_msg);
+        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -230,7 +230,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             esc_html($backup_index)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-        error_log('ETP ' . $error_msg);
+        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -253,7 +253,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($update_result->get_error_message())
             );
             amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
-            error_log('ETP ' . $error_msg);
+            error_log('AMENDOR ' . $error_msg);
             return false;
         }
     }
@@ -270,7 +270,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($backup_index)
             );
             amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-            error_log('ETP ' . $error_msg);
+            error_log('AMENDOR ' . $error_msg);
             return false;
         } else {
             $encoded_backup_data = amendor_encode_elementor_data($backup_data, ['post_id' => $post_id, 'operation' => 'restore_backup']);
@@ -288,7 +288,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                     esc_html($db_error)
                 );
                 amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
-                error_log('ETP ' . $error_msg);
+                error_log('AMENDOR ' . $error_msg);
                 return false;
             }
         }
@@ -299,7 +299,7 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($post_id)
             );
             amendor_add_debug_log($log_msg, 'INFO', ['post_id' => $post_id]);
-            error_log('ETP Restore Info: ' . $log_msg);
+            error_log('AMENDOR Restore Info: ' . $log_msg);
         }
     }
 

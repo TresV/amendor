@@ -58,20 +58,11 @@ function amendor_render_text_replacer_ui()
     $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
     $replace = isset($_POST['replace']) ? sanitize_text_field(wp_unslash($_POST['replace'])) : '';
     $search_mode = isset($_POST['search_mode']) ? sanitize_key($_POST['search_mode']) : 'partial';
-    // Regex search is a Pro-only mode; the Free build strips the regex UI.
-    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
-        $search_mode = 'partial';
-    }
     $selected_ids = isset($_POST['selected_posts']) ? array_map('intval', (array) $_POST['selected_posts']) : [];
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) $_POST['widget_types']) : [];
     $selected_content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) $_POST['content_sources']) : [];
     $bulk_search = isset($_POST['bulk_search']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_search']) : [];
     $bulk_replace = isset($_POST['bulk_replace']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_replace']) : [];
-    if (!ame_fs()->is__premium_only()) {
-        // Bulk replace (multiple pairs) is a Pro feature.
-        $bulk_search = [];
-        $bulk_replace = [];
-    }
 
     // Initialize result arrays and counters
     $results = [];
@@ -265,47 +256,41 @@ function amendor_render_text_replacer_ui()
                                         <select name="search_mode" id="search_mode">
                                             <option value="partial" <?php selected($search_mode, 'partial'); ?>><?php esc_html_e('Partial Match (Case-Insensitive, Default)', 'amendor'); ?></option>
                                             <option value="exact" <?php selected($search_mode, 'exact'); ?>><?php esc_html_e('Exact Text (Case-Sensitive)', 'amendor'); ?></option>
-                                            <?php if (ame_fs()->is__premium_only()) { ?>
-                                                <option value="regex" <?php selected($search_mode, 'regex'); ?>><?php esc_html_e('Regular Expression (PCRE, Case-Insensitive)', 'amendor'); ?></option>
-                                            <?php } ?>
+                                            <option value="regex" <?php selected($search_mode, 'regex'); ?>><?php esc_html_e('Regular Expression (PCRE, Case-Insensitive)', 'amendor'); ?></option>
                                         </select>
                                         <p class="description"><?php esc_html_e('Choose matching method. Exact Text matches the typed text exactly, including case, within larger content.', 'amendor'); ?></p>
-                                        <?php if (ame_fs()->is__premium_only()) { ?>
-                                            <div id="regex-help" style="display: <?php echo $search_mode === 'regex' ? 'block' : 'none'; ?>; margin-top: 10px; padding: 10px; background: #f0f0f0; border: 1px solid #ddd; font-size: 0.9em;">
-                                                <strong><?php esc_html_e('Regex Tips:', 'amendor'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'amendor'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'amendor'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php esc_html_e('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\b</code> for word boundaries. Test carefully!', 'amendor'); ?>
-                                            </div>
-                                        <?php } ?>
+                                        <div id="regex-help" style="display: <?php echo $search_mode === 'regex' ? 'block' : 'none'; ?>; margin-top: 10px; padding: 10px; background: #f0f0f0; border: 1px solid #ddd; font-size: 0.9em;">
+                                            <strong><?php esc_html_e('Regex Tips:', 'amendor'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'amendor'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'amendor'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php esc_html_e('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\b</code> for word boundaries. Test carefully!', 'amendor'); ?>
+                                        </div>
                                     </td>
                                 </tr>
                             </table>
                         </div>
                     </div>
 
-                    <?php if (ame_fs()->is__premium_only()) { ?>
-                        <!-- 2. Bulk Replace Section -->
-                        <div class="amendor-section postbox">
-                            <h2 class="hndle"><span><?php esc_html_e('2. Bulk Replace (Optional)', 'amendor'); ?></span></h2>
-                            <div class="inside">
-                                <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement.', 'amendor'); ?></p>
-                                <div id="bulk-replace-container">
-                                    <?php
-                                    $bulk_pairs_count = max(1, count($bulk_search));
-                                    for ($i = 0; $i < $bulk_pairs_count; $i++):
-                                    ?>
-                                        <div class="bulk-replace-pair" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
-                                            <input type="text" name="bulk_search[]" placeholder="<?php esc_attr_e('Search for...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_search[$i]) ? esc_attr($bulk_search[$i]) : ''; ?>">
-                                            <span>➡️</span>
-                                            <input type="text" name="bulk_replace[]" placeholder="<?php esc_attr_e('Replace with...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_replace[$i]) ? esc_attr($bulk_replace[$i]) : ''; ?>">
-                                            <button type="button" class="button remove-pair" title="<?php esc_attr_e('Remove this pair', 'amendor'); ?>">×</button>
-                                        </div>
-                                    <?php endfor; ?>
-                                </div>
-                                <button type="button" id="add-bulk-pair" class="button button-secondary">
-                                    <span class="dashicons dashicons-plus-alt"></span> <?php esc_html_e('Add Another Pair', 'amendor'); ?>
-                                </button>
+                    <!-- 2. Bulk Replace Section -->
+                    <div class="amendor-section postbox">
+                        <h2 class="hndle"><span><?php esc_html_e('2. Bulk Replace (Optional)', 'amendor'); ?></span></h2>
+                        <div class="inside">
+                            <p class="description" style="margin-bottom: 15px;"><?php esc_html_e('Add multiple pairs here to run sequentially. If used, the single Search/Replace fields above are ignored during replacement.', 'amendor'); ?></p>
+                            <div id="bulk-replace-container">
+                                <?php
+                                $bulk_pairs_count = max(1, count($bulk_search));
+                                for ($i = 0; $i < $bulk_pairs_count; $i++):
+                                ?>
+                                    <div class="bulk-replace-pair" style="display: flex; gap: 10px; margin-bottom: 10px; align-items: center;">
+                                        <input type="text" name="bulk_search[]" placeholder="<?php esc_attr_e('Search for...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_search[$i]) ? esc_attr($bulk_search[$i]) : ''; ?>">
+                                        <span>➡️</span>
+                                        <input type="text" name="bulk_replace[]" placeholder="<?php esc_attr_e('Replace with...', 'amendor'); ?>" class="regular-text" style="flex-grow: 1;" value="<?php echo isset($bulk_replace[$i]) ? esc_attr($bulk_replace[$i]) : ''; ?>">
+                                        <button type="button" class="button remove-pair" title="<?php esc_attr_e('Remove this pair', 'amendor'); ?>">×</button>
+                                    </div>
+                                <?php endfor; ?>
                             </div>
+                            <button type="button" id="add-bulk-pair" class="button button-secondary">
+                                <span class="dashicons dashicons-plus-alt"></span> <?php esc_html_e('Add Another Pair', 'amendor'); ?>
+                            </button>
                         </div>
-                    <?php } ?>
+                    </div>
 
 
                     <!-- 3. Filters Section -->
