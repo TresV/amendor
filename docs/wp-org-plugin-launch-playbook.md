@@ -190,6 +190,9 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 *Only if you use a Freemius free/pro split. If your plugin is fully free, skip
 to §5.*
 
+> Deep-dive setup guide (dashboard, SDK, config, release pipeline):
+> **`docs/freemius-setup-and-distribution.md`**
+
 ### 4.1 SDK config that keeps you compliant
 
 | Parameter | wp.org (Free) build | Pro build (your site) |
