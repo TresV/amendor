@@ -68,13 +68,17 @@ function amendor_run_search_batch_callback()
     }
 
     $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $search_mode = amendor_restrict_search_mode(isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial');
+    $search_mode = isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial';
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) wp_unslash($_POST['widget_types'])) : [];
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
     $reset = !empty($_POST['reset']);
     $allowed_fields = [];
-    if (amendor_can_use_premium_features()) {
+    if (ame_fs()->is__premium_only()) {
         $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
     }
 
@@ -119,7 +123,11 @@ function amendor_get_search_results_callback()
     }
 
     $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $search_mode = amendor_restrict_search_mode(isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial');
+    $search_mode = isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial';
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) wp_unslash($_POST['widget_types'])) : [];
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';

@@ -3,7 +3,7 @@
 /**
  * Plugin Name:       Amendor
  * Description:       Search and replace text within Elementor data, with backup, history, and persistent debug logging.
- * Version:           1.0.0
+ * Version:           1.0.1
  * Author:            TheBrandPlace
  * Author URI:        https://thebrandplace.com/
  * License:           GPLv2 or later
@@ -79,7 +79,7 @@ if (function_exists('ame_fs')) {
         define('AMENDOR_PLUGIN_MODE', 'amendor');
     }
     if (!defined('AMENDOR_VERSION')) {
-        define('AMENDOR_VERSION', '1.0.0');
+        define('AMENDOR_VERSION', '1.0.1');
     }
     if (!defined('AMENDOR_PLUGIN_DIR')) {
         define('AMENDOR_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -95,7 +95,6 @@ if (function_exists('ame_fs')) {
     }
 
     require_once AMENDOR_PLUGIN_DIR . 'includes/plugin-context.php';
-    require_once AMENDOR_PLUGIN_DIR . 'includes/i18n.php';
     require_once AMENDOR_PLUGIN_DIR . 'includes/activation.php';
     require_once AMENDOR_PLUGIN_DIR . 'includes/search-data.php';
     require_once AMENDOR_PLUGIN_DIR . 'includes/backups.php';
@@ -110,8 +109,6 @@ if (function_exists('ame_fs')) {
     require_once AMENDOR_PLUGIN_DIR . 'includes/log-history-page.php';
     require_once AMENDOR_PLUGIN_DIR . 'includes/elementor-editor.php';
     require_once AMENDOR_PLUGIN_DIR . 'includes/ajax-handlers.php';
-
-    add_action('plugins_loaded', 'amendor_load_textdomain');
 
     register_activation_hook(AMENDOR_PLUGIN_FILE, 'amendor_activate_amendor');
     register_deactivation_hook(AMENDOR_PLUGIN_FILE, 'amendor_clear_log_pruning_schedule');

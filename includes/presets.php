@@ -253,9 +253,8 @@ function amendor_handle_presets_action($action, array &$messages)
         return;
     }
 
-    // Saved presets are a Pro feature.
-    if (!amendor_can_use_premium_features()) {
-        $messages[] = ['type' => 'info', 'text' => __('Saved presets are available in Amendor Pro.', 'amendor')];
+    // Saved presets are a Pro feature (stripped from the Free build).
+    if (!ame_fs()->is__premium_only()) {
         return;
     }
 
@@ -313,7 +312,7 @@ function amendor_handle_presets_action($action, array &$messages)
 function amendor_render_presets_box()
 {
     // Saved presets are a Pro feature (the call site is also gated in the admin UI).
-    if (!amendor_can_use_premium_features()) {
+    if (!ame_fs()->is__premium_only()) {
         return;
     }
 
@@ -348,7 +347,7 @@ function amendor_render_presets_box()
                                         <?php esc_html_e('Export', 'amendor'); ?>
                                     </button>
                                 </form>
-                                <form method="post" action="<?php echo esc_url($page_url); ?>" style="display: inline;" onsubmit="return confirm('<?php echo esc_js(__('Delete this preset?', 'amendor')); ?>');">
+                                <form method="post" action="<?php echo esc_url($page_url); ?>" style="display: inline;" data-confirm-delete-preset>
                                     <?php wp_nonce_field('amendor_presets_action', 'amendor_presets_nonce'); ?>
                                     <input type="hidden" name="preset_id" value="<?php echo esc_attr((int) $preset['id']); ?>">
                                     <button type="submit" name="action" value="delete_preset" class="button button-small">

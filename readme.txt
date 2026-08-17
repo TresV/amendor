@@ -1,9 +1,9 @@
 === Amendor ===
-Contributors: TheBrandPlace
+Contributors: thebrandplaceltd
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -18,18 +18,18 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 = Key Features =
 
 * Search Elementor content plus native post fields (title, content, excerpt)
-* Partial (case-insensitive), exact (case-sensitive), and PCRE regular-expression matching
-* Bulk search & replace with multiple sequential search/replace pairs
+* Partial (case-insensitive) and exact (case-sensitive) matching
 * Batched AJAX scanning with live progress (scales to large sites)
 * Preview (dry run) before committing any change
 * Automatic backups before every replacement, with one-click Undo and per-post restore
 * Dashboard quick stats and per-source/per-widget occurrence counts
-* Change history log with filtering and CSV/JSON/TXT export
-* Persistent debug log with level filtering and CSV/JSON/TXT export
+* Change history log with filtering
+* Persistent debug log with level filtering
 * Content-source and widget-type filters
 * Recent search history (20 entries) with one-click re-run
-* Elementor editor tool (experimental): word-level highlight and in-place replace directly in the editor, with per-occurrence selection, a field filter, and native Cmd/Ctrl+Z undo
 * Fully translation-ready (`languages/amendor.pot`)
+
+An extended Amendor Pro plugin adds regex matching, bulk search & replace, field-key targeting, SEO meta sources (Yoast / Rank Math), saved presets, an in-editor Elementor tool, and CSV/JSON/TXT log exports. It is available separately.
 
 == Installation ==
 
@@ -48,13 +48,20 @@ Yes. Amendor scans the raw Elementor data, so any widget from Elementor Free, El
 
 = Can I replace text right inside the Elementor editor? =
 
-Yes. Open the Amendor panel with the 🔍 button or Alt+Shift+F, search, tick the occurrences you want, then press "Replace Selected". Changes apply in place (no page reload) and are recorded in Elementor's own history, so Cmd/Ctrl+Z (Mac) or Ctrl+Z (Windows) undoes them like any other editor change. The panel's Undo button restores the whole last batch at once.
+Yes — this is included in Amendor Pro. The in-editor tool adds a panel (🔍 button or Alt+Shift+F) to search, highlight, and replace text in place, with Elementor-native undo (Cmd/Ctrl+Z). The free version replaces text from the Amendor admin page, with preview and one-click undo.
 
 = Can I delete all plugin data on uninstall? =
 
 Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settings page, then deactivate and delete the plugin. This removes the history, debug log, and backups tables, plus backup meta and per-user search history.
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Compliance: refactored Freemius gating so the generated Free build strips all Pro features cleanly — no locked functionality ships in the wp.org version
+* Compliance: moved inline styles into the enqueued stylesheet and removed inline JS handlers
+* Compliance: removed the unnecessary `load_plugin_textdomain()` call (WordPress auto-loads translations for wp.org plugins)
+* Compliance: corrected the readme Contributors list and aligned the feature list with the Free build
 
 = 1.0.0 =
 

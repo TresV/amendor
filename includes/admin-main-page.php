@@ -57,13 +57,17 @@ function amendor_render_text_replacer_ui()
     // --- Prepare Variables from POST/GET data ---
     $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
     $replace = isset($_POST['replace']) ? sanitize_text_field(wp_unslash($_POST['replace'])) : '';
-    $search_mode = amendor_restrict_search_mode(isset($_POST['search_mode']) ? sanitize_key($_POST['search_mode']) : 'partial');
+    $search_mode = isset($_POST['search_mode']) ? sanitize_key($_POST['search_mode']) : 'partial';
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
     $selected_ids = isset($_POST['selected_posts']) ? array_map('intval', (array) $_POST['selected_posts']) : [];
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) $_POST['widget_types']) : [];
     $selected_content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) $_POST['content_sources']) : [];
     $bulk_search = isset($_POST['bulk_search']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_search']) : [];
     $bulk_replace = isset($_POST['bulk_replace']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_replace']) : [];
-    if (!amendor_can_use_premium_features()) {
+    if (!ame_fs()->is__premium_only()) {
         // Bulk replace (multiple pairs) is a Pro feature.
         $bulk_search = [];
         $bulk_replace = [];
@@ -84,7 +88,7 @@ function amendor_render_text_replacer_ui()
     $available_content_sources = amendor_get_available_content_sources();
     $selected_content_sources = amendor_normalize_content_sources($selected_content_sources);
     $allowed_fields = [];
-    if (amendor_can_use_premium_features()) {
+    if (ame_fs()->is__premium_only()) {
         // Field-key targeting is a Pro feature.
         $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
     }
@@ -99,7 +103,7 @@ function amendor_render_text_replacer_ui()
                 $data = $preset['data'];
                 $search = (string) ($data['search'] ?? '');
                 $replace = (string) ($data['replace'] ?? '');
-                $search_mode = amendor_restrict_search_mode(in_array($data['search_mode'] ?? '', ['partial', 'exact', 'regex'], true) ? $data['search_mode'] : 'partial');
+                $search_mode = in_array($data['search_mode'] ?? '', ['partial', 'exact', 'regex'], true) ? $data['search_mode'] : 'partial';
                 $selected_content_sources = amendor_normalize_content_sources((array) ($data['content_sources'] ?? []));
                 $selected_widgets = amendor_normalize_selected_widgets((array) ($data['widget_types'] ?? []));
                 $allowed_fields = amendor_normalize_allowed_fields((string) ($data['field_keys'] ?? ''));

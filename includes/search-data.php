@@ -50,10 +50,8 @@ function amendor_get_available_content_sources()
 
     // SEO meta sources (Yoast / Rank Math) are a Pro feature.
     if (ame_fs()->is__premium_only()) {
-        if (amendor_can_use_premium_features()) {
-            $sources['seo_title'] = __('SEO Title (Yoast / Rank Math)', 'amendor');
-            $sources['seo_description'] = __('SEO Meta Description (Yoast / Rank Math)', 'amendor');
-        }
+        $sources['seo_title'] = __('SEO Title (Yoast / Rank Math)', 'amendor');
+        $sources['seo_description'] = __('SEO Meta Description (Yoast / Rank Math)', 'amendor');
     }
 
     return $sources;

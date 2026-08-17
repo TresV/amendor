@@ -481,6 +481,19 @@ jQuery(function ($) {
         }
     });
 
+    // Deferred confirmation handlers (replaces inline onclick/onsubmit).
+    $(document).on('click', '[data-confirm-clear-log]', function (event) {
+        if (!window.confirm(amendor_admin_vars.confirm_clear_log_text)) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).on('submit', '[data-confirm-delete-preset]', function (event) {
+        if (!window.confirm(amendor_admin_vars.confirm_delete_preset)) {
+            event.preventDefault();
+        }
+    });
+
     syncContentSourceUi();
     refreshResultsUi();
 });

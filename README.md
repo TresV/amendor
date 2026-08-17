@@ -40,7 +40,7 @@ Search, see and replace text directly in the Elementor editor — no need to lea
 
 - `amendor.php`: plugin bootstrap (loads the module files below)
 - `includes/` — self-contained PHP runtime, split into focused modules:
-  - `plugin-context.php` / `i18n.php` / `activation.php` — bootstrap, localization, and table setup
+  - `plugin-context.php` / `activation.php` — bootstrap context helpers and table setup
   - `search-data.php` — data helpers: content sources, retention limits, search history, stats
   - `backups.php` — backup storage and restore (dedicated table)
   - `search-engine.php` — search/replace analysis engine and logging

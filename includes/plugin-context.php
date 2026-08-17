@@ -57,38 +57,6 @@ function amendor_current_user_can_manage()
 }
 
 /**
- * Return whether the current user can use premium (Pro) features.
- *
- * Wraps the Freemius license check so call sites don't need to know about the
- * SDK. In the free build this is always false; in the premium build it
- * reflects an active (paid) license.
- *
- * @return bool
- */
-function amendor_can_use_premium_features()
-{
-    return function_exists('ame_fs') && ame_fs()->can_use_premium_code();
-}
-
-/**
- * Restrict premium-only search modes (regex) to Pro users.
- *
- * Downgrades any regex request to a partial match for non-Pro users. Applied at
- * every entry point (form + AJAX) so crafted requests can't enable Pro modes
- * in the free version.
- *
- * @param string $search_mode Raw search mode.
- * @return string Allowed search mode (partial or exact).
- */
-function amendor_restrict_search_mode($search_mode)
-{
-    if ('regex' === $search_mode && !amendor_can_use_premium_features()) {
-        return 'partial';
-    }
-    return $search_mode;
-}
-
-/**
  * Return the current plugin display name.
  *
  * @return string

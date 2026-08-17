@@ -139,9 +139,13 @@ function amendor_handle_undo_action($action, array &$messages)
  */
 function amendor_handle_search_action($action, $search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $paged, $results_per_page, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
-    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
+    if (ame_fs()->is__premium_only()) {
+        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+    } else {
         $allowed_fields = [];
     }
 
@@ -283,9 +287,13 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
  */
 function amendor_handle_preview_action($action, array $selected_ids, $search, $replace, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
-    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
+    if (ame_fs()->is__premium_only()) {
+        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+    } else {
         $allowed_fields = [];
     }
 
@@ -416,9 +424,13 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
  */
 function amendor_handle_replace_action($action, array $selected_ids, $search, $replace, $search_mode, array $bulk_search, array $bulk_replace, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
-    $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
+    // Regex search is a Pro-only mode; the Free build strips the regex UI.
+    if ('regex' === $search_mode && !ame_fs()->is__premium_only()) {
+        $search_mode = 'partial';
+    }
+    if (ame_fs()->is__premium_only()) {
+        $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
+    } else {
         // Bulk replace and field-key targeting are Pro-only.
         $allowed_fields = [];
         $bulk_search = [];
@@ -612,7 +624,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         }
 
         // Save SEO meta (Yoast / Rank Math) when those sources are selected (Pro).
-        if (amendor_can_use_premium_features()) {
+        if (ame_fs()->is__premium_only()) {
             $seo_groups = amendor_get_seo_meta_field_groups();
             foreach ($seo_groups as $seo_source => $seo_meta_keys) {
                 if (!in_array($seo_source, $content_sources, true)) {

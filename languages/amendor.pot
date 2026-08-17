@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the Amendor plugin.
 msgid ""
 msgstr ""
-"Project-Id-Version: Amendor 1.0.0\n"
+"Project-Id-Version: Amendor 1.0.1\n"
 "Report-Msgid-Bugs-To: https://thebrandplace.com/\n"
 "POT-Creation-Date: 2026-08-14 13:09+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
@@ -879,10 +879,6 @@ msgstr ""
 
 #: includes/presets.php:324
 msgid "Saved Presets"
-msgstr ""
-
-#: includes/presets.php:258
-msgid "Saved presets are available in Amendor Pro."
 msgstr ""
 
 #: includes/admin-chrome.php:211

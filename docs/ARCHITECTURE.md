@@ -16,7 +16,6 @@
 amendor.php                 Bootstrap: requires every module, Freemius SDK init, after_uninstall cleanup hook
 includes/
   plugin-context.php        Context helpers: mode, capability gate, table names
-  i18n.php                  Text-domain loading
   activation.php            Table creation (dbDelta), cron schedule, migrations
   search-data.php           Data helpers: sources, limits, history, stats, JSON diff
   backups.php               Backup snapshots, restore, download (dedicated table)
@@ -67,9 +66,6 @@ drift; the name is the stable key.
 - `amendor_get_admin_parent_slug` (74) — admin page parent slug
 - `amendor_get_backup_meta_key` (84) — post-meta key for backups
 - `amendor_get_history_table_name` (94) / `amendor_get_debug_log_table_name` (106) / `amendor_get_backups_table_name` (118) — table names
-
-### `includes/i18n.php`
-- `amendor_load_textdomain` (15) — loads translations
 
 ### `includes/activation.php`
 - `amendor_create_amendor_tables` (18) / `amendor_create_tables` (79) — dbDelta table creation
