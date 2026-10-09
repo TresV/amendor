@@ -8,6 +8,17 @@
 
 ---
 
+> **✅ EXECUTED (2026-10-07) — Path A1.** The Freemius SDK, its `ame_fs()`
+> bootstrap, `.github/workflows/deploy-freemius.yml`, and every
+> `is__premium_only()` gate have been removed. Amendor now ships as a single,
+> fully-featured free plugin: field-key targeting, SEO meta sources, saved
+> presets, log exports, and the in-editor Elementor tool are all enabled
+> unconditionally. Uninstall cleanup moved from `fs_after_uninstall_amendor`
+> to a standard `uninstall.php`. The Path B material below is kept for
+> historical context only.
+
+---
+
 ## 0. Executive summary
 
 | Priority | Issue | Effort | Risk if skipped |
@@ -25,6 +36,10 @@ split; submit the auto-generated Free build to wp.org. Path A was originally
 recommended as lowest-risk, but the freemium funnel is the business model.
 Execute Path B's steps rigorously; the residual re-review risk is addressed in
 §P0b step 6.
+
+> **⚠️ Superseded on 2026-10-07:** the product moved to a single free edition,
+> so **Path A1** was implemented instead (see the banner above). The Path B
+> analysis below is retained for historical context.
 
 ---
 

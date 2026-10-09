@@ -13,7 +13,8 @@
 ## Layout
 
 ```
-amendor.php                 Bootstrap: requires every module, Freemius SDK init, after_uninstall cleanup hook
+amendor.php                 Bootstrap: requires every module
+uninstall.php               Opt-in data cleanup when the plugin is deleted
 includes/
   plugin-context.php        Context helpers: mode, capability gate, table names
   activation.php            Table creation (dbDelta), cron schedule, migrations

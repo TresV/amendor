@@ -8,6 +8,13 @@
 > Status: **Mostly compliant. One OPEN item (Guideline 5) needs a product
 > decision; three minor items optional.**
 
+> **✅ Superseded (2026-10-07):** Guideline 5 was resolved by removing Freemius
+> entirely and shipping a single fully-free plugin (Path A1). The
+> `vendor/freemius` SDK, the `ame_fs()` bootstrap, the `wp_org_gatekeeper`
+> config, the `is__premium_only()` gates, and the Free/Pro split no longer
+> exist. Everything below describes the earlier Freemius-based state and is
+> kept for historical context.
+
 ---
 
 ## Verdict summary

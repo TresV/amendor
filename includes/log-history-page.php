@@ -139,24 +139,22 @@ function amendor_display_change_history_log()
         $where_sql .= ($where_sql === '' ? ' WHERE' : ' AND') . ' bulk_operation = 0';
     }
 
-    // --- Export Action (Pro) ---
-    if (ame_fs()->is__premium_only()) {
-        if (
-            isset($_GET['amendor_action'], $_GET['_wpnonce']) &&
-            $_GET['amendor_action'] === 'export_history_log' &&
-            wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_history_log')
-        ) {
-            $history_format = isset($_GET['history_format']) && in_array(sanitize_key($_GET['history_format']), ['csv', 'json', 'txt'], true) ? sanitize_key($_GET['history_format']) : 'csv';
-            $export_sql = "SELECT * FROM {$table_name}{$where_sql} ORDER BY timestamp DESC";
-            $export_rows = $wpdb->get_results($wpdb->prepare($export_sql, ...$where_params), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-            $export_max_rows = max(1, (int) apply_filters('amendor_history_log_export_max_rows', 50000));
-            $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
-            $filename_suffix = $selected_mode !== '' ? $selected_mode : 'all';
-            if ($selected_bulk !== '') {
-                $filename_suffix .= '-' . $selected_bulk;
-            }
-            amendor_send_history_log_export($export_rows, $history_format, $filename_suffix);
+    // --- Export Action ---
+    if (
+        isset($_GET['amendor_action'], $_GET['_wpnonce']) &&
+        $_GET['amendor_action'] === 'export_history_log' &&
+        wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_history_log')
+    ) {
+        $history_format = isset($_GET['history_format']) && in_array(sanitize_key($_GET['history_format']), ['csv', 'json', 'txt'], true) ? sanitize_key($_GET['history_format']) : 'csv';
+        $export_sql = "SELECT * FROM {$table_name}{$where_sql} ORDER BY timestamp DESC";
+        $export_rows = $wpdb->get_results($wpdb->prepare($export_sql, ...$where_params), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+        $export_max_rows = max(1, (int) apply_filters('amendor_history_log_export_max_rows', 50000));
+        $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
+        $filename_suffix = $selected_mode !== '' ? $selected_mode : 'all';
+        if ($selected_bulk !== '') {
+            $filename_suffix .= '-' . $selected_bulk;
         }
+        amendor_send_history_log_export($export_rows, $history_format, $filename_suffix);
     }
 
     // --- Pagination Logic ---
@@ -203,18 +201,16 @@ function amendor_display_change_history_log()
                 <?php endif; ?>
             </form>
 
-            <?php if (ame_fs()->is__premium_only()) { ?>
-                <?php
-                $export_base = [
-                    'page' => 'amendor-change-history',
-                    'amendor_action' => 'export_history_log',
-                    'history_mode' => $selected_mode,
-                    'history_bulk' => $selected_bulk,
-                ];
-                foreach (['csv' => __('Export CSV', 'amendor'), 'json' => __('Export JSON', 'amendor'), 'txt' => __('Export TXT', 'amendor')] as $fmt => $label) : ?>
-                    <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array_merge($export_base, ['history_format' => $fmt]), admin_url('admin.php')), 'amendor_export_history_log')); ?>" class="button button-secondary"><?php echo esc_html($label); ?></a>
-                <?php endforeach; ?>
-            <?php } ?>
+            <?php
+            $export_base = [
+                'page' => 'amendor-change-history',
+                'amendor_action' => 'export_history_log',
+                'history_mode' => $selected_mode,
+                'history_bulk' => $selected_bulk,
+            ];
+            foreach (['csv' => __('Export CSV', 'amendor'), 'json' => __('Export JSON', 'amendor'), 'txt' => __('Export TXT', 'amendor')] as $fmt => $label) : ?>
+                <a href="<?php echo esc_url(wp_nonce_url(add_query_arg(array_merge($export_base, ['history_format' => $fmt]), admin_url('admin.php')), 'amendor_export_history_log')); ?>" class="button button-secondary"><?php echo esc_html($label); ?></a>
+            <?php endforeach; ?>
         </div>
 
         <?php // --- Top Pagination --- 

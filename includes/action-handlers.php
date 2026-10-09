@@ -507,6 +507,8 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $post_modified_by_any_pair = false;
         $total_changes_in_post_across_pairs = 0;
         $current_state = amendor_build_post_content_state($post);
+        // Snapshot taken before any pair runs, so unchanged values are never written back.
+        $original_state = $current_state;
 
         foreach ($pairs_to_process as $pair_index => $pair) {
             $pair_analysis = amendor_analyze_post_content_state(
@@ -575,46 +577,56 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
 
         if (array_key_exists('elementor_data', $current_state)) {
             if (is_array($current_state['elementor_data'])) {
-                $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
-                if ($encoded_current_data_state === false) {
-                    /* translators: %d: Post ID. */
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
-                    continue;
-                }
+                if ($current_state['elementor_data'] !== $original_state['elementor_data']) {
+                    $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
+                    if ($encoded_current_data_state === false) {
+                        /* translators: %d: Post ID. */
+                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
+                        continue;
+                    }
 
-                $meta_update = update_post_meta($post_id, '_elementor_data', wp_slash($encoded_current_data_state));
-                if ($meta_update === false) {
-                    $db_error = $GLOBALS['wpdb']->last_error;
-                    amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
-                    /* translators: 1: Post ID, 2: Database error message. */
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
-                    continue;
+                    $meta_update = update_post_meta($post_id, '_elementor_data', wp_slash($encoded_current_data_state));
+                    // update_post_meta() returns false when the stored value already matches the new
+                    // one (no query runs), so only a populated last_error means a real failure.
+                    $db_error = (string) $GLOBALS['wpdb']->last_error;
+                    if ($meta_update === false && '' !== $db_error) {
+                        amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
+                        /* translators: 1: Post ID, 2: Database error message. */
+                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
+                        continue;
+                    }
+                    amendor_clear_elementor_cache_for_post($post_id);
                 }
-                amendor_clear_elementor_cache_for_post($post_id);
             } elseif ($current_state['elementor_data'] === null && amendor_content_sources_include_elementor($content_sources)) {
                 delete_post_meta($post_id, '_elementor_data');
             }
         }
 
-        // Save SEO meta (Yoast / Rank Math) when those sources are selected (Pro).
-        if (ame_fs()->is__premium_only()) {
-            $seo_groups = amendor_get_seo_meta_field_groups();
-            foreach ($seo_groups as $seo_source => $seo_meta_keys) {
-                if (!in_array($seo_source, $content_sources, true)) {
+        // Save SEO meta (Yoast / Rank Math) when those sources are selected.
+        $seo_groups = amendor_get_seo_meta_field_groups();
+        foreach ($seo_groups as $seo_source => $seo_meta_keys) {
+            if (!in_array($seo_source, $content_sources, true)) {
+                continue;
+            }
+            $seo_values = isset($current_state[$seo_source]) && is_array($current_state[$seo_source]) ? $current_state[$seo_source] : [];
+            $original_seo_values = isset($original_state[$seo_source]) && is_array($original_state[$seo_source]) ? $original_state[$seo_source] : [];
+            foreach ($seo_meta_keys as $seo_meta_key) {
+                if (!array_key_exists($seo_meta_key, $seo_values)) {
                     continue;
                 }
-                $seo_values = isset($current_state[$seo_source]) && is_array($current_state[$seo_source]) ? $current_state[$seo_source] : [];
-                foreach ($seo_meta_keys as $seo_meta_key) {
-                    if (!array_key_exists($seo_meta_key, $seo_values)) {
-                        continue;
-                    }
-                    $seo_meta_saved = update_post_meta($post_id, $seo_meta_key, wp_slash((string) $seo_values[$seo_meta_key]));
-                    if ($seo_meta_saved === false) {
-                        $db_error = $GLOBALS['wpdb']->last_error;
-                        amendor_add_debug_log('ERROR updating SEO meta after processing pairs.', 'ERROR', ['post_id' => $post_id, 'meta_key' => $seo_meta_key, 'db_error' => $db_error]);
-                        /* translators: 1: Post ID, 2: Meta key, 3: Database error message. */
-                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s', 'amendor'), $post_id, esc_html($seo_meta_key), esc_html($db_error))];
-                    }
+                $seo_meta_value = (string) $seo_values[$seo_meta_key];
+                if (isset($original_seo_values[$seo_meta_key]) && (string) $original_seo_values[$seo_meta_key] === $seo_meta_value) {
+                    // Source was selected but this key did not change, so there is nothing to save.
+                    continue;
+                }
+                $seo_meta_saved = update_post_meta($post_id, $seo_meta_key, wp_slash($seo_meta_value));
+                // update_post_meta() returns false when the value is unchanged or another plugin
+                // short-circuits the write, so only a populated last_error means a real failure.
+                $db_error = (string) $GLOBALS['wpdb']->last_error;
+                if ($seo_meta_saved === false && '' !== $db_error) {
+                    amendor_add_debug_log('ERROR updating SEO meta after processing pairs.', 'ERROR', ['post_id' => $post_id, 'meta_key' => $seo_meta_key, 'db_error' => $db_error]);
+                    /* translators: 1: Post ID, 2: Meta key, 3: Database error message. */
+                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s', 'amendor'), $post_id, esc_html($seo_meta_key), esc_html($db_error))];
                 }
             }
         }

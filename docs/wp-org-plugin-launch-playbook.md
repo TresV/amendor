@@ -190,8 +190,8 @@ add_action( 'admin_enqueue_scripts', function ( $hook ) {
 *Only if you use a Freemius free/pro split. If your plugin is fully free, skip
 to §5.*
 
-> Deep-dive setup guide (dashboard, SDK, config, release pipeline):
-> **`docs/freemius-setup-and-distribution.md`**
+> Amendor itself no longer uses Freemius — it ships as a single, fully-free
+> plugin — so this section is generic guidance only.
 
 ### 4.1 SDK config that keeps you compliant
 

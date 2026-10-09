@@ -279,8 +279,10 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             }
 
             $update_result = update_post_meta($post_id, '_elementor_data', wp_slash($encoded_backup_data));
-            if ($update_result === false) {
-                $db_error = $GLOBALS['wpdb']->last_error;
+            // update_post_meta() also returns false when the value already matches the backup
+            // (no query runs), which is a successful restore, not a failure.
+            $db_error = (string) $GLOBALS['wpdb']->last_error;
+            if ($update_result === false && '' !== $db_error) {
                 $error_msg = sprintf(
                     /* translators: 1: Post ID, 2: Database Error */
                     esc_html__('Restore Error: Failed to update post meta for Post ID %1$s. DB Error: %2$s', 'amendor'),

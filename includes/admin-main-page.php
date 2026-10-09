@@ -78,39 +78,33 @@ function amendor_render_text_replacer_ui()
     $available_widgets = amendor_get_available_widgets();
     $available_content_sources = amendor_get_available_content_sources();
     $selected_content_sources = amendor_normalize_content_sources($selected_content_sources);
-    $allowed_fields = [];
-    if (ame_fs()->is__premium_only()) {
-        // Field-key targeting is a Pro feature.
-        $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
-    }
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     // Apply a saved preset: load its data into the form and run the search.
-    if (ame_fs()->is__premium_only()) {
-        if ($action === 'apply_preset') {
-            $preset_nonce_ok = isset($_POST['amendor_presets_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_presets_nonce'])), 'amendor_presets_action');
-            $preset_id = isset($_POST['preset_id']) ? intval($_POST['preset_id']) : 0;
-            $preset = $preset_nonce_ok ? amendor_get_preset($preset_id) : null;
-            if ($preset) {
-                $data = $preset['data'];
-                $search = (string) ($data['search'] ?? '');
-                $replace = (string) ($data['replace'] ?? '');
-                $search_mode = in_array($data['search_mode'] ?? '', ['partial', 'exact', 'regex'], true) ? $data['search_mode'] : 'partial';
-                $selected_content_sources = amendor_normalize_content_sources((array) ($data['content_sources'] ?? []));
-                $selected_widgets = amendor_normalize_selected_widgets((array) ($data['widget_types'] ?? []));
-                $allowed_fields = amendor_normalize_allowed_fields((string) ($data['field_keys'] ?? ''));
-                $bulk_search = array_values(array_map(static fn($item) => (string) $item, (array) ($data['bulk_search'] ?? [])));
-                $bulk_replace = array_values(array_map(static fn($item) => (string) $item, (array) ($data['bulk_replace'] ?? [])));
-                /* translators: %s: Preset name. */
-                $amendor_messages[] = ['type' => 'success', 'text' => sprintf(__('✅ Preset "%s" applied.', 'amendor'), esc_html($preset['name']))];
-                $action = 'search';
-            } elseif ($preset_nonce_ok) {
-                $amendor_messages[] = ['type' => 'error', 'text' => __('❌ Preset not found.', 'amendor')];
-            }
+    if ($action === 'apply_preset') {
+        $preset_nonce_ok = isset($_POST['amendor_presets_nonce']) && wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_presets_nonce'])), 'amendor_presets_action');
+        $preset_id = isset($_POST['preset_id']) ? intval($_POST['preset_id']) : 0;
+        $preset = $preset_nonce_ok ? amendor_get_preset($preset_id) : null;
+        if ($preset) {
+            $data = $preset['data'];
+            $search = (string) ($data['search'] ?? '');
+            $replace = (string) ($data['replace'] ?? '');
+            $search_mode = in_array($data['search_mode'] ?? '', ['partial', 'exact', 'regex'], true) ? $data['search_mode'] : 'partial';
+            $selected_content_sources = amendor_normalize_content_sources((array) ($data['content_sources'] ?? []));
+            $selected_widgets = amendor_normalize_selected_widgets((array) ($data['widget_types'] ?? []));
+            $allowed_fields = amendor_normalize_allowed_fields((string) ($data['field_keys'] ?? ''));
+            $bulk_search = array_values(array_map(static fn($item) => (string) $item, (array) ($data['bulk_search'] ?? [])));
+            $bulk_replace = array_values(array_map(static fn($item) => (string) $item, (array) ($data['bulk_replace'] ?? [])));
+            /* translators: %s: Preset name. */
+            $amendor_messages[] = ['type' => 'success', 'text' => sprintf(__('✅ Preset "%s" applied.', 'amendor'), esc_html($preset['name']))];
+            $action = 'search';
+        } elseif ($preset_nonce_ok) {
+            $amendor_messages[] = ['type' => 'error', 'text' => __('❌ Preset not found.', 'amendor')];
         }
-
-        // Preset management actions (save / delete / export / import).
-        amendor_handle_presets_action($action, $amendor_messages);
     }
+
+    // Preset management actions (save / delete / export / import).
+    amendor_handle_presets_action($action, $amendor_messages);
 
     $search_attempted = ($action === 'search');
     $preview_attempted = ($action === 'preview_selected');
@@ -330,15 +324,13 @@ function amendor_render_text_replacer_ui()
                                         <?php endif; ?>
                                     </td>
                                 </tr>
-                                <?php if (ame_fs()->is__premium_only()) { ?>
-                                    <tr>
-                                        <th><label for="field_keys"><?php esc_html_e('Field Keys', 'amendor'); ?></label></th>
-                                        <td>
-                                            <input type="text" name="field_keys" id="field_keys" class="regular-text" value="<?php echo esc_attr(implode(', ', $allowed_fields)); ?>" placeholder="editor, title, url">
-                                            <p class="description"><?php esc_html_e('Optional. Comma-separated Elementor settings keys to limit scanning to (e.g. editor, title, url). Leave empty to scan all fields.', 'amendor'); ?></p>
-                                        </td>
-                                    </tr>
-                                <?php } ?>
+                                <tr>
+                                    <th><label for="field_keys"><?php esc_html_e('Field Keys', 'amendor'); ?></label></th>
+                                    <td>
+                                        <input type="text" name="field_keys" id="field_keys" class="regular-text" value="<?php echo esc_attr(implode(', ', $allowed_fields)); ?>" placeholder="editor, title, url">
+                                        <p class="description"><?php esc_html_e('Optional. Comma-separated Elementor settings keys to limit scanning to (e.g. editor, title, url). Leave empty to scan all fields.', 'amendor'); ?></p>
+                                    </td>
+                                </tr>
                             </table>
                         </div>
                     </div>
@@ -411,20 +403,18 @@ function amendor_render_text_replacer_ui()
                         </div>
                     </div>
 
-                    <?php if (ame_fs()->is__premium_only()) { ?>
-                        <!-- Save Preset -->
-                        <div id="amendor-save-preset" class="postbox">
-                            <h2 class="hndle"><span><?php esc_html_e('Save Preset', 'amendor'); ?></span></h2>
-                            <div class="inside">
-                                <p class="description"><?php esc_html_e('Save the current search/replace configuration to reuse it — also reusable across sites via Export/Import.', 'amendor'); ?></p>
-                                <?php wp_nonce_field('amendor_presets_action', 'amendor_presets_nonce'); ?>
-                                <input type="text" name="preset_name" id="preset-name" class="regular-text" style="width: 100%; margin-bottom: 8px; box-sizing: border-box;" placeholder="<?php esc_attr_e('Preset name...', 'amendor'); ?>">
-                                <button type="submit" name="action" value="save_preset" class="button button-secondary button-large" style="width: 100%;">
-                                    <span class="dashicons dashicons-saved"></span> <?php esc_html_e('Save Current as Preset', 'amendor'); ?>
-                                </button>
-                            </div>
+                    <!-- Save Preset -->
+                    <div id="amendor-save-preset" class="postbox">
+                        <h2 class="hndle"><span><?php esc_html_e('Save Preset', 'amendor'); ?></span></h2>
+                        <div class="inside">
+                            <p class="description"><?php esc_html_e('Save the current search/replace configuration to reuse it — also reusable across sites via Export/Import.', 'amendor'); ?></p>
+                            <?php wp_nonce_field('amendor_presets_action', 'amendor_presets_nonce'); ?>
+                            <input type="text" name="preset_name" id="preset-name" class="regular-text" style="width: 100%; margin-bottom: 8px; box-sizing: border-box;" placeholder="<?php esc_attr_e('Preset name...', 'amendor'); ?>">
+                            <button type="submit" name="action" value="save_preset" class="button button-secondary button-large" style="width: 100%;">
+                                <span class="dashicons dashicons-saved"></span> <?php esc_html_e('Save Current as Preset', 'amendor'); ?>
+                            </button>
                         </div>
-                    <?php } ?>
+                    </div>
 
                     <!-- Actions Panel -->
                     <div id="amendor-actions-panel" class="postbox">
@@ -495,9 +485,7 @@ function amendor_render_text_replacer_ui()
         </form> <?php // End main form 
                 ?>
 
-        <?php if (ame_fs()->is__premium_only()) {
-            amendor_render_presets_box();
-        } ?>
+        <?php amendor_render_presets_box(); ?>
     </div> <?php // End wrap 
             ?>
 

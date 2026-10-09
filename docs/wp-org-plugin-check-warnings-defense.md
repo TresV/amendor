@@ -8,6 +8,12 @@
 > either by design or a tool false positive. **No warning reflects a security,
 > performance, or compliance defect.**
 
+> **⚠️ Code changed since this run (2026-10-07):** Freemius was removed and the
+> plugin now ships as a single free edition. Section 8 (Freemius SDK accessor
+> naming, warning #12) no longer applies — the SDK and its `ame_fs()` accessor
+> are gone. Line numbers and the freemium-related notes below reflect the
+> earlier 1.0.0 tree; re-run Plugin Check before the next upload.
+
 ---
 
 ## 1. Summary

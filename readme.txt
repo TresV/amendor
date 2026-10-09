@@ -4,7 +4,7 @@ Tags: elementor, search, replace, find, backup
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -19,19 +19,21 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 = Key Features =
 
 * Search Elementor content plus native post fields (title, content, excerpt)
+* SEO meta sources (Yoast / Rank Math) searchable and replaceable as first-class sources
 * Partial (case-insensitive), exact (case-sensitive), and PCRE regular-expression matching
 * Bulk search & replace with multiple sequential search/replace pairs
+* Elementor field-key targeting to limit scanning to specific settings keys
 * Batched AJAX scanning with live progress (scales to large sites)
 * Preview (dry run) before committing any change
 * Automatic backups before every replacement, with one-click Undo and per-post restore
 * Dashboard quick stats and per-source/per-widget occurrence counts
-* Change history log with filtering
-* Persistent debug log with level filtering
+* Change history log with filtering and CSV/JSON/TXT export
+* Persistent debug log with level filtering and CSV/JSON/TXT export
 * Content-source and widget-type filters
+* Saved search/replace presets, exportable and importable as JSON
+* In-editor Elementor search tool (🔍 button or Alt+Shift+F) with in-place replace and undo
 * Recent search history (20 entries) with one-click re-run
 * Fully translation-ready (`languages/amendor.pot`)
-
-An extended Amendor Pro plugin adds field-key targeting, SEO meta sources (Yoast / Rank Math), saved presets, an in-editor Elementor tool, and CSV/JSON/TXT log exports. It is available separately.
 
 == Installation ==
 
@@ -50,7 +52,7 @@ Yes. Amendor scans the raw Elementor data, so any widget from Elementor Free, El
 
 = Can I replace text right inside the Elementor editor? =
 
-Yes — this is included in Amendor Pro. The in-editor tool adds a panel (🔍 button or Alt+Shift+F) to search, highlight, and replace text in place, with Elementor-native undo (Cmd/Ctrl+Z). The free version replaces text from the Amendor admin page, with preview and one-click undo.
+Yes. The in-editor tool adds a panel (🔍 button or Alt+Shift+F) to search, highlight, and replace text in place, with Elementor-native undo (Cmd/Ctrl+Z). Batch work across many pages is done from the Amendor admin page, with preview and one-click undo.
 
 = Can I delete all plugin data on uninstall? =
 
@@ -58,15 +60,22 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 
 == Changelog ==
 
+= 1.0.1 =
+
+* Single self-contained edition: the bundled license/account SDK and all premium gating are removed — no external service, no account, and no locked functionality
+* SEO meta fields (Yoast / Rank Math), field-key targeting, saved presets, the in-editor Elementor tool, and CSV/JSON/TXT log exports all ship in the one free plugin
+* Fixed: replacement no longer reports a false "Database error occurred" for SEO meta fields whose value did not change — only genuine database write failures are reported
+* Elementor data is written only when it actually changed
+* Added `uninstall.php` for the opt-in "Delete plugin data on uninstall" cleanup, replacing the previous SDK-based uninstall hook
+
 = 1.0.0 =
 
-* Initial public release, split into Free and Pro editions (via Freemius)
+* Initial public release — a single, fully-featured free edition with no license keys, accounts, or locked functionality
 * Search & replace in Elementor data and native post fields, with preview (dry run), automatic backups, one-click undo, and per-post restore
-* Free: partial, exact, and regex matching; bulk search & replace; content-source & widget-type filters; dashboard stats; search history; history/debug log viewing
-* Pro: field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, in-editor live tool (Alt+Shift+F5), and CSV/JSON/TXT log exports
-* Compliance: Freemius gating refactored so the generated Free build strips all Pro features cleanly — no locked functionality ships in the wp.org version; inline styles/handlers moved to the enqueued assets; load_plugin_textdomain() removed; Contributors corrected and the feature list aligned with the Free build
+* Includes field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, the in-editor live tool (Alt+Shift+F), and CSV/JSON/TXT log exports
 * Performance: keyset-cursor search scan, lightweight search cache, batched AJAX scanning, daily log pruning
 * Security: central capability helper, term-length limits, bounded PCRE resource limits, debug-log redaction
+* Compliance: no account, license, telemetry, or external service; inline styles/handlers moved to enqueued assets; load_plugin_textdomain() removed; Contributors corrected and the feature list aligned with what ships
 
 == Notes ==
 

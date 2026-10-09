@@ -73,10 +73,7 @@ function amendor_run_search_batch_callback()
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
     $reset = !empty($_POST['reset']);
-    $allowed_fields = [];
-    if (ame_fs()->is__premium_only()) {
-        $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
-    }
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     if ($search === '') {
         wp_send_json_error(['message' => __('Search term is required.', 'amendor')], 400);
