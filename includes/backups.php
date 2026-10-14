@@ -76,7 +76,6 @@ function amendor_create_post_backup($post_id, array $snapshot)
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id]);
-        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -132,7 +131,6 @@ function amendor_create_elementor_backup($post_id, $data)
             esc_html(gettype($data))
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'data_type' => gettype($data)]);
-        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -174,6 +172,26 @@ function amendor_get_elementor_backups($post_id)
 }
 
 /**
+ * Delete the newest backup for a post.
+ *
+ * @param int $post_id The post ID.
+ * @return void
+ */
+function amendor_delete_latest_backup($post_id)
+{
+    global $wpdb;
+    $table = amendor_get_backups_table_name();
+
+    $backup_id = $wpdb->get_var(
+        $wpdb->prepare("SELECT id FROM {$table} WHERE post_id = %d ORDER BY timestamp DESC, id DESC LIMIT 1", $post_id) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    ); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+
+    if ($backup_id) {
+        $wpdb->delete($table, ['id' => (int) $backup_id], ['%d']); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    }
+}
+
+/**
  * Returns the number of stored backups for a post.
  *
  * @param int $post_id The post ID.
@@ -210,7 +228,6 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             esc_html($post_id)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
@@ -230,17 +247,22 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
             esc_html($backup_index)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-        error_log('AMENDOR ' . $error_msg);
         return false;
     }
 
     $post_update = [
         'ID' => (int) $post_id,
     ];
+    $current_post = get_post($post_id);
     foreach (['post_title', 'post_content', 'post_excerpt'] as $field_key) {
-        if (array_key_exists($field_key, $snapshot)) {
-            $post_update[$field_key] = (string) $snapshot[$field_key];
+        if (!array_key_exists($field_key, $snapshot)) {
+            continue;
         }
+        // Skip fields that already match so restores do not create needless revisions.
+        if ($current_post instanceof WP_Post && (string) $current_post->{$field_key} === (string) $snapshot[$field_key]) {
+            continue;
+        }
+        $post_update[$field_key] = (string) $snapshot[$field_key];
     }
 
     if (count($post_update) > 1) {
@@ -253,7 +275,6 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($update_result->get_error_message())
             );
             amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
-            error_log('AMENDOR ' . $error_msg);
             return false;
         }
     }
@@ -270,7 +291,6 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($backup_index)
             );
             amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'index' => $backup_index]);
-            error_log('AMENDOR ' . $error_msg);
             return false;
         } else {
             $encoded_backup_data = amendor_encode_elementor_data($backup_data, ['post_id' => $post_id, 'operation' => 'restore_backup']);
@@ -290,7 +310,6 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                     esc_html($db_error)
                 );
                 amendor_add_debug_log($error_msg, 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
-                error_log('AMENDOR ' . $error_msg);
                 return false;
             }
         }
@@ -301,7 +320,6 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
                 esc_html($post_id)
             );
             amendor_add_debug_log($log_msg, 'INFO', ['post_id' => $post_id]);
-            error_log('AMENDOR Restore Info: ' . $log_msg);
         }
     }
 
@@ -310,7 +328,14 @@ function amendor_restore_elementor_backup($post_id, $backup_index = 0)
     foreach ($seo_groups as $seo_source => $seo_meta_keys) {
         $seo_values = isset($snapshot[$seo_source]) && is_array($snapshot[$seo_source]) ? $snapshot[$seo_source] : [];
         foreach ($seo_meta_keys as $seo_meta_key) {
-            if (array_key_exists($seo_meta_key, $seo_values)) {
+            if (!array_key_exists($seo_meta_key, $seo_values)) {
+                continue;
+            }
+            // Snapshots store '' for keys the post did not have; delete rather than
+            // creating empty SEO meta rows.
+            if ((string) $seo_values[$seo_meta_key] === '') {
+                delete_post_meta($post_id, $seo_meta_key);
+            } else {
                 update_post_meta($post_id, $seo_meta_key, wp_slash((string) $seo_values[$seo_meta_key]));
             }
         }

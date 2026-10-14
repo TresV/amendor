@@ -35,16 +35,6 @@ function amendor_is_amendor_plugin()
 }
 
 /**
- * Return whether the current bootstrap is Fluentor.
- *
- * @return bool
- */
-function amendor_is_fluentor_plugin()
-{
-    return false;
-}
-
-/**
  * Return whether the current user can manage plugin settings and actions.
  *
  * Central capability check used by every admin handler and AJAX endpoint.

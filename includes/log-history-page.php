@@ -107,22 +107,18 @@ function amendor_send_history_log_export(array $rows, $format, $filename_suffix)
 }
 
 /**
- * Displays the change history log page content.
+ * Read the history log filters from the request.
+ *
+ * @return array{0:string,1:string,2:string,3:array} Mode, bulk filter, WHERE clause with placeholders, and its params.
  */
-function amendor_display_change_history_log()
+function amendor_get_history_log_filters()
 {
-    global $wpdb;
-    $table_name = amendor_get_history_table_name();
-
-    // Security check: Only users who can manage options should see this
-    if (!amendor_current_user_can_manage()) {
-        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
-    }
-
-    // --- Filters ---
     $allowed_modes = ['partial', 'exact', 'regex'];
-    $selected_mode = isset($_GET['history_mode']) && in_array(sanitize_key($_GET['history_mode']), $allowed_modes, true) ? sanitize_key($_GET['history_mode']) : '';
-    $selected_bulk = isset($_GET['history_bulk']) ? sanitize_key($_GET['history_bulk']) : '';
+    $selected_mode = isset($_GET['history_mode']) ? sanitize_key(wp_unslash($_GET['history_mode'])) : '';
+    if (!in_array($selected_mode, $allowed_modes, true)) {
+        $selected_mode = '';
+    }
+    $selected_bulk = isset($_GET['history_bulk']) ? sanitize_key(wp_unslash($_GET['history_bulk'])) : '';
     if (!in_array($selected_bulk, ['bulk', 'single'], true)) {
         $selected_bulk = '';
     }
@@ -139,23 +135,74 @@ function amendor_display_change_history_log()
         $where_sql .= ($where_sql === '' ? ' WHERE' : ' AND') . ' bulk_operation = 0';
     }
 
-    // --- Export Action ---
+    return [$selected_mode, $selected_bulk, $where_sql, $where_params];
+}
+
+/**
+ * Stream a history log export before any admin page output is sent.
+ *
+ * Runs on admin_init: the page render callback runs after the admin header has
+ * been printed, when download headers can no longer be sent.
+ *
+ * @return void
+ */
+function amendor_maybe_export_history_log()
+{
     if (
-        isset($_GET['amendor_action'], $_GET['_wpnonce']) &&
-        $_GET['amendor_action'] === 'export_history_log' &&
-        wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_history_log')
+        !isset($_GET['page'], $_GET['amendor_action'], $_GET['_wpnonce'])
+        || $_GET['page'] !== 'amendor-change-history'
+        || $_GET['amendor_action'] !== 'export_history_log'
     ) {
-        $history_format = isset($_GET['history_format']) && in_array(sanitize_key($_GET['history_format']), ['csv', 'json', 'txt'], true) ? sanitize_key($_GET['history_format']) : 'csv';
-        $export_sql = "SELECT * FROM {$table_name}{$where_sql} ORDER BY timestamp DESC";
-        $export_rows = $wpdb->get_results($wpdb->prepare($export_sql, ...$where_params), ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
-        $export_max_rows = max(1, (int) apply_filters('amendor_history_log_export_max_rows', 50000));
-        $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
-        $filename_suffix = $selected_mode !== '' ? $selected_mode : 'all';
-        if ($selected_bulk !== '') {
-            $filename_suffix .= '-' . $selected_bulk;
-        }
-        amendor_send_history_log_export($export_rows, $history_format, $filename_suffix);
+        return;
     }
+
+    if (!wp_verify_nonce(sanitize_text_field(wp_unslash($_GET['_wpnonce'])), 'amendor_export_history_log')) {
+        wp_die(esc_html__('Security check failed. Please try again.', 'amendor'), esc_html__('Export Error', 'amendor'), 403);
+    }
+
+    if (!amendor_current_user_can_manage()) {
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'), esc_html__('Permission Denied', 'amendor'), 403);
+    }
+
+    global $wpdb;
+    $table_name = amendor_get_history_table_name();
+    [$selected_mode, $selected_bulk, $where_sql, $where_params] = amendor_get_history_log_filters();
+
+    $history_format = isset($_GET['history_format']) ? sanitize_key(wp_unslash($_GET['history_format'])) : 'csv';
+    if (!in_array($history_format, ['csv', 'json', 'txt'], true)) {
+        $history_format = 'csv';
+    }
+
+    $export_sql = "SELECT * FROM {$table_name}{$where_sql} ORDER BY timestamp DESC";
+    if (!empty($where_params)) {
+        $export_sql = $wpdb->prepare($export_sql, ...$where_params); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    }
+    $export_rows = $wpdb->get_results($export_sql, ARRAY_A); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, PluginCheck.Security.DirectDB.UnescapedDBParameter
+    $export_max_rows = max(1, (int) apply_filters('amendor_history_log_export_max_rows', 50000));
+    $export_rows = array_slice((array) $export_rows, 0, $export_max_rows);
+    $filename_suffix = $selected_mode !== '' ? $selected_mode : 'all';
+    if ($selected_bulk !== '') {
+        $filename_suffix .= '-' . $selected_bulk;
+    }
+    amendor_send_history_log_export($export_rows, $history_format, $filename_suffix);
+}
+add_action('admin_init', 'amendor_maybe_export_history_log');
+
+/**
+ * Displays the change history log page content.
+ */
+function amendor_display_change_history_log()
+{
+    global $wpdb;
+    $table_name = amendor_get_history_table_name();
+
+    // Security check: Only users who can manage options should see this
+    if (!amendor_current_user_can_manage()) {
+        wp_die(esc_html__('You do not have sufficient permissions to access this page.', 'amendor'));
+    }
+
+    // --- Filters ---
+    [$selected_mode, $selected_bulk, $where_sql, $where_params] = amendor_get_history_log_filters();
 
     // --- Pagination Logic ---
     $current_page = isset($_GET['history_paged']) ? absint($_GET['history_paged']) : 1;
@@ -164,7 +211,10 @@ function amendor_display_change_history_log()
 
     // Get total number of history items for pagination calculation (respecting filters)
     $count_sql = "SELECT COUNT(id) FROM {$table_name}{$where_sql}";
-    $total_items = (int) $wpdb->get_var($wpdb->prepare($count_sql, ...$where_params)); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    if (!empty($where_params)) {
+        $count_sql = $wpdb->prepare($count_sql, ...$where_params); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+    }
+    $total_items = (int) $wpdb->get_var($count_sql); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
     $total_pages = ceil($total_items / $per_page);
 
     // Get the history items for the current page (respecting filters)

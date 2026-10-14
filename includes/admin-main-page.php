@@ -41,7 +41,7 @@ function amendor_render_text_replacer_ui()
     $show_onboarding = !get_user_meta(get_current_user_id(), 'amendor_onboarding_dismissed', true);
 
     // Add an initial marker to the debug log for clarity
-    amendor_add_debug_log("====== ETP PAGE LOAD / ACTION START ======", 'DEBUG');
+    amendor_add_debug_log("====== Amendor page load / action start ======", 'DEBUG');
 
     // Determine the current action from POST or GET requests
     $action = '';
@@ -55,14 +55,14 @@ function amendor_render_text_replacer_ui()
     amendor_add_debug_log("Action Triggered", 'DEBUG', ['action' => $action ?: '(None)']);
 
     // --- Prepare Variables from POST/GET data ---
-    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $replace = isset($_POST['replace']) ? sanitize_text_field(wp_unslash($_POST['replace'])) : '';
+    $search = isset($_POST['search']) ? amendor_sanitize_search_term(wp_unslash($_POST['search'])) : '';
+    $replace = isset($_POST['replace']) ? amendor_sanitize_search_term(wp_unslash($_POST['replace'])) : '';
     $search_mode = isset($_POST['search_mode']) ? sanitize_key($_POST['search_mode']) : 'partial';
     $selected_ids = isset($_POST['selected_posts']) ? array_map('intval', (array) $_POST['selected_posts']) : [];
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) $_POST['widget_types']) : [];
     $selected_content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) $_POST['content_sources']) : [];
-    $bulk_search = isset($_POST['bulk_search']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_search']) : [];
-    $bulk_replace = isset($_POST['bulk_replace']) ? array_map(fn($item) => sanitize_text_field(wp_unslash($item)), (array) $_POST['bulk_replace']) : [];
+    $bulk_search = isset($_POST['bulk_search']) ? array_map(fn($item) => amendor_sanitize_search_term(wp_unslash($item)), (array) $_POST['bulk_search']) : [];
+    $bulk_replace = isset($_POST['bulk_replace']) ? array_map(fn($item) => amendor_sanitize_search_term(wp_unslash($item)), (array) $_POST['bulk_replace']) : [];
 
     // Initialize result arrays and counters
     $results = [];
@@ -254,7 +254,7 @@ function amendor_render_text_replacer_ui()
                                         </select>
                                         <p class="description"><?php esc_html_e('Choose matching method. Exact Text matches the typed text exactly, including case, within larger content.', 'amendor'); ?></p>
                                         <div id="regex-help" style="display: <?php echo $search_mode === 'regex' ? 'block' : 'none'; ?>; margin-top: 10px; padding: 10px; background: #f0f0f0; border: 1px solid #ddd; font-size: 0.9em;">
-                                            <strong><?php esc_html_e('Regex Tips:', 'amendor'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'amendor'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'amendor'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php esc_html_e('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag). Use <code>\b</code> for word boundaries. Test carefully!', 'amendor'); ?>
+                                            <strong><?php esc_html_e('Regex Tips:', 'amendor'); ?></strong> <?php esc_html_e('Use PCRE syntax (no delimiters needed here). Special characters like', 'amendor'); ?> <code>.^$*+?()[{|</code> <?php esc_html_e('need escaping with', 'amendor'); ?> <code>\</code> (e.g., <code>1\.0</code>). <?php echo wp_kses(__('Search is case-insensitive (<code>i</code> flag) and Unicode-aware (<code>u</code> flag); start the pattern with <code>(?-i)</code> to make it case-sensitive. Use <code>\b</code> for word boundaries. Test carefully!', 'amendor'), ['code' => []]); ?>
                                         </div>
                                     </td>
                                 </tr>
@@ -437,10 +437,10 @@ function amendor_render_text_replacer_ui()
                                 <button type="submit" name="action" value="preview_selected" class="button button-secondary button-large amendor-action-button" id="preview-button" disabled>
                                     <span class="dashicons dashicons-visibility"></span> <?php esc_html_e('Preview Selected', 'amendor'); ?>
                                 </button>
-                                <button type="submit" name="action" value="replace_selected" class="button button-primary button-large amendor-action-button" id="replace-button" disabled onclick="return confirmReplaceAction();">
+                                <button type="submit" name="action" value="replace_selected" class="button button-primary button-large amendor-action-button" id="replace-button" disabled data-confirm-replace>
                                     <span class="dashicons dashicons-yes"></span> <?php esc_html_e('Replace Selected', 'amendor'); ?>
                                 </button>
-                                <button type="submit" name="action" value="undo" class="button button-secondary button-large amendor-action-button" id="undo-button" onclick="return confirm(amendor_admin_vars.confirm_undo_text);">
+                                <button type="submit" name="action" value="undo" class="button button-secondary button-large amendor-action-button" id="undo-button" data-confirm-undo>
                                     <span class="dashicons dashicons-undo"></span> <?php esc_html_e('Undo Last Replace', 'amendor'); ?>
                                 </button>
                                 <a href="<?php echo esc_url(wp_nonce_url(admin_url('admin.php?page=' . amendor_get_admin_parent_slug() . '&action=download_backup'), 'amendor_download_backup_action', 'amendor_download_nonce')); ?>"

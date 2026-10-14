@@ -132,7 +132,7 @@ function amendor_render_results_item(array $item, $is_preview, array $selected_i
                             </select>
                             <button type="submit" class="button button-secondary button-small restore-button"
                                 data-post-id="<?php echo esc_attr($item['ID']); ?>"
-                                onclick="return confirm(amendor_admin_vars.confirm_restore_text.replace('%d', this.getAttribute('data-post-id')));">
+                                data-confirm-restore>
                                 <span class="dashicons dashicons-undo"></span> <?php esc_html_e('Restore', 'amendor'); ?>
                             </button>
                         </form>

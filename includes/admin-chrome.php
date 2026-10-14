@@ -15,9 +15,6 @@ if (!defined('ABSPATH')) {
  */
 function amendor_register_admin_pages()
 {
-    if (function_exists('amendor_is_fluentor_plugin') && amendor_is_fluentor_plugin()) {
-        return;
-    }
 
     add_menu_page(
         __('Amendor', 'amendor'),                          // Page Title

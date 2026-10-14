@@ -12,7 +12,7 @@ Search and replace text within Elementor data and native post fields, with autom
 
 == Description ==
 
-Amendor is the search-and-replace portion of the original combined plugin, packaged as a standalone WordPress plugin. It lets you find and replace text inside Elementor page-builder data as well as native post titles, content, and excerpts - safely, with automatic backups and a complete audit trail.
+Amendor lets you find and replace text inside Elementor page-builder data as well as native post titles, content, and excerpts - safely, with automatic backups and a complete audit trail.
 
 Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor scans the raw Elementor data, widgets from most third-party Elementor add-ons work too.
 
@@ -76,8 +76,4 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 * Performance: keyset-cursor search scan, lightweight search cache, batched AJAX scanning, daily log pruning
 * Security: central capability helper, term-length limits, bounded PCRE resource limits, debug-log redaction
 * Compliance: no account, license, telemetry, or external service; inline styles/handlers moved to enqueued assets; load_plugin_textdomain() removed; Contributors corrected and the feature list aligned with what ships
-
-== Notes ==
-
-Amendor is fully separated from Fluentor. Both plugins can be installed and activated on the same WordPress installation.
 

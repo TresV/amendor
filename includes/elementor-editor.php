@@ -4,8 +4,10 @@
  * Elementor Editor Integration (experimental)
  *
  * Adds a floating search tool to the Elementor editor that highlights
- * matching widgets in the current document. Replacement is intentionally
- * performed in the Amendor admin UI (safe, with backups and undo).
+ * matching widgets in the current document and can replace values in place.
+ * In-editor replacements go through Elementor's own settings commands, so they
+ * are undone with Elementor's history (Cmd/Ctrl+Z) and only persist once the
+ * page is saved. Multi-page work with backups belongs in the Amendor admin UI.
  *
  * @package Amendor
  */

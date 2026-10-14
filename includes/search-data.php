@@ -134,6 +134,28 @@ function amendor_format_content_sources_summary(array $selected_sources)
 }
 
 /**
+ * Sanitize a raw (already unslashed) search or replace term.
+ *
+ * Terms are matched against raw Elementor data and post HTML, so tags, line
+ * breaks, whitespace runs and regex syntax must survive intact; that rules out
+ * sanitize_text_field(). Only invalid UTF-8 and NUL bytes are dropped, and the
+ * length is clamped. Terms are always escaped on output.
+ *
+ * @param mixed $term Raw term.
+ * @return string
+ */
+function amendor_sanitize_search_term($term)
+{
+    if (!is_scalar($term)) {
+        return '';
+    }
+
+    $term = str_replace("\0", '', wp_check_invalid_utf8((string) $term));
+
+    return amendor_limit_search_term($term);
+}
+
+/**
  * Clamp a search or replace term to a safe maximum length.
  *
  * @param string $term Search or replace term.
@@ -226,7 +248,6 @@ function amendor_encode_elementor_data($data, $log_context = [])
             function_exists('json_last_error_msg') ? json_last_error_msg() : __('Unknown JSON error', 'amendor')
         );
         amendor_add_debug_log($error_message, 'ERROR', $log_context);
-        error_log('AMENDOR ' . $error_message);
         return false;
     }
 

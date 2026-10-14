@@ -26,6 +26,9 @@ delete_option('amendor_delete_data_on_uninstall');
 delete_option('amendor_storage_schema_version');
 delete_option('amendor_search_batch_size');
 delete_option('amendor_presets');
+delete_option('amendor_debug_log_retention_limit');
+delete_option('amendor_history_log_retention_limit');
+delete_option('amendor_undo_stack');
 
 $amendor_tables = [
     $wpdb->prefix . 'amendor_history',
@@ -49,3 +52,4 @@ $wpdb->query(
 
 $wpdb->delete($wpdb->postmeta, ['meta_key' => '_amendor_backups'], ['%s']);
 $wpdb->delete($wpdb->usermeta, ['meta_key' => 'amendor_search_history'], ['%s']);
+$wpdb->delete($wpdb->usermeta, ['meta_key' => 'amendor_onboarding_dismissed'], ['%s']);

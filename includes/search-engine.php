@@ -211,6 +211,12 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
     $changes_details['errors'] = $changes_details['errors'] ?? [];
 
     if (is_string($data)) {
+        // Never touch Elementor's structural values (element IDs, types, global
+        // references): rewriting them breaks the document tree.
+        if (is_string($field_key) && in_array($field_key, amendor_get_protected_elementor_keys(), true)) {
+            return $data;
+        }
+
         // Field-key targeting: skip string values whose key is not in the allowlist.
         if (!empty($allowed_fields) && $field_key !== '' && !in_array($field_key, $allowed_fields, true)) {
             return $data;
@@ -236,22 +242,11 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
 
                     case 'regex':
                         $pattern = amendor_build_regex_pattern($search, 'iu');
-                        $match_result = @preg_match($pattern, $original_value);
+                        $match_result = amendor_with_pcre_limits(static fn() => @preg_match($pattern, $original_value));
                         if ($match_result === 1) {
                             $matched = true;
-                            // Bound PCRE resource limits to avoid catastrophic backtracking on user input.
-                            $prev_backtrack = ini_get('pcre.backtrack_limit');
-                            $prev_recursion = ini_get('pcre.recursion_limit');
-                            ini_set('pcre.backtrack_limit', '1000000');
-                            ini_set('pcre.recursion_limit', '100000');
-                            $potential_new_value = @preg_replace($pattern, $replace, $original_value);
-                            if (false !== $prev_backtrack) {
-                                ini_set('pcre.backtrack_limit', (string) $prev_backtrack);
-                            }
-                            if (false !== $prev_recursion) {
-                                ini_set('pcre.recursion_limit', (string) $prev_recursion);
-                            }
-                            if ($potential_new_value === null && preg_last_error() !== PREG_NO_ERROR) {
+                            $potential_new_value = amendor_with_pcre_limits(static fn() => @preg_replace($pattern, $replace, $original_value));
+                            if ($potential_new_value === null) {
                                 /* translators: %s: PCRE error message. */
                                 throw new Exception(sprintf(__('Regex replacement error: %s', 'amendor'), preg_last_error_msg()));
                             }
@@ -265,7 +260,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
                     default:
                         if (mb_stripos($original_value, $search, 0, 'UTF-8') !== false) {
                             $matched = true;
-                            $new_value = str_ireplace($search, $replace, $original_value);
+                            $new_value = amendor_replace_case_insensitive($search, $replace, $original_value);
                         }
                         break;
                 }
@@ -322,7 +317,7 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
         }
 
         foreach ($data as $key => $value) {
-            if ($key === 'settings' && $is_widget_or_element && !$process_this_element_settings) {
+            if ($key === '__globals__' || ($key === 'settings' && $is_widget_or_element && !$process_this_element_settings)) {
                 $modified_data[$key] = $value;
                 continue;
             }
@@ -334,6 +329,66 @@ function amendor_process_elementor_data_recursive($data, $search, $replace, $sea
     }
 
     return $data;
+}
+
+/**
+ * Elementor data keys whose string values are structural and never searched.
+ *
+ * @return array<int,string>
+ */
+function amendor_get_protected_elementor_keys()
+{
+    static $keys = null;
+    if ($keys === null) {
+        $keys = (array) apply_filters('amendor_protected_elementor_keys', ['id', '_id', 'elType', 'widgetType', 'isInner', 'isLocked', 'templateID']);
+    }
+
+    return $keys;
+}
+
+/**
+ * Case-insensitively replace a literal term, Unicode-aware.
+ *
+ * str_ireplace() only folds ASCII case, so "Ä" would be matched by
+ * mb_stripos() but never replaced. The replacement is inserted literally.
+ *
+ * @param string $search  Literal search term.
+ * @param string $replace Literal replacement.
+ * @param string $subject Subject string.
+ * @return string
+ */
+function amendor_replace_case_insensitive($search, $replace, $subject)
+{
+    $pattern = '~' . preg_quote($search, '~') . '~iu';
+    $result = preg_replace_callback($pattern, static fn() => $replace, $subject);
+
+    // Invalid UTF-8 in the subject makes /u fail; fall back to the ASCII-only replace.
+    return $result === null ? str_ireplace($search, $replace, $subject) : $result;
+}
+
+/**
+ * Run a PCRE call with bounded backtrack/recursion limits for user patterns.
+ *
+ * @param callable $callback PCRE call to run.
+ * @return mixed The callback result.
+ */
+function amendor_with_pcre_limits(callable $callback)
+{
+    $prev_backtrack = ini_get('pcre.backtrack_limit');
+    $prev_recursion = ini_get('pcre.recursion_limit');
+    ini_set('pcre.backtrack_limit', (string) apply_filters('amendor_pcre_backtrack_limit', 100000));
+    ini_set('pcre.recursion_limit', (string) apply_filters('amendor_pcre_recursion_limit', 10000));
+
+    try {
+        return $callback();
+    } finally {
+        if (false !== $prev_backtrack) {
+            ini_set('pcre.backtrack_limit', (string) $prev_backtrack);
+        }
+        if (false !== $prev_recursion) {
+            ini_set('pcre.recursion_limit', (string) $prev_recursion);
+        }
+    }
 }
 
 /**
@@ -388,7 +443,6 @@ function amendor_clear_elementor_cache_for_post($post_id)
         return true;
     } catch (Exception $e) {
         amendor_add_debug_log('Error clearing Elementor cache.', 'WARN', ['post_id' => $post_id, 'error' => $e->getMessage()]);
-        error_log('AMENDOR Cache Clear Warning: ' . $e->getMessage());
         return false;
     }
 }
@@ -440,7 +494,6 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
             'post_id' => $post_id,
             'changes_made' => $changes_made
         ]);
-        error_log('AMENDOR Log Error: ' . $log_msg);
         return; // Don't log if no changes were made or data is missing
     }
 
@@ -478,7 +531,6 @@ function amendor_log_replacement($user_id, $post_id, $post_title, $search, $repl
             esc_html($db_error)
         );
         amendor_add_debug_log($error_msg, 'ERROR', ['db_error' => $db_error]);
-        error_log('AMENDOR Log Error: ' . $error_msg);
     } else {
         $log_msg = sprintf(
             /* translators: 1: Post ID, 2: Changes Made */
@@ -523,7 +575,7 @@ function amendor_redact_log_context($context)
 function amendor_add_debug_log($message, $level = 'INFO', $context = null)
 {
     $logging_enabled = get_option('amendor_enable_persistent_debug_log', false);
-    $write_php_debug_log = defined('WP_DEBUG_LOG') && WP_DEBUG_LOG;
+    $write_php_debug_log = defined('WP_DEBUG') && WP_DEBUG && defined('WP_DEBUG_LOG') && WP_DEBUG_LOG;
 
     if (!$logging_enabled && !$write_php_debug_log) {
         return;
@@ -550,10 +602,10 @@ function amendor_add_debug_log($message, $level = 'INFO', $context = null)
     }
     $GLOBALS['amendor_request_log_fingerprints'][$fingerprint] = true;
 
-    $php_log_line = '[ETP][' . $log_level . '] ' . $message . ($context_json ? ' ' . $context_json : '');
+    $php_log_line = '[Amendor][' . $log_level . '] ' . $message . ($context_json ? ' ' . $context_json : '');
 
     if ($write_php_debug_log) {
-        error_log($php_log_line);
+        error_log($php_log_line); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Only when WP_DEBUG and WP_DEBUG_LOG are on.
     }
 
     if (!$logging_enabled) {
