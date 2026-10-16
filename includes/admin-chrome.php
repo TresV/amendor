@@ -15,9 +15,6 @@ if (!defined('ABSPATH')) {
  */
 function amendor_register_admin_pages()
 {
-    if (function_exists('amendor_is_fluentor_plugin') && amendor_is_fluentor_plugin()) {
-        return;
-    }
 
     add_menu_page(
         __('Amendor', 'amendor'),                          // Page Title
@@ -204,6 +201,7 @@ function amendor_admin_enqueue_scripts($hook_suffix)
         'confirm_undo_text' => __('Are you sure you want to undo the last replacement operation? This will restore the affected posts to their state before the last replace.', 'amendor'),
         'confirm_clear_log_title' => __('Confirm Clear Log', 'amendor'),
         'confirm_clear_log_text' => __('Are you sure you want to clear the ENTIRE debug log? This cannot be undone.', 'amendor'),
+        'confirm_delete_preset' => __('Delete this preset?', 'amendor'),
         'backup_selection_warning' => __('Some selected posts do not have an existing plugin backup yet. A fresh backup will be created automatically before replacement.', 'amendor'),
         'backup_selection_safe' => __('All selected posts already have at least one saved plugin backup.', 'amendor'),
         'search_batch_nonce' => wp_create_nonce('amendor_run_search_batch'),
@@ -238,7 +236,7 @@ function amendor_render_admin_notices(array $messages)
         <div class="notice notice-<?php echo esc_attr($message['type']); ?> is-dismissible" style="margin-bottom: 15px;">
             <p><?php echo wp_kses_post($message['text']); ?></p>
         </div>
-    <?php
+<?php
     endforeach;
 }
 
@@ -254,4 +252,3 @@ function amendor_get_admin_notices_html(array $messages)
     amendor_render_admin_notices($messages);
     return ob_get_clean();
 }
-

@@ -105,17 +105,17 @@ function amendor_delete_preset($preset_id)
  */
 function amendor_build_preset_data()
 {
-    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $replace = isset($_POST['replace']) ? sanitize_text_field(wp_unslash($_POST['replace'])) : '';
+    $search = isset($_POST['search']) ? amendor_sanitize_search_term(wp_unslash($_POST['search'])) : '';
+    $replace = isset($_POST['replace']) ? amendor_sanitize_search_term(wp_unslash($_POST['replace'])) : '';
     $search_mode = isset($_POST['search_mode']) && in_array($_POST['search_mode'], ['partial', 'exact', 'regex'], true) ? $_POST['search_mode'] : 'partial';
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) $_POST['content_sources']) : [];
     $widget_types = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) $_POST['widget_types']) : [];
     $field_keys = isset($_POST['field_keys']) ? sanitize_text_field(wp_unslash($_POST['field_keys'])) : '';
     $bulk_search = isset($_POST['bulk_search']) ? array_values(array_map(static function ($item) {
-        return sanitize_text_field(wp_unslash((string) $item));
+        return amendor_sanitize_search_term(wp_unslash((string) $item));
     }, (array) $_POST['bulk_search'])) : [];
     $bulk_replace = isset($_POST['bulk_replace']) ? array_values(array_map(static function ($item) {
-        return sanitize_text_field(wp_unslash((string) $item));
+        return amendor_sanitize_search_term(wp_unslash((string) $item));
     }, (array) $_POST['bulk_replace'])) : [];
 
     return [
@@ -138,8 +138,8 @@ function amendor_build_preset_data()
  */
 function amendor_validate_preset_data(array $data)
 {
-    $search = isset($data['search']) ? sanitize_text_field((string) $data['search']) : '';
-    $replace = isset($data['replace']) ? sanitize_text_field((string) $data['replace']) : '';
+    $search = isset($data['search']) ? amendor_sanitize_search_term((string) $data['search']) : '';
+    $replace = isset($data['replace']) ? amendor_sanitize_search_term((string) $data['replace']) : '';
     $search_mode = isset($data['search_mode']) && in_array($data['search_mode'], ['partial', 'exact', 'regex'], true) ? $data['search_mode'] : 'partial';
     $content_sources = isset($data['content_sources']) && is_array($data['content_sources'])
         ? amendor_normalize_content_sources(array_map('sanitize_key', $data['content_sources']))
@@ -150,12 +150,12 @@ function amendor_validate_preset_data(array $data)
     $field_keys = isset($data['field_keys']) ? sanitize_text_field((string) $data['field_keys']) : '';
     $bulk_search = isset($data['bulk_search']) && is_array($data['bulk_search'])
         ? array_values(array_map(static function ($item) {
-            return sanitize_text_field((string) $item);
+            return amendor_sanitize_search_term((string) $item);
         }, $data['bulk_search']))
         : [];
     $bulk_replace = isset($data['bulk_replace']) && is_array($data['bulk_replace'])
         ? array_values(array_map(static function ($item) {
-            return sanitize_text_field((string) $item);
+            return amendor_sanitize_search_term((string) $item);
         }, $data['bulk_replace']))
         : [];
 
@@ -210,6 +210,32 @@ function amendor_send_preset_export($preset_id)
 }
 
 /**
+ * Stream a preset export before any admin page output is sent.
+ *
+ * Runs on admin_init: the page render callback runs after the admin header has
+ * been printed, when download headers can no longer be sent. Failures fall
+ * through to the page render, which shows the error notice.
+ *
+ * @return void
+ */
+function amendor_maybe_export_preset()
+{
+    if (
+        !isset($_GET['page'], $_POST['action'], $_POST['amendor_presets_nonce'])
+        || $_GET['page'] !== amendor_get_admin_parent_slug()
+        || $_POST['action'] !== 'export_preset'
+        || !amendor_current_user_can_manage()
+        || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['amendor_presets_nonce'])), 'amendor_presets_action')
+    ) {
+        return;
+    }
+
+    $preset_id = isset($_POST['preset_id']) ? intval($_POST['preset_id']) : 0;
+    amendor_send_preset_export($preset_id);
+}
+add_action('admin_init', 'amendor_maybe_export_preset');
+
+/**
  * Import a preset from a JSON export string.
  *
  * @param string $json     JSON payload.
@@ -253,12 +279,6 @@ function amendor_handle_presets_action($action, array &$messages)
         return;
     }
 
-    // Saved presets are a Pro feature.
-    if (!amendor_can_use_premium_features()) {
-        $messages[] = ['type' => 'info', 'text' => __('Saved presets are available in Amendor Pro.', 'amendor')];
-        return;
-    }
-
     if (!amendor_current_user_can_manage()) {
         $messages[] = ['type' => 'error', 'text' => __('❌ You do not have permission to manage presets.', 'amendor')];
         return;
@@ -291,10 +311,9 @@ function amendor_handle_presets_action($action, array &$messages)
             break;
 
         case 'export_preset':
-            $preset_id = isset($_POST['preset_id']) ? intval($_POST['preset_id']) : 0;
-            if (!amendor_send_preset_export($preset_id)) {
-                $messages[] = ['type' => 'error', 'text' => __('❌ Preset not found for export.', 'amendor')];
-            }
+            // A valid export is streamed on admin_init (amendor_maybe_export_preset);
+            // reaching the page render means the preset could not be exported.
+            $messages[] = ['type' => 'error', 'text' => __('❌ Preset not found for export.', 'amendor')];
             break;
 
         case 'import_preset':
@@ -312,11 +331,6 @@ function amendor_handle_presets_action($action, array &$messages)
  */
 function amendor_render_presets_box()
 {
-    // Saved presets are a Pro feature (the call site is also gated in the admin UI).
-    if (!amendor_can_use_premium_features()) {
-        return;
-    }
-
     $presets = amendor_get_presets();
     $page_url = admin_url('admin.php?page=' . amendor_get_admin_parent_slug());
 ?>
@@ -348,7 +362,7 @@ function amendor_render_presets_box()
                                         <?php esc_html_e('Export', 'amendor'); ?>
                                     </button>
                                 </form>
-                                <form method="post" action="<?php echo esc_url($page_url); ?>" style="display: inline;" onsubmit="return confirm('<?php echo esc_js(__('Delete this preset?', 'amendor')); ?>');">
+                                <form method="post" action="<?php echo esc_url($page_url); ?>" style="display: inline;" data-confirm-delete-preset>
                                     <?php wp_nonce_field('amendor_presets_action', 'amendor_presets_nonce'); ?>
                                     <input type="hidden" name="preset_id" value="<?php echo esc_attr((int) $preset['id']); ?>">
                                     <button type="submit" name="action" value="delete_preset" class="button button-small">

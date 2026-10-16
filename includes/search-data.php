@@ -48,13 +48,8 @@ function amendor_get_available_content_sources()
         'post_excerpt' => __('Post Excerpt', 'amendor'),
     ];
 
-    // SEO meta sources (Yoast / Rank Math) are a Pro feature.
-    if (ame_fs()->is__premium_only()) {
-        if (amendor_can_use_premium_features()) {
-            $sources['seo_title'] = __('SEO Title (Yoast / Rank Math)', 'amendor');
-            $sources['seo_description'] = __('SEO Meta Description (Yoast / Rank Math)', 'amendor');
-        }
-    }
+    $sources['seo_title'] = __('SEO Title (Yoast / Rank Math)', 'amendor');
+    $sources['seo_description'] = __('SEO Meta Description (Yoast / Rank Math)', 'amendor');
 
     return $sources;
 }
@@ -136,6 +131,28 @@ function amendor_format_content_sources_summary(array $selected_sources)
     $selected_sources = amendor_normalize_content_sources($selected_sources);
     $labels = array_map('amendor_get_content_source_label', $selected_sources);
     return implode(', ', $labels);
+}
+
+/**
+ * Sanitize a raw (already unslashed) search or replace term.
+ *
+ * Terms are matched against raw Elementor data and post HTML, so tags, line
+ * breaks, whitespace runs and regex syntax must survive intact; that rules out
+ * sanitize_text_field(). Only invalid UTF-8 and NUL bytes are dropped, and the
+ * length is clamped. Terms are always escaped on output.
+ *
+ * @param mixed $term Raw term.
+ * @return string
+ */
+function amendor_sanitize_search_term($term)
+{
+    if (!is_scalar($term)) {
+        return '';
+    }
+
+    $term = str_replace("\0", '', wp_check_invalid_utf8((string) $term));
+
+    return amendor_limit_search_term($term);
 }
 
 /**
@@ -231,7 +248,6 @@ function amendor_encode_elementor_data($data, $log_context = [])
             function_exists('json_last_error_msg') ? json_last_error_msg() : __('Unknown JSON error', 'amendor')
         );
         amendor_add_debug_log($error_message, 'ERROR', $log_context);
-        error_log('ETP ' . $error_message);
         return false;
     }
 

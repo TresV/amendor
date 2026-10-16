@@ -1,9 +1,10 @@
 === Amendor ===
-Contributors: TheBrandPlace
+Contributors: thebrandplaceltd
+Tags: elementor, search, replace, find, backup
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.0
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -11,15 +12,17 @@ Search and replace text within Elementor data and native post fields, with autom
 
 == Description ==
 
-Amendor is the search-and-replace portion of the original combined plugin, packaged as a standalone WordPress plugin. It lets you find and replace text inside Elementor page-builder data as well as native post titles, content, and excerpts - safely, with automatic backups and a complete audit trail.
+Amendor lets you find and replace text inside Elementor page-builder data as well as native post titles, content, and excerpts - safely, with automatic backups and a complete audit trail.
 
 Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor scans the raw Elementor data, widgets from most third-party Elementor add-ons work too.
 
 = Key Features =
 
 * Search Elementor content plus native post fields (title, content, excerpt)
+* SEO meta sources (Yoast / Rank Math) searchable and replaceable as first-class sources
 * Partial (case-insensitive), exact (case-sensitive), and PCRE regular-expression matching
 * Bulk search & replace with multiple sequential search/replace pairs
+* Elementor field-key targeting to limit scanning to specific settings keys
 * Batched AJAX scanning with live progress (scales to large sites)
 * Preview (dry run) before committing any change
 * Automatic backups before every replacement, with one-click Undo and per-post restore
@@ -27,8 +30,9 @@ Elementor Free and Pro (tested up to 3.15) are supported, and because Amendor sc
 * Change history log with filtering and CSV/JSON/TXT export
 * Persistent debug log with level filtering and CSV/JSON/TXT export
 * Content-source and widget-type filters
+* Saved search/replace presets, exportable and importable as JSON
+* In-editor Elementor search tool (🔍 button or Alt+Shift+F) with in-place replace and undo
 * Recent search history (20 entries) with one-click re-run
-* Elementor editor tool (experimental): word-level highlight and in-place replace directly in the editor, with per-occurrence selection, a field filter, and native Cmd/Ctrl+Z undo
 * Fully translation-ready (`languages/amendor.pot`)
 
 == Installation ==
@@ -48,7 +52,7 @@ Yes. Amendor scans the raw Elementor data, so any widget from Elementor Free, El
 
 = Can I replace text right inside the Elementor editor? =
 
-Yes. Open the Amendor panel with the 🔍 button or Alt+Shift+F, search, tick the occurrences you want, then press "Replace Selected". Changes apply in place (no page reload) and are recorded in Elementor's own history, so Cmd/Ctrl+Z (Mac) or Ctrl+Z (Windows) undoes them like any other editor change. The panel's Undo button restores the whole last batch at once.
+Yes. The in-editor tool adds a panel (🔍 button or Alt+Shift+F) to search, highlight, and replace text in place, with Elementor-native undo (Cmd/Ctrl+Z). Batch work across many pages is done from the Amendor admin page, with preview and one-click undo.
 
 = Can I delete all plugin data on uninstall? =
 
@@ -56,16 +60,34 @@ Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settin
 
 == Changelog ==
 
+= 1.0.2 =
+
+* Fixed: storage migrations no longer re-run (with database writes) on every page load; missing tables are created after an update
+* Fixed: debug log, history log, and preset exports now download as files instead of printing into the admin page
+* Fixed: replacements never touch Elementor structural values (element IDs, element/widget types, global style references), which could break page layouts
+* Fixed: search and replace terms keep HTML tags, line breaks, whitespace, and regex syntax intact
+* Fixed: case-insensitive partial matching now replaces non-ASCII letters (e.g. Ä/ä)
+* Improved: "Undo Last Replace" reverts the whole last run, and repeated clicks step back through earlier runs
+* Improved: backups are only created for posts that actually change, and only changed post fields are saved
+* Improved: restoring a backup no longer creates empty Yoast / Rank Math meta fields
+* Improved: tighter PCRE limits for regex mode; regex help explains `(?-i)` for case-sensitive patterns
+* Uninstall now also removes retention settings, the undo history, and onboarding user meta
+* Removed legacy AJAX aliases, leftover code, and inline event handlers; PHP error logging only when WP_DEBUG is on
+
+= 1.0.1 =
+
+* Single self-contained edition: the bundled license/account SDK and all premium gating are removed — no external service, no account, and no locked functionality
+* SEO meta fields (Yoast / Rank Math), field-key targeting, saved presets, the in-editor Elementor tool, and CSV/JSON/TXT log exports all ship in the one free plugin
+* Fixed: replacement no longer reports a false "Database error occurred" for SEO meta fields whose value did not change — only genuine database write failures are reported
+* Elementor data is written only when it actually changed
+* Added `uninstall.php` for the opt-in "Delete plugin data on uninstall" cleanup, replacing the previous SDK-based uninstall hook
+
 = 1.0.0 =
 
-* Initial public release, split into Free and Pro editions (via Freemius)
+* Initial public release — a single, fully-featured free edition with no license keys, accounts, or locked functionality
 * Search & replace in Elementor data and native post fields, with preview (dry run), automatic backups, one-click undo, and per-post restore
-* Free: partial/exact matching, content-source & widget-type filters, dashboard stats, search history, history/debug log viewing
-* Pro: regex matching, bulk replace, field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, in-editor live tool (Alt+Shift+F5), and CSV/JSON/TXT log exports
+* Includes field-key targeting, SEO meta fields (Yoast / Rank Math), saved presets, the in-editor live tool (Alt+Shift+F), and CSV/JSON/TXT log exports
 * Performance: keyset-cursor search scan, lightweight search cache, batched AJAX scanning, daily log pruning
 * Security: central capability helper, term-length limits, bounded PCRE resource limits, debug-log redaction
-
-== Notes ==
-
-Amendor is fully separated from Fluentor. Both plugins can be installed and activated on the same WordPress installation.
+* Compliance: no account, license, telemetry, or external service; inline styles/handlers moved to enqueued assets; load_plugin_textdomain() removed; Contributors corrected and the feature list aligned with what ships
 

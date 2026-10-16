@@ -501,3 +501,54 @@ tr.log-level-critical {
 .amendor-diff-same {
     color: #d4d4d4;
 }
+
+/* Debug log page: level badges & toolbar (moved from inline <style> for wp.org compliance) */
+.log-level-badge {
+    display: inline-block;
+    padding: 2px 6px;
+    font-size: 10px;
+    font-weight: bold;
+    border-radius: 3px;
+    color: #fff;
+    text-transform: uppercase;
+}
+
+.log-level-debug {
+    background-color: #6c757d;
+}
+
+.log-level-info {
+    background-color: #17a2b8;
+}
+
+.log-level-warn {
+    background-color: #ffc107;
+    color: #333;
+}
+
+.log-level-error {
+    background-color: #dc3545;
+}
+
+.log-level-critical {
+    background-color: #bd2130;
+}
+
+tr.log-level-warn {
+    background-color: #fff3cd !important;
+}
+
+/* Use important to override WP styles */
+tr.log-level-error,
+tr.log-level-critical {
+    background-color: #f8d7da !important;
+}
+
+.debug_log__options {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: nowrap;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}

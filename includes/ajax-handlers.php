@@ -50,9 +50,7 @@ function amendor_check_backup_callback()
     wp_die(); // Required for AJAX handlers in WordPress
 }
 
-// Register both Amendor and legacy action names while the package is being renamed.
 add_action('wp_ajax_amendor_check_backup', 'amendor_check_backup_callback');
-add_action('wp_ajax_etp_check_backup', 'amendor_check_backup_callback');
 
 /**
  * AJAX handler to run a batched search scan.
@@ -67,16 +65,13 @@ function amendor_run_search_batch_callback()
         wp_die();
     }
 
-    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $search_mode = amendor_restrict_search_mode(isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial');
+    $search = isset($_POST['search']) ? amendor_sanitize_search_term(wp_unslash($_POST['search'])) : '';
+    $search_mode = isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial';
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) wp_unslash($_POST['widget_types'])) : [];
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
     $reset = !empty($_POST['reset']);
-    $allowed_fields = [];
-    if (amendor_can_use_premium_features()) {
-        $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
-    }
+    $allowed_fields = isset($_POST['field_keys']) ? amendor_normalize_allowed_fields(wp_unslash($_POST['field_keys'])) : [];
 
     if ($search === '') {
         wp_send_json_error(['message' => __('Search term is required.', 'amendor')], 400);
@@ -103,7 +98,6 @@ function amendor_run_search_batch_callback()
     wp_die();
 }
 add_action('wp_ajax_amendor_run_search_batch', 'amendor_run_search_batch_callback');
-add_action('wp_ajax_etp_run_search_batch', 'amendor_run_search_batch_callback');
 
 /**
  * AJAX handler to render cached search results without a full page reload.
@@ -118,8 +112,8 @@ function amendor_get_search_results_callback()
         wp_die();
     }
 
-    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $search_mode = amendor_restrict_search_mode(isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial');
+    $search = isset($_POST['search']) ? amendor_sanitize_search_term(wp_unslash($_POST['search'])) : '';
+    $search_mode = isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial';
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) wp_unslash($_POST['widget_types'])) : [];
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
     $cache_key = isset($_POST['search_cache_key']) ? sanitize_key(wp_unslash($_POST['search_cache_key'])) : '';
@@ -172,7 +166,6 @@ function amendor_get_search_results_callback()
     wp_die();
 }
 add_action('wp_ajax_amendor_get_search_results', 'amendor_get_search_results_callback');
-add_action('wp_ajax_etp_get_search_results', 'amendor_get_search_results_callback');
 
 /**
  * AJAX handler to run a preview request without reloading the page.
@@ -187,8 +180,8 @@ function amendor_run_preview_callback()
         wp_die();
     }
 
-    $search = isset($_POST['search']) ? sanitize_text_field(wp_unslash($_POST['search'])) : '';
-    $replace = isset($_POST['replace']) ? sanitize_text_field(wp_unslash($_POST['replace'])) : '';
+    $search = isset($_POST['search']) ? amendor_sanitize_search_term(wp_unslash($_POST['search'])) : '';
+    $replace = isset($_POST['replace']) ? amendor_sanitize_search_term(wp_unslash($_POST['replace'])) : '';
     $search_mode = isset($_POST['search_mode']) ? sanitize_key(wp_unslash($_POST['search_mode'])) : 'partial';
     $selected_widgets = isset($_POST['widget_types']) ? array_map('sanitize_text_field', (array) wp_unslash($_POST['widget_types'])) : [];
     $content_sources = isset($_POST['content_sources']) ? array_map('sanitize_key', (array) wp_unslash($_POST['content_sources'])) : [];
@@ -232,4 +225,3 @@ function amendor_run_preview_callback()
     wp_die();
 }
 add_action('wp_ajax_amendor_run_preview', 'amendor_run_preview_callback');
-add_action('wp_ajax_etp_run_preview', 'amendor_run_preview_callback');

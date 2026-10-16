@@ -77,23 +77,13 @@ function amendor_handle_undo_action($action, array &$messages)
 
     amendor_add_debug_log("Attempting Undo Action...", 'INFO');
 
-    global $wpdb;
-    $history_table = amendor_get_history_table_name();
-
-    $last_timestamp = $wpdb->get_var("SELECT MAX(timestamp) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-    if (!$last_timestamp) {
-        $messages[] = ['type' => 'info', 'text' => __('ℹ️ Nothing to undo yet. No replacement operations have been recorded.', 'amendor')];
-        amendor_add_debug_log("Undo Action Finished: no history.", 'DEBUG');
-        return;
-    }
-
-    $post_ids = $wpdb->get_col(
-        $wpdb->prepare("SELECT DISTINCT post_id FROM {$history_table} WHERE timestamp = %s", $last_timestamp)
-    ); // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    $run = amendor_pop_undo_run();
+    $from_undo_stack = $run !== null;
+    $post_ids = $from_undo_stack ? $run['post_ids'] : amendor_get_legacy_undo_post_ids();
 
     if (empty($post_ids)) {
-        $messages[] = ['type' => 'info', 'text' => __('ℹ️ Nothing to undo.', 'amendor')];
-        amendor_add_debug_log("Undo Action Finished: no posts to undo.", 'DEBUG');
+        $messages[] = ['type' => 'info', 'text' => __('ℹ️ Nothing to undo yet. No replacement operations have been recorded.', 'amendor')];
+        amendor_add_debug_log("Undo Action Finished: nothing to undo.", 'DEBUG');
         return;
     }
 
@@ -102,6 +92,11 @@ function amendor_handle_undo_action($action, array &$messages)
     foreach ($post_ids as $post_id) {
         if (amendor_restore_elementor_backup((int) $post_id, 0)) {
             $restored++;
+            // The restored backup now matches the live post; dropping it exposes the
+            // previous run's backup to the next undo.
+            if ($from_undo_stack) {
+                amendor_delete_latest_backup((int) $post_id);
+            }
             amendor_add_debug_log('Undo restored post from backup.', 'INFO', ['post_id' => (int) $post_id]);
         } else {
             $failed++;
@@ -124,6 +119,86 @@ function amendor_handle_undo_action($action, array &$messages)
 }
 
 /**
+ * Record the posts changed by one replace run so Undo can revert the run as a whole.
+ *
+ * @param array $post_ids Post IDs modified (and backed up) by the run.
+ * @return void
+ */
+function amendor_push_undo_run(array $post_ids)
+{
+    $post_ids = array_values(array_unique(array_filter(array_map('intval', $post_ids))));
+    if (empty($post_ids)) {
+        return;
+    }
+
+    $stack = get_option('amendor_undo_stack', []);
+    $stack = is_array($stack) ? $stack : [];
+    $stack[] = [
+        'timestamp' => current_time('mysql', 1),
+        'post_ids' => $post_ids,
+    ];
+
+    // Older runs cannot be undone once their backups fall out of retention anyway.
+    $max_runs = max(1, (int) apply_filters('amendor_undo_stack_size', 20));
+    update_option('amendor_undo_stack', array_slice($stack, -$max_runs), false);
+}
+
+/**
+ * Remove and return the most recent replace run, or null when none is recorded.
+ *
+ * @return array{timestamp:string,post_ids:array<int,int>}|null
+ */
+function amendor_pop_undo_run()
+{
+    $stack = get_option('amendor_undo_stack', null);
+    if (!is_array($stack) || empty($stack)) {
+        return null;
+    }
+
+    $run = array_pop($stack);
+    update_option('amendor_undo_stack', $stack, false);
+
+    if (!is_array($run) || empty($run['post_ids']) || !is_array($run['post_ids'])) {
+        return null;
+    }
+
+    return [
+        'timestamp' => (string) ($run['timestamp'] ?? ''),
+        'post_ids' => array_map('intval', $run['post_ids']),
+    ];
+}
+
+/**
+ * Posts from the last replace recorded before the undo stack existed (older installs).
+ *
+ * Only used while no undo stack has ever been written; afterwards an empty stack
+ * means there is nothing left to undo.
+ *
+ * @return array<int,int>
+ */
+function amendor_get_legacy_undo_post_ids()
+{
+    if (get_option('amendor_undo_stack', null) !== null) {
+        return [];
+    }
+
+    global $wpdb;
+    $history_table = amendor_get_history_table_name();
+
+    $last_timestamp = $wpdb->get_var("SELECT MAX(timestamp) FROM {$history_table}"); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+    if (!$last_timestamp) {
+        return [];
+    }
+
+    // Mark the legacy entry as consumed so it is not undone twice.
+    update_option('amendor_undo_stack', [], false);
+
+    return array_map('intval', (array) $wpdb->get_col(
+        $wpdb->prepare("SELECT DISTINCT post_id FROM {$history_table} WHERE timestamp = %s", $last_timestamp) // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+    )); // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+}
+
+/**
  * Handle search action requests.
  *
  * @param string $action Current action.
@@ -139,11 +214,7 @@ function amendor_handle_undo_action($action, array &$messages)
  */
 function amendor_handle_search_action($action, $search, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, $paged, $results_per_page, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
     $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
-        $allowed_fields = [];
-    }
 
     $payload = [
         'results' => [],
@@ -283,11 +354,7 @@ function amendor_handle_search_action($action, $search, $search_mode, array $sel
  */
 function amendor_handle_preview_action($action, array $selected_ids, $search, $replace, $search_mode, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
     $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
-        $allowed_fields = [];
-    }
 
     $preview_results = [];
 
@@ -416,14 +483,7 @@ function amendor_handle_preview_action($action, array $selected_ids, $search, $r
  */
 function amendor_handle_replace_action($action, array $selected_ids, $search, $replace, $search_mode, array $bulk_search, array $bulk_replace, array $selected_widgets, array $content_sources, array $supported_post_types, array &$messages, array $allowed_fields = [])
 {
-    $search_mode = amendor_restrict_search_mode($search_mode);
     $allowed_fields = amendor_normalize_allowed_fields($allowed_fields);
-    if (!amendor_can_use_premium_features()) {
-        // Bulk replace and field-key targeting are Pro-only.
-        $allowed_fields = [];
-        $bulk_search = [];
-        $bulk_replace = [];
-    }
 
     if ($action !== 'replace_selected' || empty($selected_ids)) {
         return;
@@ -499,6 +559,7 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
     $global_replaced_posts_count = 0;
     $global_total_changes_made = 0;
     $current_user_id = get_current_user_id();
+    $undo_post_ids = [];
 
     amendor_add_debug_log("Processing replacement for selected posts.", 'INFO', ['count' => count($selected_ids), 'sources' => $content_sources]);
 
@@ -509,19 +570,21 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             continue;
         }
 
+        // Snapshot now, but only store it once a pair actually changes the post, so
+        // no-op runs do not rotate real backups out of the retention window.
         $snapshot = amendor_build_post_backup_snapshot($post_id);
-        if (!is_array($snapshot) || !amendor_create_post_backup($post_id, $snapshot)) {
-            amendor_add_debug_log("Replace aborted for post: Failed to create backup.", 'ERROR', ['post_id' => $post_id]);
+        if (!is_array($snapshot)) {
+            amendor_add_debug_log("Replace aborted for post: Failed to build backup snapshot.", 'ERROR', ['post_id' => $post_id]);
             /* translators: %d: Post ID. */
             $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to create backup for Post ID %d. Replacement skipped for this post.', 'amendor'), $post_id)];
             continue;
         }
 
-        amendor_add_debug_log("Backup created for post.", 'INFO', ['post_id' => $post_id]);
-
         $post_modified_by_any_pair = false;
         $total_changes_in_post_across_pairs = 0;
         $current_state = amendor_build_post_content_state($post);
+        // Snapshot taken before any pair runs, so unchanged values are never written back.
+        $original_state = $current_state;
 
         foreach ($pairs_to_process as $pair_index => $pair) {
             $pair_analysis = amendor_analyze_post_content_state(
@@ -574,62 +637,86 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
             continue;
         }
 
-        $native_update = [
-            'ID' => $post_id,
-            'post_title' => (string) $current_state['post_title'],
-            'post_content' => (string) $current_state['post_content'],
-            'post_excerpt' => (string) $current_state['post_excerpt'],
-        ];
-        $update_result = wp_update_post(wp_slash($native_update), true);
-        if (is_wp_error($update_result)) {
-            amendor_add_debug_log('ERROR updating native post fields after processing pairs.', 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
-            /* translators: 1: Post ID, 2: WordPress error message. */
-            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($update_result->get_error_message()))];
+        if (!amendor_create_post_backup($post_id, $snapshot)) {
+            amendor_add_debug_log("Replace aborted for post: Failed to create backup.", 'ERROR', ['post_id' => $post_id]);
+            /* translators: %d: Post ID. */
+            $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to create backup for Post ID %d. Replacement skipped for this post.', 'amendor'), $post_id)];
             continue;
+        }
+
+        amendor_add_debug_log("Backup created for post.", 'INFO', ['post_id' => $post_id]);
+        $undo_post_ids[] = (int) $post_id;
+
+        // Only save native fields that changed, so Elementor/SEO-only edits do not
+        // create a revision or re-run content filters on untouched fields.
+        $native_update = ['ID' => $post_id];
+        foreach (['post_title', 'post_content', 'post_excerpt'] as $native_field) {
+            if ((string) $current_state[$native_field] !== (string) $original_state[$native_field]) {
+                $native_update[$native_field] = (string) $current_state[$native_field];
+            }
+        }
+        if (count($native_update) > 1) {
+            $update_result = wp_update_post(wp_slash($native_update), true);
+            if (is_wp_error($update_result)) {
+                amendor_add_debug_log('ERROR updating native post fields after processing pairs.', 'ERROR', ['post_id' => $post_id, 'error' => $update_result->get_error_message()]);
+                /* translators: 1: Post ID, 2: WordPress error message. */
+                $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save post field changes for Post ID %1$d. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($update_result->get_error_message()))];
+                continue;
+            }
         }
 
         if (array_key_exists('elementor_data', $current_state)) {
             if (is_array($current_state['elementor_data'])) {
-                $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
-                if ($encoded_current_data_state === false) {
-                    /* translators: %d: Post ID. */
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
-                    continue;
-                }
+                if ($current_state['elementor_data'] !== $original_state['elementor_data']) {
+                    $encoded_current_data_state = amendor_encode_elementor_data($current_state['elementor_data'], ['post_id' => $post_id, 'operation' => 'replace_selected']);
+                    if ($encoded_current_data_state === false) {
+                        /* translators: %d: Post ID. */
+                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to encode updated Elementor data for Post ID %d. Backup was created and no changes were saved.', 'amendor'), $post_id)];
+                        continue;
+                    }
 
-                $meta_update = update_post_meta($post_id, '_elementor_data', wp_slash($encoded_current_data_state));
-                if ($meta_update === false) {
-                    $db_error = $GLOBALS['wpdb']->last_error;
-                    amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
-                    /* translators: 1: Post ID, 2: Database error message. */
-                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
-                    continue;
+                    $meta_update = update_post_meta($post_id, '_elementor_data', wp_slash($encoded_current_data_state));
+                    // update_post_meta() returns false when the stored value already matches the new
+                    // one (no query runs), so only a populated last_error means a real failure.
+                    $db_error = (string) $GLOBALS['wpdb']->last_error;
+                    if ($meta_update === false && '' !== $db_error) {
+                        amendor_add_debug_log("ERROR updating post meta after processing pairs.", 'ERROR', ['post_id' => $post_id, 'db_error' => $db_error]);
+                        /* translators: 1: Post ID, 2: Database error message. */
+                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save Elementor changes for Post ID %1$d. Database error occurred. Backup was created. Error: %2$s', 'amendor'), $post_id, esc_html($db_error))];
+                        continue;
+                    }
+                    amendor_clear_elementor_cache_for_post($post_id);
                 }
-                amendor_clear_elementor_cache_for_post($post_id);
             } elseif ($current_state['elementor_data'] === null && amendor_content_sources_include_elementor($content_sources)) {
                 delete_post_meta($post_id, '_elementor_data');
             }
         }
 
-        // Save SEO meta (Yoast / Rank Math) when those sources are selected (Pro).
-        if (amendor_can_use_premium_features()) {
-            $seo_groups = amendor_get_seo_meta_field_groups();
-            foreach ($seo_groups as $seo_source => $seo_meta_keys) {
-                if (!in_array($seo_source, $content_sources, true)) {
+        // Save SEO meta (Yoast / Rank Math) when those sources are selected.
+        $seo_groups = amendor_get_seo_meta_field_groups();
+        foreach ($seo_groups as $seo_source => $seo_meta_keys) {
+            if (!in_array($seo_source, $content_sources, true)) {
+                continue;
+            }
+            $seo_values = isset($current_state[$seo_source]) && is_array($current_state[$seo_source]) ? $current_state[$seo_source] : [];
+            $original_seo_values = isset($original_state[$seo_source]) && is_array($original_state[$seo_source]) ? $original_state[$seo_source] : [];
+            foreach ($seo_meta_keys as $seo_meta_key) {
+                if (!array_key_exists($seo_meta_key, $seo_values)) {
                     continue;
                 }
-                $seo_values = isset($current_state[$seo_source]) && is_array($current_state[$seo_source]) ? $current_state[$seo_source] : [];
-                foreach ($seo_meta_keys as $seo_meta_key) {
-                    if (!array_key_exists($seo_meta_key, $seo_values)) {
-                        continue;
-                    }
-                    $seo_meta_saved = update_post_meta($post_id, $seo_meta_key, wp_slash((string) $seo_values[$seo_meta_key]));
-                    if ($seo_meta_saved === false) {
-                        $db_error = $GLOBALS['wpdb']->last_error;
-                        amendor_add_debug_log('ERROR updating SEO meta after processing pairs.', 'ERROR', ['post_id' => $post_id, 'meta_key' => $seo_meta_key, 'db_error' => $db_error]);
-                        /* translators: 1: Post ID, 2: Meta key, 3: Database error message. */
-                        $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s', 'amendor'), $post_id, esc_html($seo_meta_key), esc_html($db_error))];
-                    }
+                $seo_meta_value = (string) $seo_values[$seo_meta_key];
+                if (isset($original_seo_values[$seo_meta_key]) && (string) $original_seo_values[$seo_meta_key] === $seo_meta_value) {
+                    // Source was selected but this key did not change, so there is nothing to save.
+                    continue;
+                }
+                $seo_meta_saved = update_post_meta($post_id, $seo_meta_key, wp_slash($seo_meta_value));
+                // update_post_meta() returns false when the value is unchanged or another plugin
+                // short-circuits the write, so only a populated last_error means a real failure.
+                $db_error = (string) $GLOBALS['wpdb']->last_error;
+                if ($seo_meta_saved === false && '' !== $db_error) {
+                    amendor_add_debug_log('ERROR updating SEO meta after processing pairs.', 'ERROR', ['post_id' => $post_id, 'meta_key' => $seo_meta_key, 'db_error' => $db_error]);
+                    /* translators: 1: Post ID, 2: Meta key, 3: Database error message. */
+                    $messages[] = ['type' => 'error', 'text' => sprintf(__('❌ Failed to save SEO meta (%2$s) for Post ID %1$d. Database error occurred. Backup was created. Error: %3$s', 'amendor'), $post_id, esc_html($seo_meta_key), esc_html($db_error))];
                 }
             }
         }
@@ -655,6 +742,8 @@ function amendor_handle_replace_action($action, array $selected_ids, $search, $r
         $global_total_changes_made += $total_changes_in_post_across_pairs;
         $global_replaced_posts_count++;
     }
+
+    amendor_push_undo_run($undo_post_ids);
 
     if ($global_replaced_posts_count > 0) {
         $summary_message = sprintf(

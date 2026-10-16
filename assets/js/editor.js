@@ -141,19 +141,22 @@ jQuery(function ($) {
             .replace(/<hr\s*\/?>/gi, ' ');
     }
 
+    function parseInertHtml(html) {
+        // DOMParser builds an inert document: unlike innerHTML on an element of
+        // the live page, it never loads images or runs inline event handlers.
+        return new DOMParser().parseFromString(spacedHtml(html), 'text/html').body;
+    }
+
     function stripHtmlToText(html) {
-        var div = document.createElement('div');
-        div.innerHTML = spacedHtml(html);
-        return div.textContent.replace(/\s+/g, ' ').trim();
+        return (parseInertHtml(html).textContent || '').replace(/\s+/g, ' ').trim();
     }
 
     function htmlContextBadge(html, term) {
         // Returns a tiny structural hint (H2, List, Quote, ...) when the term
         // sits inside a meaningful block, so the stripped snippet isn't flat.
         try {
-            var div = document.createElement('div');
-            div.innerHTML = spacedHtml(html);
-            var walker = document.createTreeWalker(div, NodeFilter.SHOW_TEXT, {
+            var div = parseInertHtml(html);
+            var walker = div.ownerDocument.createTreeWalker(div, NodeFilter.SHOW_TEXT, {
                 acceptNode: function (node) {
                     return node.nodeValue && node.nodeValue.toLowerCase().indexOf(String(term).toLowerCase()) !== -1
                         ? NodeFilter.FILTER_ACCEPT

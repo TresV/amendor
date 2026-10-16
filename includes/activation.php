@@ -165,7 +165,7 @@ function amendor_maybe_migrate_legacy_storage()
 {
     global $wpdb;
 
-    if (get_option('amendor_storage_schema_version', '') === '1') {
+    if ((int) get_option('amendor_storage_schema_version', 0) >= 1) {
         return;
     }
 
@@ -192,13 +192,18 @@ function amendor_maybe_migrate_backups_to_table()
 {
     global $wpdb;
 
-    if (get_option('amendor_storage_schema_version', '') === '2') {
+    if ((int) get_option('amendor_storage_schema_version', 0) >= 2) {
         return;
     }
 
     $table = amendor_get_backups_table_name();
     if (!amendor_table_exists($table)) {
-        return;
+        // Plugin updates do not fire the activation hook, so an install upgraded
+        // from a version without this table has to create it here.
+        amendor_create_amendor_tables();
+        if (!amendor_table_exists($table)) {
+            return;
+        }
     }
 
     $migrated = 0;

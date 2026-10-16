@@ -481,6 +481,38 @@ jQuery(function ($) {
         }
     });
 
+    // Deferred confirmation handlers (replaces inline onclick/onsubmit).
+    $(document).on('click', '[data-confirm-clear-log]', function (event) {
+        if (!window.confirm(amendor_admin_vars.confirm_clear_log_text)) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).on('click', '[data-confirm-replace]', function (event) {
+        if (!window.confirmReplaceAction()) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).on('click', '[data-confirm-undo]', function (event) {
+        if (!window.confirm(amendor_admin_vars.confirm_undo_text)) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).on('click', '[data-confirm-restore]', function (event) {
+        const postId = $(this).attr('data-post-id') || '';
+        if (!window.confirm(amendor_admin_vars.confirm_restore_text.replace('%d', postId))) {
+            event.preventDefault();
+        }
+    });
+
+    $(document).on('submit', '[data-confirm-delete-preset]', function (event) {
+        if (!window.confirm(amendor_admin_vars.confirm_delete_preset)) {
+            event.preventDefault();
+        }
+    });
+
     syncContentSourceUi();
     refreshResultsUi();
 });
