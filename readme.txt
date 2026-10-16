@@ -4,7 +4,7 @@ Tags: elementor, search, replace, find, backup
 Requires at least: 6.4
 Tested up to: 7.0
 Requires PHP: 8.1
-Stable tag: 1.0.1
+Stable tag: 1.0.2
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -59,6 +59,20 @@ Yes. The in-editor tool adds a panel (🔍 button or Alt+Shift+F) to search, hig
 Yes. Enable the "Delete plugin data on uninstall" option on the Debug Log settings page, then deactivate and delete the plugin. This removes the history, debug log, and backups tables, plus backup meta and per-user search history.
 
 == Changelog ==
+
+= 1.0.2 =
+
+* Fixed: storage migrations no longer re-run (with database writes) on every page load; missing tables are created after an update
+* Fixed: debug log, history log, and preset exports now download as files instead of printing into the admin page
+* Fixed: replacements never touch Elementor structural values (element IDs, element/widget types, global style references), which could break page layouts
+* Fixed: search and replace terms keep HTML tags, line breaks, whitespace, and regex syntax intact
+* Fixed: case-insensitive partial matching now replaces non-ASCII letters (e.g. Ä/ä)
+* Improved: "Undo Last Replace" reverts the whole last run, and repeated clicks step back through earlier runs
+* Improved: backups are only created for posts that actually change, and only changed post fields are saved
+* Improved: restoring a backup no longer creates empty Yoast / Rank Math meta fields
+* Improved: tighter PCRE limits for regex mode; regex help explains `(?-i)` for case-sensitive patterns
+* Uninstall now also removes retention settings, the undo history, and onboarding user meta
+* Removed legacy AJAX aliases, leftover code, and inline event handlers; PHP error logging only when WP_DEBUG is on
 
 = 1.0.1 =
 
